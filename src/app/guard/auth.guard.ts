@@ -10,14 +10,12 @@ export const authGuard: CanActivateFn = async (
   const router = inject(Router);
   const http = inject(HttpClient);
 
-  // Ensure window and localStorage are available
   if (typeof window === 'undefined' || !window.localStorage) {
     console.error('Session storage is not available.');
-    router.navigate(['/home']); // Redirect to /home instead of /login
+    router.navigate(['/login']);
     return false;
   }
 
-  // Safely retrieve token
   const token = localStorage.getItem('auth-token');
 
   const isTokenExpired = (token: string): boolean => {
@@ -31,7 +29,7 @@ export const authGuard: CanActivateFn = async (
   };
 
   if (!token || isTokenExpired(token)) {
-    router.navigate(['/home']); // Redirect to /home instead of /login
+    router.navigate(['/login']);
     return false;
   }
 
@@ -41,11 +39,9 @@ export const authGuard: CanActivateFn = async (
     userRoles = payload.roles || [];
   } catch (e) {
     console.error('Failed to parse token payload:', e);
-    router.navigate(['/home']); // Redirect to /home instead of /login
-    return false;
+    router.navigate(['/login']);
   }
 
-  // Extract the current route's path
   const currentRoutePath = route.routeConfig?.path || '';
   console.log(
     `Checking access for route: ${currentRoutePath} with roles:`,
@@ -92,7 +88,7 @@ export const authGuard: CanActivateFn = async (
     }
   } catch (error) {
     console.error('Error while fetching menus for roles:', error);
-    router.navigate(['/home']);
+    router.navigate(['/login']);
     return false;
   }
 };
