@@ -162,9 +162,12 @@ export class ManageRoleAccessComponent implements OnInit {
 
   resetAssociations(): void {
     this.selectedAssociations.clear();
+    console.log('Reset Associations:', this.selectedAssociations);
     this.roleMenuAssociations.forEach((assoc) =>
       this.selectedAssociations.add(`${assoc.role_id}~${assoc.menu_id}`)
     );
+    this.initializeCheckboxStates();
+    console.log('Updated Associations:', this.selectedAssociations);
   }
 
   saveAssociations(): void {
