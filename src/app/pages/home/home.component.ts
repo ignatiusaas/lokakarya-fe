@@ -82,13 +82,6 @@ export class HomeComponent {
       });
   }
 
-  logout(): void {
-    localStorage.clear();
-    this.router.navigate(['/login'], {
-      queryParams: { warning: 'You have been successfully logged out.' },
-    });
-  }
-
   private initializeForm() {
     console.log('Initializing Change Password Form...');
     this.changePasswordForm = this.fb.group({

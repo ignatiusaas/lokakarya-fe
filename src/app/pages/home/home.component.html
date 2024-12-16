@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<app-navbar (onLogout)="logout()"></app-navbar>
+<app-navbar></app-navbar>
 <div class="home-container">
   <h1 *ngIf="!loading && !errorMessage">
     Welcome, {{ userDetails?.full_name }}!
