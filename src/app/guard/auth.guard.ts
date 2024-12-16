@@ -63,10 +63,17 @@ export const authGuard: CanActivateFn = async (
 
     const responses = await Promise.all(roleRequests);
 
-    // Add globally accessible menus
     availableMenus.add('home');
     availableMenus.add('login');
-    availableMenus.add('assessment-summary');
+    if (
+      userRoles.includes('HR') ||
+      userRoles.includes('MGR') ||
+      userRoles.includes('SVP')
+    ) {
+      availableMenus.add('view-assessment-summary');
+    } else {
+      availableMenus.add('assessment-summary');
+    }
 
     responses.forEach((response) => {
       if (response && response.content) {

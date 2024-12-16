@@ -297,7 +297,13 @@ export class AssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
-          this.achievements = response.content || [];
+          const allAchievements = response.content || [];
+          console.log('All Achievements:', allAchievements);
+          allAchievements.forEach((achievement: any) => {
+            if (achievement.enabled === true) {
+              this.achievements.push(achievement);
+            }
+          });
           console.log('Fetched Achievement Summary:', this.achievements);
           resolve();
         },
@@ -334,7 +340,12 @@ export class AssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
-          this.attitudeSkills = response.content || [];
+          const allAttitudeSkills = response.content || [];
+          allAttitudeSkills.forEach((attitudeSkill: any) => {
+            if (attitudeSkill.enabled === true) {
+              this.attitudeSkills.push(attitudeSkill);
+            }
+          });
           console.log('Fetched Attitude Skill Summary:', this.attitudeSkills);
           resolve();
         },

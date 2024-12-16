@@ -106,7 +106,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       .get<any>('https://lokakarya-be.up.railway.app/division/all')
       .subscribe({
         next: (response) => {
-          const all = { id: null, division_name: "All" };
+          const all = { id: null, division_name: 'All' };
           const res = response.content || [];
           this.divisions = res.slice(); // Ensure `this.divisions` starts fresh if needed
           this.divisions.unshift(all); // Add `all` at the beginning
@@ -250,7 +250,13 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
-          this.achievements = response.content || [];
+          const allAchievements = response.content || [];
+          console.log('All Achievements:', allAchievements);
+          allAchievements.forEach((achievement: any) => {
+            if (achievement.enabled === true) {
+              this.achievements.push(achievement);
+            }
+          });
           console.log('Fetched Achievement Summary:', this.achievements);
           resolve();
         },
@@ -270,11 +276,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
   fetchAttitudeSkillSummary(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // if (!this.selectedUserId) {
-      //   console.warn('No user selected.');
-      //   this.selectedUserId = this.currentUserId;
-      // }
-
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
       console.log(
@@ -287,7 +288,12 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
-          this.attitudeSkills = response.content || [];
+          const allAttitudeSkills = response.content || [];
+          allAttitudeSkills.forEach((attitudeSkill: any) => {
+            if (attitudeSkill.enabled === true) {
+              this.attitudeSkills.push(attitudeSkill);
+            }
+          });
           console.log('Fetched Attitude Skill Summary:', this.attitudeSkills);
           resolve();
         },
