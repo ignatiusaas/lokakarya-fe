@@ -250,6 +250,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
+          this.achievements = [];
           const allAchievements = response.content || [];
           console.log('All Achievements:', allAchievements);
           allAchievements.forEach((achievement: any) => {
@@ -288,6 +289,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
+          this.attitudeSkills = [];
           const allAttitudeSkills = response.content || [];
           allAttitudeSkills.forEach((attitudeSkill: any) => {
             if (attitudeSkill.enabled === true) {

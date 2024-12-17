@@ -77,17 +77,15 @@
             <th pSortableColumn="score">
               Score <p-sortIcon field="score"></p-sortIcon>
             </th>
-            <!-- Add a class to the actions header for centering -->
             <th class="actions-column">Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-summaries>
+        <ng-template pTemplate="body" let-summary>
           <tr>
-            <td>{{ summaries.full_name }}</td>
-            <td>{{ summaries.division_name }}</td>
-            <td *ngIf="summaries.status == 1">Permanent</td>
-            <td *ngIf="summaries.status == 2">Contract</td>
-            <td>{{ summaries.score }}</td>
+            <td>{{ summary.full_name }}</td>
+            <td>{{ summary.division_name }}</td>
+            <td>{{ summary.status == 1 ? "Permanent" : "Contract" }}</td>
+            <td>{{ summary.score }}</td>
             <td class="actions-cell">
               <button
                 pButton
@@ -95,9 +93,16 @@
                   isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-external-link'
                 "
                 class="p-button-rounded"
-                (click)="fetchViewAssessmentSummary(summaries.user_id)"
+                (click)="fetchViewAssessmentSummary(summary.user_id)"
                 [disabled]="isLoading"
               ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" style="text-align: center; font-style: italic">
+              No data available.
             </td>
           </tr>
         </ng-template>
