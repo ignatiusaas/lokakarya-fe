@@ -64,7 +64,7 @@ export class LoginComponent {
           console.error('Login error:', err);
           this.errorMessage =
             err.status === 401 || err.status === 500
-              ? 'Invalid username or password'
+              ? 'Invalid username/email or password'
               : 'An unexpected error occurred.';
           this.isLoading = false;
         },
