@@ -110,6 +110,8 @@
           <tr>
             <td colspan="4" style="text-align: center; font-style: italic">
               No Achievements data available for the selected assessment year.
+              <br />
+              Please contact HR for clarifications.
             </td>
           </tr>
         </ng-template>
@@ -194,12 +196,23 @@
         <ng-template #noData>
           <tr>
             <td colspan="4" style="text-align: center; font-style: italic">
-              No data available for the selected assessment year.
+              No suggestion available for the selected assessment year.
             </td>
           </tr>
         </ng-template>
       </table>
     </div>
+    <span *ngIf="attitudeSkills.length === 0 || achievements.length === 0">
+      <p style="font-weight: bold; color: red">
+        Cannot submit assessment summary because
+      </p>
+      <li *ngIf="attitudeSkills.length === 0" style="color: black">
+        Attitude Skills is empty for the selected assessment year.
+      </li>
+      <li *ngIf="achievements.length === 0" style="color: black">
+        Achievements data is empty for the selected assessment year.
+      </li>
+    </span>
     <button
       *ngIf="
         !isExist &&
@@ -209,7 +222,9 @@
       pButton
       type="submit"
       [label]="isLoading ? 'Saving...' : 'Save'"
-      [disabled]="isLoading || attitudeSkills.length === 0"
+      [disabled]="
+        isLoading || attitudeSkills.length === 0 || achievements.length === 0
+      "
       class="p-button-primary"
     >
       <ng-container *ngIf="isLoading">
