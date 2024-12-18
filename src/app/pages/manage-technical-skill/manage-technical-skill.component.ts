@@ -108,7 +108,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     if (!this.allTechSkills.length || this.allTechSkills.length > 0) {
       this.loading = true;
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/technicalskill/all')
+        .get<any>('http://103.150.93.202:8081/technicalskill/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -193,9 +193,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(
-            `https://lokakarya-be.up.railway.app/technicalskill/${techSkillId}`
-          )
+          .delete(`http://103.150.93.202:8081/technicalskill/${techSkillId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -232,7 +230,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.mode = 'edit';
 
     const techSkillRequest = this.http.get<any>(
-      `https://lokakarya-be.up.railway.app/technicalskill/${techSkillId}`
+      `http://103.150.93.202:8081/technicalskill/${techSkillId}`
     );
 
     this.displayEditDialog = false;
@@ -315,11 +313,11 @@ export class ManageTechnicalSkillComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://lokakarya-be.up.railway.app/technicalskill/create',
+            'http://103.150.93.202:8081/technicalskill/create',
             payload
           )
         : this.http.put(
-            'https://lokakarya-be.up.railway.app/technicalskill/update',
+            'http://103.150.93.202:8081/technicalskill/update',
             payload
           );
 
@@ -378,7 +376,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://lokakarya-be.up.railway.app/technicalskill/name/${name}`
+          `http://103.150.93.202:8081/technicalskill/name/${name}`
         )
         .toPromise();
 

@@ -197,7 +197,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://lokakarya-be.up.railway.app/appuser/get/${this.selectedUserId}`;
+    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -218,29 +218,27 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    this.http
-      .get<any>('https://lokakarya-be.up.railway.app/appuser/all')
-      .subscribe({
-        next: (response) => {
-          this.employees = response.content || [];
-          console.log('Fetched Employees:', this.employees);
-        },
-        error: (error) => {
-          console.error('Error fetching employees:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch employees.',
-          });
-        },
-      });
+    this.http.get<any>('http://103.150.93.202:8081/appuser/all').subscribe({
+      next: (response) => {
+        this.employees = response.content || [];
+        console.log('Fetched Employees:', this.employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch employees.',
+        });
+      },
+    });
   }
 
   fetchTechnicalSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('Fetching TechnicalSkills...');
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/technicalskill/all')
+        .get<any>('http://103.150.93.202:8081/technicalskill/all')
         .subscribe({
           next: (response) => {
             this.technicalSkills = (response.content || []).filter(
@@ -285,7 +283,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
       this.loading = true;
 
-      const skillUrl = `https://lokakarya-be.up.railway.app/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
+      const skillUrl = `http://103.150.93.202:8081/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Fetching EmpTechnicalSkills from URL:', skillUrl);
 
@@ -399,7 +397,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           requests.push(
             this.http
               .put(
-                'https://lokakarya-be.up.railway.app/emptechnicalskill/update',
+                'http://103.150.93.202:8081/emptechnicalskill/update',
                 payload
               )
               .toPromise()
@@ -410,7 +408,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           requests.push(
             this.http
               .post(
-                'https://lokakarya-be.up.railway.app/emptechnicalskill/create',
+                'http://103.150.93.202:8081/emptechnicalskill/create',
                 payload
               )
               .toPromise()

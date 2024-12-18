@@ -122,11 +122,10 @@ export class AssessmentSummaryComponent implements OnInit {
   async fetchEmployees(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.selectedDivisionId === '') {
-        this.empUrl = 'https://lokakarya-be.up.railway.app/appuser/all';
+        this.empUrl = 'http://103.150.93.202:8081/appuser/all';
       } else {
         this.empUrl =
-          'https://lokakarya-be.up.railway.app/appuser/div/' +
-          this.selectedDivisionId;
+          'http://103.150.93.202:8081/appuser/div/' + this.selectedDivisionId;
       }
 
       this.http.get<any>(this.empUrl).subscribe({
@@ -149,26 +148,24 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   fetchDivisions(): void {
-    this.http
-      .get<any>('https://lokakarya-be.up.railway.app/division/all')
-      .subscribe({
-        next: (response) => {
-          this.divisions = response.content || [];
-          console.log('Fetched Divisions:', this.divisions);
-        },
-        error: (error) => {
-          console.error('Error fetching divisions:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch divisions.',
-          });
-        },
-      });
+    this.http.get<any>('http://103.150.93.202:8081/division/all').subscribe({
+      next: (response) => {
+        this.divisions = response.content || [];
+        console.log('Fetched Divisions:', this.divisions);
+      },
+      error: (error) => {
+        console.error('Error fetching divisions:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch divisions.',
+        });
+      },
+    });
   }
 
   checkAssessmentSummary(): void {
-    const url = `https://lokakarya-be.up.railway.app/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const url = `http://103.150.93.202:8081/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
     this.http.get<any>(url).subscribe({
       next: (response) => {
         if (response.content !== null) {
@@ -218,7 +215,7 @@ export class AssessmentSummaryComponent implements OnInit {
       this.selectedUserId = this.currentUserId;
     }
 
-    const userUrl = `https://lokakarya-be.up.railway.app/appuser/get/${this.selectedUserId}`;
+    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(userUrl).subscribe({
@@ -291,7 +288,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -335,7 +332,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -378,7 +375,7 @@ export class AssessmentSummaryComponent implements OnInit {
       );
 
       const summaryUrl =
-        'https://lokakarya-be.up.railway.app/empsuggestion/' +
+        'http://103.150.93.202:8081/empsuggestion/' +
         this.selectedUserId +
         '/' +
         this.selectedYear;
@@ -526,9 +523,8 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   createAssessmentSummary(): void {
-    const checkUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
-    const createUrl =
-      'https://lokakarya-be.up.railway.app/assessmentsummary/create';
+    const checkUrl = `http://103.150.93.202:8081/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const createUrl = 'http://103.150.93.202:8081/assessmentsummary/create';
 
     console.log(
       'Checking for existing Assessment Summary using URL:',
@@ -542,7 +538,7 @@ export class AssessmentSummaryComponent implements OnInit {
           const fetchedSummary = existingSummary.content;
           console.log('Fetched Summary:', fetchedSummary);
           if (existingSummary && fetchedSummary?.id) {
-            const updateUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/update`;
+            const updateUrl = `http://103.150.93.202:8081/assessmentsummary/update`;
 
             const updateBody: any = {
               id: fetchedSummary.id,

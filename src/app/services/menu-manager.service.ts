@@ -7,7 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class MenuManagerService {
-  private baseUrl = 'https://lokakarya-be.up.railway.app/auth/role';
+  private baseUrl = 'http://103.150.93.202:8081/auth/role';
   private menuCache = new Map<string, any>();
 
   constructor(private http: HttpClient) {}

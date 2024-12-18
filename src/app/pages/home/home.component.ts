@@ -64,7 +64,7 @@ export class HomeComponent {
     this.userId = payload.userId;
 
     this.http
-      .get(`https://lokakarya-be.up.railway.app/appuser/get/${this.userId}`)
+      .get(`http://103.150.93.202:8081/appuser/get/${this.userId}`)
       .subscribe({
         next: (response: any) => {
           this.userDetails = response.content;
@@ -124,13 +124,9 @@ export class HomeComponent {
         };
 
         this.http
-          .post(
-            'https://lokakarya-be.up.railway.app/auth/sign-in',
-            loginPayload,
-            {
-              responseType: 'text',
-            }
-          )
+          .post('http://103.150.93.202:8081/auth/sign-in', loginPayload, {
+            responseType: 'text',
+          })
           .pipe(
             switchMap(() => {
               if (newPassword == currentPassword) {
@@ -148,7 +144,7 @@ export class HomeComponent {
                 new_password: newPassword,
               };
               return this.http.put(
-                'https://lokakarya-be.up.railway.app/auth/changepassword',
+                'http://103.150.93.202:8081/auth/changepassword',
                 changePassPayload
               );
             }),

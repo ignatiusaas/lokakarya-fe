@@ -102,25 +102,23 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   }
 
   fetchDivisions(): void {
-    this.http
-      .get<any>('https://lokakarya-be.up.railway.app/division/all')
-      .subscribe({
-        next: (response) => {
-          const all = { id: null, division_name: 'All' };
-          const res = response.content || [];
-          this.divisions = res.slice(); // Ensure `this.divisions` starts fresh if needed
-          this.divisions.unshift(all); // Add `all` at the beginning
-          console.log('Fetched Divisions:', this.divisions);
-        },
-        error: (error) => {
-          console.error('Error fetching divisions:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch divisions.',
-          });
-        },
-      });
+    this.http.get<any>('http://103.150.93.202:8081/division/all').subscribe({
+      next: (response) => {
+        const all = { id: null, division_name: 'All' };
+        const res = response.content || [];
+        this.divisions = res.slice(); // Ensure `this.divisions` starts fresh if needed
+        this.divisions.unshift(all); // Add `all` at the beginning
+        console.log('Fetched Divisions:', this.divisions);
+      },
+      error: (error) => {
+        console.error('Error fetching divisions:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch divisions.',
+        });
+      },
+    });
   }
 
   private extractCurrentUserId(): string | null {
@@ -152,7 +150,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     //   this.selectedUserId = this.currentUserId;
     // }
 
-    const userUrl = `https://lokakarya-be.up.railway.app/appuser/get/${this.selectedUserId}`;
+    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(userUrl).subscribe({
@@ -244,7 +242,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -283,7 +281,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -326,7 +324,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       );
 
       const summaryUrl =
-        'https://lokakarya-be.up.railway.app/empsuggestion/' +
+        'http://103.150.93.202:8081/empsuggestion/' +
         this.selectedUserId +
         '/' +
         this.selectedYear;
@@ -365,10 +363,10 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       this.isLoading = true;
 
       if (this.selectedDivisionId) {
-        this.fetchAllUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/divyear/${this.selectedDivisionId}/${this.selectedYear}`;
+        this.fetchAllUrl = `http://103.150.93.202:8081/assessmentsummary/divyear/${this.selectedDivisionId}/${this.selectedYear}`;
         console.log('Sending Request to URL:', this.fetchAllUrl);
       } else {
-        this.fetchAllUrl = `https://lokakarya-be.up.railway.app/assessmentsummary/year/${this.selectedYear}`;
+        this.fetchAllUrl = `http://103.150.93.202:8081/assessmentsummary/year/${this.selectedYear}`;
         console.log('Sending Request to URL:', this.fetchAllUrl);
       }
 

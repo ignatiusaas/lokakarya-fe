@@ -107,7 +107,7 @@ export class ManageDivisionComponent implements OnInit {
     if (!this.allDivisions.length || this.allDivisions.length > 0) {
       this.loading = true;
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/division/all')
+        .get<any>('http://103.150.93.202:8081/division/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -191,7 +191,7 @@ export class ManageDivisionComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`https://lokakarya-be.up.railway.app/division/${divisionId}`)
+          .delete(`http://103.150.93.202:8081/division/${divisionId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -228,7 +228,7 @@ export class ManageDivisionComponent implements OnInit {
     this.mode = 'edit';
 
     const divisionRequest = this.http.get<any>(
-      `https://lokakarya-be.up.railway.app/division/${divisionId}`
+      `http://103.150.93.202:8081/division/${divisionId}`
     );
 
     this.displayEditDialog = false;
@@ -309,14 +309,8 @@ export class ManageDivisionComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://lokakarya-be.up.railway.app/division/create',
-            payload
-          )
-        : this.http.put(
-            'https://lokakarya-be.up.railway.app/division/update',
-            payload
-          );
+        ? this.http.post('http://103.150.93.202:8081/division/create', payload)
+        : this.http.put('http://103.150.93.202:8081/division/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -373,7 +367,7 @@ export class ManageDivisionComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://lokakarya-be.up.railway.app/division/name/${name}`
+          `http://103.150.93.202:8081/division/name/${name}`
         )
         .toPromise();
 

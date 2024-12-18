@@ -179,7 +179,7 @@ export class EmployeeDevPlanComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://lokakarya-be.up.railway.app/appuser/get/${this.selectedUserId}`;
+    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -200,54 +200,50 @@ export class EmployeeDevPlanComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    this.http
-      .get<any>('https://lokakarya-be.up.railway.app/appuser/all')
-      .subscribe({
-        next: (response) => {
-          this.employees = response.content || [];
-          console.log('Fetched Employees:', this.employees);
-        },
-        error: (error) => {
-          console.error('Error fetching employees:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch employees.',
-          });
-        },
-      });
+    this.http.get<any>('http://103.150.93.202:8081/appuser/all').subscribe({
+      next: (response) => {
+        this.employees = response.content || [];
+        console.log('Fetched Employees:', this.employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch employees.',
+        });
+      },
+    });
   }
 
   fetchDevPlans(): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('Fetching DevPlans...');
-      this.http
-        .get<any>('https://lokakarya-be.up.railway.app/devplan/all')
-        .subscribe({
-          next: (response) => {
-            this.devPlans = (response.content || []).filter(
-              (plan: any) => plan.enabled === true
-            );
-            console.log('Fetched DevPlans:', this.devPlans);
+      this.http.get<any>('http://103.150.93.202:8081/devplan/all').subscribe({
+        next: (response) => {
+          this.devPlans = (response.content || []).filter(
+            (plan: any) => plan.enabled === true
+          );
+          console.log('Fetched DevPlans:', this.devPlans);
 
-            // Create a map for quick lookup
-            this.devPlansMap.clear();
-            this.devPlans.forEach((plan: any) => {
-              this.devPlansMap.set(plan.id, plan.plan);
-            });
+          // Create a map for quick lookup
+          this.devPlansMap.clear();
+          this.devPlans.forEach((plan: any) => {
+            this.devPlansMap.set(plan.id, plan.plan);
+          });
 
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error fetching dev plans:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch dev plans.',
-            });
-            reject(error);
-          },
-        });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error fetching dev plans:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch dev plans.',
+          });
+          reject(error);
+        },
+      });
     });
   }
 
@@ -262,7 +258,7 @@ export class EmployeeDevPlanComponent implements OnInit {
 
       this.loading = true;
 
-      const planUrl = `https://lokakarya-be.up.railway.app/empdevplan/get/${this.selectedUserId}/${this.selectedYear}`;
+      const planUrl = `http://103.150.93.202:8081/empdevplan/get/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Fetching EmpDevPlans from URL:', planUrl);
 
@@ -370,10 +366,7 @@ export class EmployeeDevPlanComponent implements OnInit {
           payload['updated_by'] = this.currentUserId;
           requests.push(
             this.http
-              .put(
-                'https://lokakarya-be.up.railway.app/empdevplan/update',
-                payload
-              )
+              .put('http://103.150.93.202:8081/empdevplan/update', payload)
               .toPromise()
           );
         } else {
@@ -381,10 +374,7 @@ export class EmployeeDevPlanComponent implements OnInit {
           payload['created_by'] = this.currentUserId;
           requests.push(
             this.http
-              .post(
-                'https://lokakarya-be.up.railway.app/empdevplan/create',
-                payload
-              )
+              .post('http://103.150.93.202:8081/empdevplan/create', payload)
               .toPromise()
           );
         }

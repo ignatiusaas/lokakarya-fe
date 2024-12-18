@@ -241,7 +241,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://lokakarya-be.up.railway.app/appuser/get/${this.selectedUserId}`;
+    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -263,11 +263,10 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
   fetchEmployees(): void {
     if (this.currentRoles.includes('HR') || this.currentRoles.includes('SVP')) {
-      this.empUrl = 'https://lokakarya-be.up.railway.app/appuser/all';
+      this.empUrl = 'http://103.150.93.202:8081/appuser/all';
     } else {
       this.empUrl =
-        'https://lokakarya-be.up.railway.app/appuser/div/' +
-        this.currentDivisionId;
+        'http://103.150.93.202:8081/appuser/div/' + this.currentDivisionId;
     }
     console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
@@ -297,7 +296,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
     this.loading = true; // Show the spinner
 
-    const skillUrl = `https://lokakarya-be.up.railway.app/empattitudeskill/get/${this.selectedUserId}/${this.selectedYear}`;
+    const skillUrl = `http://103.150.93.202:8081/empattitudeskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
     this.http
       .get<any>(skillUrl)
@@ -373,9 +372,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     this.isProcessing = true;
 
     this.http
-      .get<any>(
-        `https://lokakarya-be.up.railway.app/empattitudeskill/${skillId}`
-      )
+      .get<any>(`http://103.150.93.202:8081/empattitudeskill/${skillId}`)
       .pipe(
         finalize(() => {
           this.isProcessing = false;
@@ -452,7 +449,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           requests.push(
             this.http
               .put(
-                'https://lokakarya-be.up.railway.app/empattitudeskill/update',
+                'http://103.150.93.202:8081/empattitudeskill/update',
                 payload
               )
               .toPromise()
@@ -462,7 +459,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           requests.push(
             this.http
               .post(
-                'https://lokakarya-be.up.railway.app/empattitudeskill/create',
+                'http://103.150.93.202:8081/empattitudeskill/create',
                 payload
               )
               .toPromise()
@@ -537,10 +534,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
     try {
       await this.http
-        .put(
-          'https://lokakarya-be.up.railway.app/empattitudeskill/update',
-          payload
-        )
+        .put('http://103.150.93.202:8081/empattitudeskill/update', payload)
         .toPromise();
 
       console.log(`Skill "${entry.attitude_skill_name}" updated successfully.`);
@@ -626,7 +620,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   fetchAttitudeSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/attitudeskill/all')
+        .get<any>('http://103.150.93.202:8081/attitudeskill/all')
         .subscribe({
           next: (response) => {
             this.attitudeSkills = (response.content || []).filter(
@@ -653,7 +647,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   fetchGroupAttitudeSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/groupattitudeskill/all')
+        .get<any>('http://103.150.93.202:8081/groupattitudeskill/all')
         .subscribe({
           next: (response) => {
             this.groupAttitudeSkills = response.content || [];

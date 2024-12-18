@@ -122,10 +122,10 @@ export class ManageAchievementComponent implements OnInit {
     this.loading = true;
 
     const groupsRequest = this.http.get<any>(
-      'https://lokakarya-be.up.railway.app/groupachievement/all'
+      'http://103.150.93.202:8081/groupachievement/all'
     );
     const attAchievementsRequest = this.http.get<any>(
-      'https://lokakarya-be.up.railway.app/achievement/all'
+      'http://103.150.93.202:8081/achievement/all'
     );
 
     forkJoin([groupsRequest, attAchievementsRequest])
@@ -233,11 +233,11 @@ export class ManageAchievementComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://lokakarya-be.up.railway.app/groupachievement/create',
+            'http://103.150.93.202:8081/groupachievement/create',
             payload
           )
         : this.http.put(
-            'https://lokakarya-be.up.railway.app/groupachievement/update',
+            'http://103.150.93.202:8081/groupachievement/update',
             payload
           );
 
@@ -269,7 +269,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for group
 
     const groupRequest = this.http.get<any>(
-      `https://lokakarya-be.up.railway.app/groupachievement/${groupId}`
+      `http://103.150.93.202:8081/groupachievement/${groupId}`
     );
 
     this.displayGroupEditDialog = false;
@@ -308,9 +308,7 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this group achievement?',
       accept: () => {
         this.http
-          .delete(
-            `https://lokakarya-be.up.railway.app/groupachievement/${groupId}`
-          )
+          .delete(`http://103.150.93.202:8081/groupachievement/${groupId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -391,11 +389,11 @@ export class ManageAchievementComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://lokakarya-be.up.railway.app/achievement/create',
+            'http://103.150.93.202:8081/achievement/create',
             payload
           )
         : this.http.put(
-            'https://lokakarya-be.up.railway.app/achievement/update',
+            'http://103.150.93.202:8081/achievement/update',
             payload
           );
 
@@ -426,7 +424,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for achievement
 
     const skillRequest = this.http.get<any>(
-      `https://lokakarya-be.up.railway.app/achievement/${skillId}`
+      `http://103.150.93.202:8081/achievement/${skillId}`
     );
 
     this.displayEditDialog = false;
@@ -465,7 +463,7 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this achievement?',
       accept: () => {
         this.http
-          .delete(`https://lokakarya-be.up.railway.app/achievement/${skillId}`)
+          .delete(`http://103.150.93.202:8081/achievement/${skillId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -594,7 +592,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://lokakarya-be.up.railway.app/achievement/name/${achievement}`
+          `http://103.150.93.202:8081/achievement/name/${achievement}`
         )
         .toPromise();
 
@@ -618,7 +616,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://lokakarya-be.up.railway.app/groupachievement/name/${name}`
+          `http://103.150.93.202:8081/groupachievement/name/${name}`
         )
         .toPromise();
 

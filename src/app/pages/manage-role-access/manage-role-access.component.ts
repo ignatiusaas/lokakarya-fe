@@ -70,13 +70,13 @@ export class ManageRoleAccessComponent implements OnInit {
     this.isLoading = true;
 
     const rolesRequest = this.http.get<any>(
-      'https://lokakarya-be.up.railway.app/approle/all'
+      'http://103.150.93.202:8081/approle/all'
     );
     const menusRequest = this.http.get<any>(
-      'https://lokakarya-be.up.railway.app/appmenu/all'
+      'http://103.150.93.202:8081/appmenu/all'
     );
     const associationsRequest = this.http.get<any>(
-      'https://lokakarya-be.up.railway.app/approlemenu/all'
+      'http://103.150.93.202:8081/approlemenu/all'
     );
 
     Promise.all([
@@ -199,15 +199,13 @@ export class ManageRoleAccessComponent implements OnInit {
           const payload = { role_id: roleId, menu_id: menuId };
           console.log('Payload:', payload);
           return this.http.post(
-            'https://lokakarya-be.up.railway.app/approlemenu/create',
+            'http://103.150.93.202:8081/approlemenu/create',
             payload
           );
         });
 
         const deleteRequests = deleteAssociations.map((assoc) =>
-          this.http.delete(
-            `https://lokakarya-be.up.railway.app/approlemenu/${assoc.id}`
-          )
+          this.http.delete(`http://103.150.93.202:8081/approlemenu/${assoc.id}`)
         );
 
         Promise.all([

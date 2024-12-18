@@ -108,7 +108,7 @@ export class ManageDevPlanComponent implements OnInit {
     if (!this.allPlans.length || this.allPlans.length > 0) {
       this.loading = true;
       this.http
-        .get<any>('https://lokakarya-be.up.railway.app/devplan/all')
+        .get<any>('http://103.150.93.202:8081/devplan/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -193,7 +193,7 @@ export class ManageDevPlanComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`https://lokakarya-be.up.railway.app/devplan/${planId}`)
+          .delete(`http://103.150.93.202:8081/devplan/${planId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -230,7 +230,7 @@ export class ManageDevPlanComponent implements OnInit {
     this.mode = 'edit';
 
     const planRequest = this.http.get<any>(
-      `https://lokakarya-be.up.railway.app/devplan/${planId}`
+      `http://103.150.93.202:8081/devplan/${planId}`
     );
 
     this.displayEditDialog = false;
@@ -310,14 +310,8 @@ export class ManageDevPlanComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://lokakarya-be.up.railway.app/devplan/create',
-            payload
-          )
-        : this.http.put(
-            'https://lokakarya-be.up.railway.app/devplan/update',
-            payload
-          );
+        ? this.http.post('http://103.150.93.202:8081/devplan/create', payload)
+        : this.http.put('http://103.150.93.202:8081/devplan/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -374,7 +368,7 @@ export class ManageDevPlanComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://lokakarya-be.up.railway.app/devplan/name/${name}`
+          `http://103.150.93.202:8081/devplan/name/${name}`
         )
         .toPromise();
 

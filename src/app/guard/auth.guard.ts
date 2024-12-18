@@ -55,9 +55,7 @@ export const authGuard: CanActivateFn = async (
     // Fetch menu access for each role and store it in `availableMenus`
     const roleRequests = userRoles.map((role) =>
       http
-        .get<any>(
-          `https://lokakarya-be.up.railway.app/approlemenu/role/${role}`
-        )
+        .get<any>(`http://103.150.93.202:8081/approlemenu/role/${role}`)
         .toPromise()
     );
 
