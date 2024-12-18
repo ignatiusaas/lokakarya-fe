@@ -103,8 +103,8 @@
                       pInputText
                       [disabled]="
                         isProcessing ||
-                        !currentRoles.includes('USER') ||
-                        selectedUserId !== currentUserId ||
+                        !currentRoles.includes('HR') ||
+                        selectedUserId === currentUserId ||
                         isExist
                       "
                     />
@@ -119,8 +119,8 @@
                       placeholder="Select Score"
                       [disabled]="
                         isProcessing ||
-                        !currentRoles.includes('USER') ||
-                        selectedUserId !== currentUserId ||
+                        !currentRoles.includes('HR') ||
+                        selectedUserId === currentUserId ||
                         isExist
                       "
                       appendTo="body"
@@ -146,7 +146,11 @@
     </div>
     <div class="dialog-footer">
       <button
-        *ngIf="!isExist && currentRoles.includes('USER')"
+        *ngIf="
+          !isExist &&
+          currentRoles.includes('HR') &&
+          selectedUserId !== currentUserId
+        "
         pButton
         type="submit"
         [label]="isProcessing ? 'Saving...' : 'Save'"

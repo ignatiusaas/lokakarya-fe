@@ -568,6 +568,7 @@ export class AssessmentSummaryComponent implements OnInit {
                   summary: 'Error',
                   detail: errorMessage,
                 });
+                this.isLoading = false;
                 return of(null);
               })
             );
@@ -594,6 +595,7 @@ export class AssessmentSummaryComponent implements OnInit {
                   summary: 'Error',
                   detail: errorMessage,
                 });
+                this.isLoading = false;
                 return of(null);
               })
             );
@@ -610,9 +612,16 @@ export class AssessmentSummaryComponent implements OnInit {
         },
         error: (error) => {
           console.error('Unhandled error:', error);
+          this.isLoading = false;
         },
         complete: () => {
           console.log('Create Assessment Summary process complete.');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Assessment Summary successfully submitted.',
+          });
+          this.isLoading = false;
         },
       });
   }
