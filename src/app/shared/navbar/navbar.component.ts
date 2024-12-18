@@ -1,8 +1,14 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  HostListener,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuManagerService } from '../../services/menu-manager.service';
 import { AuthService } from '../../services/auth.service';
-import { forkJoin } from 'rxjs';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { PrimeNgModule } from '../primeng/primeng.module';
 import { ConfirmDialog, ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -26,6 +32,7 @@ export class NavbarComponent implements OnInit {
   loading: boolean = true;
   isHomePage: boolean = false;
   roles: string[] = [];
+  activeDropdown: string | null = null;
 
   constructor(
     private router: Router,
@@ -127,5 +134,21 @@ export class NavbarComponent implements OnInit {
   isActiveRoute(menu: string): boolean {
     const currentRoute = this.router.url;
     return currentRoute.includes(`/${menu}`);
+  }
+
+  toggleDropdown(dropdownName: string): void {
+    if (this.activeDropdown === dropdownName) {
+      this.activeDropdown = null;
+    } else {
+      this.activeDropdown = dropdownName;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  closeDropdown(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown')) {
+      this.activeDropdown = null;
+    }
   }
 }

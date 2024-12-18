@@ -1,4 +1,3 @@
-<p-confirmDialog></p-confirmDialog>
 <nav class="navbar">
   <ul class="navbar-menu">
     <!-- Home Button -->
@@ -11,8 +10,12 @@
       Home
     </li>
 
-    <li class="dropdown" *ngIf="manageMenus.length > 0">
-      <span class="dropdown-button">
+    <!-- Manage Dropdown -->
+    <li
+      class="dropdown"
+      [ngClass]="{ 'dropdown-open': activeDropdown === 'manage' }"
+    >
+      <span class="dropdown-button" (click)="toggleDropdown('manage')">
         Manage
         <span class="dropdown-icon">▼</span>
       </span>
@@ -27,8 +30,12 @@
       </ul>
     </li>
 
-    <li class="dropdown">
-      <span class="dropdown-button">
+    <!-- Assessment Dropdown -->
+    <li
+      class="dropdown"
+      [ngClass]="{ 'dropdown-open': activeDropdown === 'assessment' }"
+    >
+      <span class="dropdown-button" (click)="toggleDropdown('assessment')">
         Assessment
         <span class="dropdown-icon">▼</span>
       </span>
@@ -36,9 +43,8 @@
         <li
           *ngIf="
             roles.includes('HR') ||
-              roles.includes('SVP') ||
-              roles.includes('MGR');
-            else user
+            roles.includes('SVP') ||
+            roles.includes('MGR')
           "
           [ngClass]="{ active: isActiveRoute('view-assessment-summary') }"
           (click)="navigateTo('view-assessment-summary')"
@@ -46,14 +52,19 @@
           Summary
         </li>
 
-        <ng-template #user>
-          <li
-            [ngClass]="{ active: isActiveRoute('assessment-summary') }"
-            (click)="navigateTo('assessment-summary')"
-          >
-            Summary
-          </li>
-        </ng-template>
+        <li
+          *ngIf="
+            !(
+              roles.includes('HR') ||
+              roles.includes('SVP') ||
+              roles.includes('MGR')
+            )
+          "
+          [ngClass]="{ active: isActiveRoute('assessment-summary') }"
+          (click)="navigateTo('assessment-summary')"
+        >
+          Summary
+        </li>
 
         <li
           *ngFor="let menu of submitMenus"
@@ -70,9 +81,7 @@
       <span class="user-roles">
         <span *ngFor="let role of roles">
           {{ role }}
-          <span>
-            <span *ngIf="role !== roles[roles.length - 1]">•</span>
-          </span>
+          <span *ngIf="role !== roles[roles.length - 1]">•</span>
         </span>
       </span>
     </li>
