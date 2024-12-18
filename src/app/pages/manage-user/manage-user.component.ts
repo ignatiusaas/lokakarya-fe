@@ -132,7 +132,7 @@ export class ManageUserComponent implements OnInit {
       this.loading = true;
 
       this.http
-        .get<any>('http://103.150.93.202:8081/appuser/get/all')
+        .get<any>('https://hiremeplease.freeddns.org/appuser/get/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -236,7 +236,7 @@ export class ManageUserComponent implements OnInit {
         // User confirmed deletion
         this.isProcessing = true; // Start processing
         this.http
-          .delete(`http://103.150.93.202:8081/appuser/${employeeId}`)
+          .delete(`https://hiremeplease.freeddns.org/appuser/${employeeId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -273,10 +273,10 @@ export class ManageUserComponent implements OnInit {
     this.mode = 'edit';
 
     const employeeRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/appuser/${employeeId}`
+      `https://hiremeplease.freeddns.org/appuser/${employeeId}`
     );
     const divisionsRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/division/all`
+      `https://hiremeplease.freeddns.org/division/all`
     );
 
     // Reset the edit form dialog visibility
@@ -326,21 +326,23 @@ export class ManageUserComponent implements OnInit {
 
   fetchDivisions(callback: () => void): void {
     console.log('Fetching Divisions...');
-    this.http.get<any>('http://103.150.93.202:8081/division/all').subscribe({
-      next: (response) => {
-        this.divisions = response.content;
-        console.log('Divisions Fetched:', this.divisions);
-        callback();
-      },
-      error: (error) => {
-        console.error('Error Fetching Divisions:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch divisions.',
-        });
-      },
-    });
+    this.http
+      .get<any>('https://hiremeplease.freeddns.org/division/all')
+      .subscribe({
+        next: (response) => {
+          this.divisions = response.content;
+          console.log('Divisions Fetched:', this.divisions);
+          callback();
+        },
+        error: (error) => {
+          console.error('Error Fetching Divisions:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch divisions.',
+          });
+        },
+      });
   }
 
   getRoleFormControl(index: number): FormControl<boolean> {
@@ -371,8 +373,14 @@ export class ManageUserComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post('http://103.150.93.202:8081/appuser/create', payload)
-        : this.http.put('http://103.150.93.202:8081/appuser/update', payload);
+        ? this.http.post(
+            'https://hiremeplease.freeddns.org/appuser/create',
+            payload
+          )
+        : this.http.put(
+            'https://hiremeplease.freeddns.org/appuser/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -470,7 +478,7 @@ export class ManageUserComponent implements OnInit {
   fetchRoles(): void {
     this.isProcessing = true;
     this.http
-      .get<any>('http://103.150.93.202:8081/approle/all')
+      .get<any>('https://hiremeplease.freeddns.org/approle/all')
       .pipe(finalize(() => (this.isProcessing = false)))
       .subscribe({
         next: (response) => {
@@ -503,7 +511,9 @@ export class ManageUserComponent implements OnInit {
 
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>(`http://103.150.93.202:8081/appuserrole/get2/${userId}`)
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuserrole/get2/${userId}`
+        )
         .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
         .subscribe({
           next: (response) => {
@@ -557,7 +567,9 @@ export class ManageUserComponent implements OnInit {
 
     const roleRequests = rolesToAssign.map((roleId) =>
       this.http
-        .get<any>(`http://103.150.93.202:8081/appuserrole/${userId}/${roleId}`)
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuserrole/${userId}/${roleId}`
+        )
         .pipe(
           finalize(() => (this.isProcessing = false)),
           finalize(() => console.log(`Check for role ${roleId} completed.`))
@@ -569,7 +581,7 @@ export class ManageUserComponent implements OnInit {
             return null;
           } else {
             return this.http
-              .post('http://103.150.93.202:8081/appuserrole/create', {
+              .post('https://hiremeplease.freeddns.org/appuserrole/create', {
                 role_id: roleId,
                 user_id: userId,
               })
@@ -616,7 +628,7 @@ export class ManageUserComponent implements OnInit {
 
     const addRoleRequests = rolesToAssign.map((roleId) =>
       this.http
-        .post('http://103.150.93.202:8081/appuserrole/create', {
+        .post('https://hiremeplease.freeddns.org/appuserrole/create', {
           role_id: roleId,
           user_id: userId,
         })
@@ -625,7 +637,9 @@ export class ManageUserComponent implements OnInit {
 
     const deleteRoleRequests = uncheckedRoles.map((roleId) =>
       this.http
-        .get<any>(`http://103.150.93.202:8081/appuserrole/${userId}/${roleId}`)
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuserrole/${userId}/${roleId}`
+        )
         .toPromise()
         .then((response) => {
           const userRoleId = response?.content;
@@ -634,7 +648,9 @@ export class ManageUserComponent implements OnInit {
               `Deleting role ${roleId} with userRoleId ${userRoleId}`
             );
             return this.http
-              .delete(`http://103.150.93.202:8081/appuserrole/${userRoleId}`)
+              .delete(
+                `https://hiremeplease.freeddns.org/appuserrole/${userRoleId}`
+              )
               .toPromise()
               .then(() => undefined); // Explicitly return void
           } else {
@@ -693,7 +709,9 @@ export class ManageUserComponent implements OnInit {
   private validateUsername(username: string): Promise<boolean> {
     return new Promise((resolve) => {
       this.http
-        .get<any>(`http://103.150.93.202:8081/appuser/username/${username}`)
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuser/username/${username}`
+        )
         .subscribe({
           next: (response: any) => {
             console.log('Username validation response:', response);
@@ -715,7 +733,7 @@ export class ManageUserComponent implements OnInit {
   private validateEmail(email: string): Promise<boolean> {
     return new Promise((resolve) => {
       this.http
-        .get<any>(`http://103.150.93.202:8081/appuser/email/${email}`)
+        .get<any>(`https://hiremeplease.freeddns.org/appuser/email/${email}`)
         .subscribe({
           next: (response: any) => {
             console.log('Email validation response:', response);
@@ -781,7 +799,10 @@ export class ManageUserComponent implements OnInit {
 
         try {
           const response = await this.http
-            .put<any>('http://103.150.93.202:8081/auth/resetpassword', payload)
+            .put<any>(
+              'https://hiremeplease.freeddns.org/auth/resetpassword',
+              payload
+            )
             .toPromise();
 
           console.log('Password reset response:', response);

@@ -64,7 +64,7 @@ export class HomeComponent {
     this.userId = payload.userId;
 
     this.http
-      .get(`http://103.150.93.202:8081/appuser/get/${this.userId}`)
+      .get(`https://hiremeplease.freeddns.org/appuser/get/${this.userId}`)
       .subscribe({
         next: (response: any) => {
           this.userDetails = response.content;
@@ -124,9 +124,13 @@ export class HomeComponent {
         };
 
         this.http
-          .post('http://103.150.93.202:8081/auth/sign-in', loginPayload, {
-            responseType: 'text',
-          })
+          .post(
+            'https://hiremeplease.freeddns.org/auth/sign-in',
+            loginPayload,
+            {
+              responseType: 'text',
+            }
+          )
           .pipe(
             switchMap(() => {
               if (newPassword == currentPassword) {
@@ -144,7 +148,7 @@ export class HomeComponent {
                 new_password: newPassword,
               };
               return this.http.put(
-                'http://103.150.93.202:8081/auth/changepassword',
+                'https://hiremeplease.freeddns.org/auth/changepassword',
                 changePassPayload
               );
             }),

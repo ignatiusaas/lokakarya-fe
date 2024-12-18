@@ -7,7 +7,7 @@ import { catchError, map, tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class MenuManagerService {
-  private baseUrl = 'http://103.150.93.202:8081/auth/role';
+  private baseUrl = 'https://hiremeplease.freeddns.org/auth/role';
   private menuCache = new Map<string, any>();
 
   constructor(private http: HttpClient) {}

@@ -122,10 +122,11 @@ export class AssessmentSummaryComponent implements OnInit {
   async fetchEmployees(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.selectedDivisionId === '') {
-        this.empUrl = 'http://103.150.93.202:8081/appuser/all';
+        this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
       } else {
         this.empUrl =
-          'http://103.150.93.202:8081/appuser/div/' + this.selectedDivisionId;
+          'https://hiremeplease.freeddns.org/appuser/div/' +
+          this.selectedDivisionId;
       }
 
       this.http.get<any>(this.empUrl).subscribe({
@@ -148,24 +149,26 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   fetchDivisions(): void {
-    this.http.get<any>('http://103.150.93.202:8081/division/all').subscribe({
-      next: (response) => {
-        this.divisions = response.content || [];
-        console.log('Fetched Divisions:', this.divisions);
-      },
-      error: (error) => {
-        console.error('Error fetching divisions:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch divisions.',
-        });
-      },
-    });
+    this.http
+      .get<any>('https://hiremeplease.freeddns.org/division/all')
+      .subscribe({
+        next: (response) => {
+          this.divisions = response.content || [];
+          console.log('Fetched Divisions:', this.divisions);
+        },
+        error: (error) => {
+          console.error('Error fetching divisions:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch divisions.',
+          });
+        },
+      });
   }
 
   checkAssessmentSummary(): void {
-    const url = `http://103.150.93.202:8081/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
     this.http.get<any>(url).subscribe({
       next: (response) => {
         if (response.content !== null) {
@@ -215,7 +218,7 @@ export class AssessmentSummaryComponent implements OnInit {
       this.selectedUserId = this.currentUserId;
     }
 
-    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
+    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(userUrl).subscribe({
@@ -288,7 +291,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -332,7 +335,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `http://103.150.93.202:8081/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -375,7 +378,7 @@ export class AssessmentSummaryComponent implements OnInit {
       );
 
       const summaryUrl =
-        'http://103.150.93.202:8081/empsuggestion/' +
+        'https://hiremeplease.freeddns.org/empsuggestion/' +
         this.selectedUserId +
         '/' +
         this.selectedYear;
@@ -523,8 +526,9 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   createAssessmentSummary(): void {
-    const checkUrl = `http://103.150.93.202:8081/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
-    const createUrl = 'http://103.150.93.202:8081/assessmentsummary/create';
+    const checkUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const createUrl =
+      'https://hiremeplease.freeddns.org/assessmentsummary/create';
 
     console.log(
       'Checking for existing Assessment Summary using URL:',
@@ -538,7 +542,7 @@ export class AssessmentSummaryComponent implements OnInit {
           const fetchedSummary = existingSummary.content;
           console.log('Fetched Summary:', fetchedSummary);
           if (existingSummary && fetchedSummary?.id) {
-            const updateUrl = `http://103.150.93.202:8081/assessmentsummary/update`;
+            const updateUrl = `https://hiremeplease.freeddns.org/assessmentsummary/update`;
 
             const updateBody: any = {
               id: fetchedSummary.id,

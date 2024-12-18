@@ -168,10 +168,12 @@ export class EmployeeSuggestionComponent implements OnInit {
 
       let suggestionUrl = '';
       if (this.currentRoles.includes('HR')) {
-        suggestionUrl = 'http://103.150.93.202:8081/empsuggestion/get/all';
+        suggestionUrl =
+          'https://hiremeplease.freeddns.org/empsuggestion/get/all';
       } else {
         suggestionUrl =
-          'http://103.150.93.202:8081/empsuggestion/by/' + this.currentUserId;
+          'https://hiremeplease.freeddns.org/empsuggestion/by/' +
+          this.currentUserId;
       }
       console.log('Suggestion URL:', suggestionUrl);
 
@@ -270,7 +272,9 @@ export class EmployeeSuggestionComponent implements OnInit {
         // User confirmed deletion
         this.isProcessing = true;
         this.http
-          .delete(`http://103.150.93.202:8081/empsuggestion/${suggestionId}`)
+          .delete(
+            `https://hiremeplease.freeddns.org/empsuggestion/${suggestionId}`
+          )
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -308,7 +312,7 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     // Fetch the employee suggestion details
     const empSuggestionRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/empsuggestion/${suggestionId}`
+      `https://hiremeplease.freeddns.org/empsuggestion/${suggestionId}`
     );
 
     this.displayEditDialog = false; // Ensure the dialog is closed before loading data
@@ -402,11 +406,11 @@ export class EmployeeSuggestionComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/empsuggestion/create',
+            'https://hiremeplease.freeddns.org/empsuggestion/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/empsuggestion/update',
+            'https://hiremeplease.freeddns.org/empsuggestion/update',
             payload
           );
 
@@ -443,7 +447,7 @@ export class EmployeeSuggestionComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/empsuggestion/${userId}/${assessmentYear}`
+          `https://hiremeplease.freeddns.org/empsuggestion/${userId}/${assessmentYear}`
         )
         .toPromise();
 

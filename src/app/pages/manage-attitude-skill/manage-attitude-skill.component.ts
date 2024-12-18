@@ -125,10 +125,10 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.loading = true;
 
     const groupsRequest = this.http.get<any>(
-      'http://103.150.93.202:8081/groupattitudeskill/all'
+      'https://hiremeplease.freeddns.org/groupattitudeskill/all'
     );
     const attSkillsRequest = this.http.get<any>(
-      'http://103.150.93.202:8081/attitudeskill/all'
+      'https://hiremeplease.freeddns.org/attitudeskill/all'
     );
 
     forkJoin([groupsRequest, attSkillsRequest])
@@ -236,11 +236,11 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/groupattitudeskill/create',
+            'https://hiremeplease.freeddns.org/groupattitudeskill/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/groupattitudeskill/update',
+            'https://hiremeplease.freeddns.org/groupattitudeskill/update',
             payload
           );
 
@@ -272,7 +272,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for group
 
     const groupRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/groupattitudeskill/${groupId}`
+      `https://hiremeplease.freeddns.org/groupattitudeskill/${groupId}`
     );
 
     this.displayGroupEditDialog = false;
@@ -311,7 +311,9 @@ export class ManageAttitudeSkillComponent implements OnInit {
       message: 'Are you sure you want to delete this group attitude skill?',
       accept: () => {
         this.http
-          .delete(`http://103.150.93.202:8081/groupattitudeskill/${groupId}`)
+          .delete(
+            `https://hiremeplease.freeddns.org/groupattitudeskill/${groupId}`
+          )
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -392,11 +394,11 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/attitudeskill/create',
+            'https://hiremeplease.freeddns.org/attitudeskill/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/attitudeskill/update',
+            'https://hiremeplease.freeddns.org/attitudeskill/update',
             payload
           );
 
@@ -427,7 +429,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for attitude skill
 
     const skillRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/attitudeskill/${skillId}`
+      `https://hiremeplease.freeddns.org/attitudeskill/${skillId}`
     );
 
     this.displayEditDialog = false;
@@ -466,7 +468,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
       message: 'Are you sure you want to delete this attitude skill?',
       accept: () => {
         this.http
-          .delete(`http://103.150.93.202:8081/attitudeskill/${skillId}`)
+          .delete(`https://hiremeplease.freeddns.org/attitudeskill/${skillId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -589,7 +591,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/attitudeskill/name/${name}`
+          `https://hiremeplease.freeddns.org/attitudeskill/name/${name}`
         )
         .toPromise();
 
@@ -613,7 +615,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/groupattitudeskill/name/${name}`
+          `https://hiremeplease.freeddns.org/groupattitudeskill/name/${name}`
         )
         .toPromise();
 

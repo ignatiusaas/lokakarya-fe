@@ -122,10 +122,10 @@ export class ManageAchievementComponent implements OnInit {
     this.loading = true;
 
     const groupsRequest = this.http.get<any>(
-      'http://103.150.93.202:8081/groupachievement/all'
+      'https://hiremeplease.freeddns.org/groupachievement/all'
     );
     const attAchievementsRequest = this.http.get<any>(
-      'http://103.150.93.202:8081/achievement/all'
+      'https://hiremeplease.freeddns.org/achievement/all'
     );
 
     forkJoin([groupsRequest, attAchievementsRequest])
@@ -233,11 +233,11 @@ export class ManageAchievementComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/groupachievement/create',
+            'https://hiremeplease.freeddns.org/groupachievement/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/groupachievement/update',
+            'https://hiremeplease.freeddns.org/groupachievement/update',
             payload
           );
 
@@ -269,7 +269,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for group
 
     const groupRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/groupachievement/${groupId}`
+      `https://hiremeplease.freeddns.org/groupachievement/${groupId}`
     );
 
     this.displayGroupEditDialog = false;
@@ -308,7 +308,9 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this group achievement?',
       accept: () => {
         this.http
-          .delete(`http://103.150.93.202:8081/groupachievement/${groupId}`)
+          .delete(
+            `https://hiremeplease.freeddns.org/groupachievement/${groupId}`
+          )
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -389,11 +391,11 @@ export class ManageAchievementComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/achievement/create',
+            'https://hiremeplease.freeddns.org/achievement/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/achievement/update',
+            'https://hiremeplease.freeddns.org/achievement/update',
             payload
           );
 
@@ -424,7 +426,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for achievement
 
     const skillRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/achievement/${skillId}`
+      `https://hiremeplease.freeddns.org/achievement/${skillId}`
     );
 
     this.displayEditDialog = false;
@@ -463,7 +465,7 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this achievement?',
       accept: () => {
         this.http
-          .delete(`http://103.150.93.202:8081/achievement/${skillId}`)
+          .delete(`https://hiremeplease.freeddns.org/achievement/${skillId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -592,7 +594,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/achievement/name/${achievement}`
+          `https://hiremeplease.freeddns.org/achievement/name/${achievement}`
         )
         .toPromise();
 
@@ -616,7 +618,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/groupachievement/name/${name}`
+          `https://hiremeplease.freeddns.org/groupachievement/name/${name}`
         )
         .toPromise();
 

@@ -241,7 +241,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
+    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -263,10 +263,11 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
   fetchEmployees(): void {
     if (this.currentRoles.includes('HR') || this.currentRoles.includes('SVP')) {
-      this.empUrl = 'http://103.150.93.202:8081/appuser/all';
+      this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
     } else {
       this.empUrl =
-        'http://103.150.93.202:8081/appuser/div/' + this.currentDivisionId;
+        'https://hiremeplease.freeddns.org/appuser/div/' +
+        this.currentDivisionId;
     }
     console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
@@ -305,7 +306,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     this.loading = true; // Show the spinner
 
-    const skillUrl = `http://103.150.93.202:8081/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
+    const skillUrl = `https://hiremeplease.freeddns.org/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
     this.http
       .get<any>(skillUrl)
@@ -390,7 +391,9 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     this.isProcessing = true;
 
     this.http
-      .get<any>(`http://103.150.93.202:8081/empachievementskill/${skillId}`)
+      .get<any>(
+        `https://hiremeplease.freeddns.org/empachievementskill/${skillId}`
+      )
       .pipe(
         finalize(() => {
           this.isProcessing = false;
@@ -474,7 +477,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           requests.push(
             this.http
               .put(
-                'http://103.150.93.202:8081/empachievementskill/update',
+                'https://hiremeplease.freeddns.org/empachievementskill/update',
                 payload
               )
               .toPromise()
@@ -484,7 +487,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           requests.push(
             this.http
               .post(
-                'http://103.150.93.202:8081/empachievementskill/create',
+                'https://hiremeplease.freeddns.org/empachievementskill/create',
                 payload
               )
               .toPromise()
@@ -559,7 +562,10 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     try {
       await this.http
-        .put('http://103.150.93.202:8081/empachievementskill/update', payload)
+        .put(
+          'https://hiremeplease.freeddns.org/empachievementskill/update',
+          payload
+        )
         .toPromise();
 
       console.log(`Skill "${entry.achievement}" updated successfully.`);
@@ -642,7 +648,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   fetchAchievementSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('http://103.150.93.202:8081/achievement/all')
+        .get<any>('https://hiremeplease.freeddns.org/achievement/all')
         .subscribe({
           next: (response) => {
             this.achievementSkills = (response.content || []).filter(
@@ -669,7 +675,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   fetchGroupAchievements(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('http://103.150.93.202:8081/groupachievement/all')
+        .get<any>('https://hiremeplease.freeddns.org/groupachievement/all')
         .subscribe({
           next: (response) => {
             this.groupAchievements = response.content || [];

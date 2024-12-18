@@ -47,7 +47,7 @@ export class LoginComponent {
     const loginPayload = { username: this.username, password: this.password };
 
     this.http
-      .post('http://103.150.93.202:8081/auth/sign-in', loginPayload, {
+      .post('https://hiremeplease.freeddns.org/auth/sign-in', loginPayload, {
         responseType: 'text',
       })
       .subscribe({

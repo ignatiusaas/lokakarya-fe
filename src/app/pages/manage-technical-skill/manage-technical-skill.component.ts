@@ -108,7 +108,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     if (!this.allTechSkills.length || this.allTechSkills.length > 0) {
       this.loading = true;
       this.http
-        .get<any>('http://103.150.93.202:8081/technicalskill/all')
+        .get<any>('https://hiremeplease.freeddns.org/technicalskill/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -193,7 +193,9 @@ export class ManageTechnicalSkillComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`http://103.150.93.202:8081/technicalskill/${techSkillId}`)
+          .delete(
+            `https://hiremeplease.freeddns.org/technicalskill/${techSkillId}`
+          )
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -230,7 +232,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.mode = 'edit';
 
     const techSkillRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/technicalskill/${techSkillId}`
+      `https://hiremeplease.freeddns.org/technicalskill/${techSkillId}`
     );
 
     this.displayEditDialog = false;
@@ -313,11 +315,11 @@ export class ManageTechnicalSkillComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'http://103.150.93.202:8081/technicalskill/create',
+            'https://hiremeplease.freeddns.org/technicalskill/create',
             payload
           )
         : this.http.put(
-            'http://103.150.93.202:8081/technicalskill/update',
+            'https://hiremeplease.freeddns.org/technicalskill/update',
             payload
           );
 
@@ -376,7 +378,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/technicalskill/name/${name}`
+          `https://hiremeplease.freeddns.org/technicalskill/name/${name}`
         )
         .toPromise();
 

@@ -197,7 +197,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `http://103.150.93.202:8081/appuser/get/${this.selectedUserId}`;
+    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -218,27 +218,29 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    this.http.get<any>('http://103.150.93.202:8081/appuser/all').subscribe({
-      next: (response) => {
-        this.employees = response.content || [];
-        console.log('Fetched Employees:', this.employees);
-      },
-      error: (error) => {
-        console.error('Error fetching employees:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch employees.',
-        });
-      },
-    });
+    this.http
+      .get<any>('https://hiremeplease.freeddns.org/appuser/all')
+      .subscribe({
+        next: (response) => {
+          this.employees = response.content || [];
+          console.log('Fetched Employees:', this.employees);
+        },
+        error: (error) => {
+          console.error('Error fetching employees:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch employees.',
+          });
+        },
+      });
   }
 
   fetchTechnicalSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('Fetching TechnicalSkills...');
       this.http
-        .get<any>('http://103.150.93.202:8081/technicalskill/all')
+        .get<any>('https://hiremeplease.freeddns.org/technicalskill/all')
         .subscribe({
           next: (response) => {
             this.technicalSkills = (response.content || []).filter(
@@ -283,7 +285,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
       this.loading = true;
 
-      const skillUrl = `http://103.150.93.202:8081/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
+      const skillUrl = `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Fetching EmpTechnicalSkills from URL:', skillUrl);
 
@@ -397,7 +399,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           requests.push(
             this.http
               .put(
-                'http://103.150.93.202:8081/emptechnicalskill/update',
+                'https://hiremeplease.freeddns.org/emptechnicalskill/update',
                 payload
               )
               .toPromise()
@@ -408,7 +410,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           requests.push(
             this.http
               .post(
-                'http://103.150.93.202:8081/emptechnicalskill/create',
+                'https://hiremeplease.freeddns.org/emptechnicalskill/create',
                 payload
               )
               .toPromise()

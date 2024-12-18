@@ -107,7 +107,7 @@ export class ManageDivisionComponent implements OnInit {
     if (!this.allDivisions.length || this.allDivisions.length > 0) {
       this.loading = true;
       this.http
-        .get<any>('http://103.150.93.202:8081/division/all')
+        .get<any>('https://hiremeplease.freeddns.org/division/all')
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
@@ -191,7 +191,7 @@ export class ManageDivisionComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`http://103.150.93.202:8081/division/${divisionId}`)
+          .delete(`https://hiremeplease.freeddns.org/division/${divisionId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -228,7 +228,7 @@ export class ManageDivisionComponent implements OnInit {
     this.mode = 'edit';
 
     const divisionRequest = this.http.get<any>(
-      `http://103.150.93.202:8081/division/${divisionId}`
+      `https://hiremeplease.freeddns.org/division/${divisionId}`
     );
 
     this.displayEditDialog = false;
@@ -309,8 +309,14 @@ export class ManageDivisionComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post('http://103.150.93.202:8081/division/create', payload)
-        : this.http.put('http://103.150.93.202:8081/division/update', payload);
+        ? this.http.post(
+            'https://hiremeplease.freeddns.org/division/create',
+            payload
+          )
+        : this.http.put(
+            'https://hiremeplease.freeddns.org/division/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -367,7 +373,7 @@ export class ManageDivisionComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `http://103.150.93.202:8081/division/name/${name}`
+          `https://hiremeplease.freeddns.org/division/name/${name}`
         )
         .toPromise();
 
