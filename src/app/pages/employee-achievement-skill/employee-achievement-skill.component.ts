@@ -86,7 +86,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   empUrl: string = '';
   isExist: boolean = false;
 
-  groupedEmpAchievementSkills: any[] = []; // For grouped data
+  groupedEmpAchievementSkills: any[] = [];
 
   achievementSkillEntries: {
     achievement_id: string;
@@ -124,7 +124,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     this.initializeForm();
 
-    // Fetch achievements and group achievements first
     Promise.all([this.fetchAchievementSkills(), this.fetchGroupAchievements()])
       .then(() => {
         // Now fetch employee achievement skills
