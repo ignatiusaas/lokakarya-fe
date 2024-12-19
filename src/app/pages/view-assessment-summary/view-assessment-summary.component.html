@@ -157,6 +157,15 @@
             </ng-container>
           </ng-container>
         </tbody>
+        <tr>
+          <td colspan="2" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td>{{ totalAchievementPercentage | number : "1.2-2" }}%</td>
+          <td>
+            {{ totalAchievementScore | number : "1.2-2" }}
+          </td>
+        </tr>
 
         <ng-template #noDataAchievements>
           <tr>
@@ -201,6 +210,15 @@
             </ng-container>
           </ng-container>
         </tbody>
+        <tr>
+          <td colspan="2" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td>{{ totalAttitudePercentage | number : "1.2-2" }}%</td>
+          <td>
+            {{ totalAttitudeScore | number : "1.2-2" }}
+          </td>
+        </tr>
 
         <ng-template #noDataAttitudeSkills>
           <tr>
@@ -216,9 +234,10 @@
       <table class="total-final-score-table">
         <tbody>
           <tr>
-            <td colspan="4" style="text-align: right; font-weight: bold">
-              Total Final Score:
+            <td colspan="3" style="text-align: right; font-weight: bold">
+              Total:
             </td>
+            <td>{{ totalPercentage | number : "1.2-2" }}%</td>
             <td>
               {{ totalFinalScore | number : "1.2-2" }}
             </td>
