@@ -421,20 +421,24 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       return;
     }
 
-    const scalingFactor = 100 / combinedTotalPercentage;
+    const scalingFactorAchievement = 65 / totalAchievementPercentage;
+    const scalingFactorAttitude = 35 / totalAttitudePercentage;
 
-    console.log('Scaling Factor:', scalingFactor);
+    console.log('Achievement Scaling Factor:', scalingFactorAchievement);
+    console.log('Attitude Scaling Factor:', scalingFactorAttitude);
 
     this.achievements = this.achievements.map((achievement) => ({
       ...achievement,
       percentage: parseFloat(
-        (achievement.percentage * scalingFactor).toFixed(2)
+        (achievement.percentage * scalingFactorAchievement).toFixed(2)
       ),
     }));
 
     this.attitudeSkills = this.attitudeSkills.map((skill) => ({
       ...skill,
-      percentage: parseFloat((skill.percentage * scalingFactor).toFixed(2)),
+      percentage: parseFloat(
+        (skill.percentage * scalingFactorAttitude).toFixed(2)
+      ),
     }));
 
     const newTotalAchievementPercentage = this.achievements.reduce(
