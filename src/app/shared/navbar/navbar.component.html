@@ -15,6 +15,7 @@
     <li
       class="dropdown"
       [ngClass]="{ 'dropdown-open': activeDropdown === 'manage' }"
+      *ngIf="manageMenus.length > 0"
     >
       <span class="dropdown-button" (click)="toggleDropdown('manage')">
         Manage
