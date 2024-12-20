@@ -59,10 +59,13 @@
           >Current Password
           <span class="required">*</span>
         </label>
-        <input
+        <p-password
           type="password"
           id="currentPassword"
-          pInputText
+          [toggleMask]="true"
+          [feedback]="false"
+          [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
+          [style]="{ width: '120%' }"
           formControlName="currentPassword"
           placeholder="Enter current password"
           required
@@ -75,10 +78,13 @@
           >New Password
           <span class="required">*</span>
         </label>
-        <input
+        <p-password
           type="password"
           id="newPassword"
-          pInputText
+          [toggleMask]="true"
+          [feedback]="true"
+          [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
+          [style]="{ width: '120%' }"
           formControlName="newPassword"
           placeholder="Enter new password"
           required
@@ -91,10 +97,13 @@
           >Confirm Password
           <span class="required">*</span>
         </label>
-        <input
+        <p-password
           type="password"
           id="confirmPassword"
-          pInputText
+          [toggleMask]="true"
+          [feedback]="false"
+          [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
+          [style]="{ width: '120%' }"
           formControlName="confirmPassword"
           placeholder="Confirm new password"
           required

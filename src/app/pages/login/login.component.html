@@ -24,24 +24,18 @@
         <div class="p-field">
           <label for="password">Password:</label>
           <div class="p-inputgroup">
-            <input
-              pInputText
-              [type]="showPassword ? 'text' : 'password'"
+            <p-password
               id="password"
               [(ngModel)]="password"
               name="password"
               required
               [disabled]="isLoading"
+              [toggleMask]="true"
+              [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
+              [feedback]="false"
+              [style]="{ width: '100%' }"
               placeholder="Enter your password"
-            />
-            <button
-              pButton
-              type="button"
-              icon="{{ showPassword ? 'pi pi-eye-slash' : 'pi pi-eye' }}"
-              class="p-button-text p-inputgroup-addon"
-              (click)="togglePasswordMask()"
-              aria-label="Toggle password visibility"
-            ></button>
+            ></p-password>
           </div>
         </div>
         <div class="p-field">
