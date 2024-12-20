@@ -271,7 +271,13 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
       next: (response) => {
-        this.employees = response.content || [];
+        this.employees = [];
+        const allEmployees = response.content || [];
+        allEmployees.forEach((employee: any) => {
+          if (employee.enabled) {
+            this.employees.push(employee);
+          }
+        });
         console.log('Fetched Employees:', this.employees);
       },
 

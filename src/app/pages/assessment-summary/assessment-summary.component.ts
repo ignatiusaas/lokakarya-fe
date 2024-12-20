@@ -72,7 +72,11 @@ export class AssessmentSummaryComponent implements OnInit {
   attitudeSkills: any[] = [];
   suggestion: string = '';
   assessmentYear: Date | null = null;
-  totalScore: number = 0;
+  totalPercentage: number = 0;
+  totalAchievementPercentage: number = 0;
+  totalAttitudePercentage: number = 0;
+  totalAchievementScore: number = 0;
+  totalAttitudeScore: number = 0;
   selectedDivision: string = '';
   selectedDivisionId: string = '';
   selectedPosition: string = '';
@@ -449,40 +453,40 @@ export class AssessmentSummaryComponent implements OnInit {
       ),
     }));
 
-    const newTotalAchievementPercentage = this.achievements.reduce(
+    this.totalAchievementPercentage = this.achievements.reduce(
       (sum, achievement) => sum + achievement.percentage,
       0
     );
 
-    const newTotalAttitudePercentage = this.attitudeSkills.reduce(
+    this.totalAttitudePercentage = this.attitudeSkills.reduce(
       (sum, skill) => sum + skill.percentage,
       0
     );
 
-    const newCombinedTotal =
-      newTotalAchievementPercentage + newTotalAttitudePercentage;
+    this.totalPercentage =
+      this.totalAchievementPercentage + this.totalAttitudePercentage;
 
     console.log(
       'New Total Achievement Percentage:',
-      newTotalAchievementPercentage
+      this.totalAchievementPercentage
     );
-    console.log('New Total Attitude Percentage:', newTotalAttitudePercentage);
-    console.log('New Combined Total Percentage:', newCombinedTotal);
+    console.log('New Total Attitude Percentage:', this.totalAttitudePercentage);
+    console.log('New Combined Total Percentage:', this.totalPercentage);
   }
 
   get totalFinalScore(): number {
-    const achievementFinalScore = this.achievements.reduce(
+    this.totalAchievementScore = this.achievements.reduce(
       (sum, achievement) =>
         sum + (achievement.sum_score * achievement.percentage) / 100,
       0
     );
 
-    const attitudeFinalScore = this.attitudeSkills.reduce(
+    this.totalAttitudeScore = this.attitudeSkills.reduce(
       (sum, skill) => sum + (skill.sum_score * skill.percentage) / 100,
       0
     );
 
-    return achievementFinalScore + attitudeFinalScore;
+    return this.totalAchievementScore + this.totalAttitudeScore;
   }
 
   async fetchAssessmentSummary(): Promise<void> {
