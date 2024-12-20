@@ -487,6 +487,7 @@ export class AssessmentSummaryComponent implements OnInit {
 
   async fetchAssessmentSummary(): Promise<void> {
     try {
+      this.resetAssessmentSummary();
       await Promise.all([
         this.fetchSelectedUserDetails(),
         this.fetchAchievementSummary(),
@@ -504,6 +505,16 @@ export class AssessmentSummaryComponent implements OnInit {
         detail: 'Failed to fetch summaries.',
       });
     }
+  }
+
+  resetAssessmentSummary(): void {
+    this.achievements = [];
+    this.attitudeSkills = [];
+    this.totalAchievementPercentage = 0;
+    this.totalAttitudePercentage = 0;
+    this.totalPercentage = 0;
+    this.totalAchievementScore = 0;
+    this.totalAttitudeScore = 0;
   }
 
   async fetchAssessmentSummaryFirstEmployee(): Promise<void> {

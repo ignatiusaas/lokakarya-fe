@@ -12,7 +12,7 @@ export const authGuard: CanActivateFn = async (
 
   if (typeof window === 'undefined' || !window.localStorage) {
     console.error('Session storage is not available.');
-    router.navigate(['/login']);
+    await router.navigate(['/login']);
     return false;
   }
 
@@ -29,7 +29,7 @@ export const authGuard: CanActivateFn = async (
   };
 
   if (!token || isTokenExpired(token)) {
-    router.navigate(['/login']);
+    await router.navigate(['/login']);
     return false;
   }
 
@@ -39,7 +39,8 @@ export const authGuard: CanActivateFn = async (
     userRoles = payload.roles || [];
   } catch (e) {
     console.error('Failed to parse token payload:', e);
-    router.navigate(['/login']);
+    await router.navigate(['/login']);
+    return false;
   }
 
   const currentRoutePath = route.routeConfig?.path || '';
@@ -48,19 +49,20 @@ export const authGuard: CanActivateFn = async (
     userRoles
   );
 
-  // Store all available menus for the user's roles
   const availableMenus = new Set<string>();
 
   try {
-    // Fetch menu access for each role and store it in `availableMenus`
+    // 🛑 Wait for role menu requests to finish before proceeding
     const roleRequests = userRoles.map((role) =>
       http
         .get<any>(`https://hiremeplease.freeddns.org/approlemenu/role/${role}`)
         .toPromise()
     );
 
+    // ⏳ Wait for all the requests to resolve
     const responses = await Promise.all(roleRequests);
 
+    // Add globally accessible menus
     availableMenus.add('home');
     availableMenus.add('login');
     if (
@@ -84,16 +86,16 @@ export const authGuard: CanActivateFn = async (
     console.log('Available menus for user:', Array.from(availableMenus));
 
     if (availableMenus.has(currentRoutePath)) {
-      console.log(`Access granted to route: ${currentRoutePath}`);
+      console.log(`✅ Access granted to route: ${currentRoutePath}`);
       return true;
     } else {
-      console.warn(`Access denied to route: ${currentRoutePath}`);
-      router.navigate(['/home']);
+      console.warn(`❌ Access denied to route: ${currentRoutePath}`);
+      await router.navigate(['/home']);
       return false;
     }
   } catch (error) {
-    console.error('Error while fetching menus for roles:', error);
-    router.navigate(['/login']);
+    console.error('💥 Error while fetching menus for roles:', error);
+    await router.navigate(['/login']);
     return false;
   }
 };

@@ -400,6 +400,16 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     }
   }
 
+  resetViewAssessmentSummary(): void {
+    this.achievements = [];
+    this.attitudeSkills = [];
+    this.suggestion = '';
+    this.totalAchievementPercentage = 0;
+    this.totalAttitudePercentage = 0;
+    this.totalAchievementScore = 0;
+    this.totalAttitudeScore = 0;
+  }
+
   adjustPercentages(): void {
     const totalAchievementPercentage = this.achievements.reduce(
       (sum, achievement) => sum + achievement.percentage,
@@ -480,6 +490,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   async fetchViewAssessmentSummary(userId: string): Promise<void> {
     console.log('Fetching summaries for user: ', userId);
     this.displayAssessmentSummaryDialog = true;
+    this.resetViewAssessmentSummary();
     try {
       this.selectedUserId = userId;
       await Promise.all([
