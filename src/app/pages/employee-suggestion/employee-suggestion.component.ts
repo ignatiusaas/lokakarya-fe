@@ -80,14 +80,15 @@ export class EmployeeSuggestionComponent implements OnInit {
   globalFilterValue: string = '';
   currentRoles: any[] = this.extractCurrentRoles() || [];
   showOnlyMine: boolean = false;
+  selectedOrderDirection: 'asc' | 'desc' = 'asc';
+  selectedOrderColumn: string = 'assessment_year';
 
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private primengConfig: PrimeNGConfig,
-    private router: Router
+    private primengConfig: PrimeNGConfig
   ) {}
 
   ngOnInit(): void {
@@ -158,6 +159,14 @@ export class EmployeeSuggestionComponent implements OnInit {
     this.currentUserId = this.extractCurrentUserId() || '';
 
     console.log('Form Initialized:', this.editForm.value);
+  }
+
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchEmpSuggestions();
   }
 
   fetchEmpSuggestions(event?: any): void {

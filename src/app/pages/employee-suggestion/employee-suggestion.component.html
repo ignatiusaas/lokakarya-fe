@@ -57,15 +57,9 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th *ngIf="currentRoles.includes('HR')" pSortableColumn="full_name">
-              Full Name <p-sortIcon field="full_name"></p-sortIcon>
-            </th>
-            <th pSortableColumn="suggestion">
-              Suggestion <p-sortIcon field="suggestion"></p-sortIcon>
-            </th>
-            <th pSortableColumn="assessment_year">
-              Assessment Year <p-sortIcon field="assessment_year"></p-sortIcon>
-            </th>
+            <th>Full Name</th>
+            <th>Suggestion</th>
+            <th>Assessment Year</th>
             <th>Actions</th>
           </tr>
         </ng-template>

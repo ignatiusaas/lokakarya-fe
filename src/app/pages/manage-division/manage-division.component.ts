@@ -47,16 +47,17 @@ export class ManageDivisionComponent implements OnInit {
   isEditFormLoading: boolean = false;
   displayEditDialog: boolean = false;
   editForm!: FormGroup;
-  allDivisions: any[] = [];
   globalFilterValue: string = '';
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'division_name';
+  selectedOrderDirection: string = 'asc';
 
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private primengConfig: PrimeNGConfig,
-    private router: Router
+    private primengConfig: PrimeNGConfig
   ) {}
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -104,66 +105,47 @@ export class ManageDivisionComponent implements OnInit {
   fetchDivisions(event?: any): void {
     console.log('Fetching Divisions...');
 
-    if (!this.allDivisions.length || this.allDivisions.length > 0) {
-      this.loading = true;
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/division/all')
-        .pipe(finalize(() => (this.loading = false)))
-        .subscribe({
-          next: (response) => {
-            console.log('Divisions Fetched:', response);
-            this.allDivisions = response.content || [];
-            this.totalRecords = this.allDivisions.length;
+    const pageIndex = event?.first ? event.first / event.rows : 0;
+    const pageSize = event?.rows || this.rowsPerPage;
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Divisions:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch divisions.',
-            });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
-  }
+    this.loading = true;
+    this.currentPage = pageIndex + 1;
+    this.rowsPerPage = pageSize;
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
+    const param = {
+      keyword: this.globalFilterValue,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+    };
 
-    let filteredSkills = this.globalFilterValue
-      ? this.allDivisions.filter((division) =>
-          Object.values(division).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allDivisions];
+    const url = 'https://hiremeplease.freeddns.org/division/sorch';
 
-    console.log(this.allDivisions);
+    console.log('Page Index:', pageIndex);
+    console.log('Page Size:', pageSize);
+    console.log('URL:', url);
+    console.log('Param:', param);
 
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredSkills.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
+    this.loading = true;
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (response) => {
+          console.log('Divisions Fetched:', response);
+          this.divisions = response.content || [];
+          this.totalRecords = response.total_data;
+        },
+        error: (error) => {
+          console.error('Error Fetching Divisions:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch divisions.',
+          });
+        },
       });
-    }
-
-    this.divisions = filteredSkills.slice(startIndex, endIndex);
-
-    this.totalRecords = filteredSkills.length;
   }
 
   openCreateDialog(): void {
@@ -194,7 +176,16 @@ export class ManageDivisionComponent implements OnInit {
           .delete(`https://hiremeplease.freeddns.org/division/${divisionId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
-            next: () => {
+            next: (response: any) => {
+              console.log('Response: ', response);
+              if (response?.content === divisionId + ' deleted: false') {
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Failed to delete division.',
+                });
+                return;
+              }
               console.log('Division Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
@@ -328,8 +319,6 @@ export class ManageDivisionComponent implements OnInit {
           detail: 'Division saved successfully.',
         });
 
-        this.resetSortAndFilter();
-
         this.displayEditDialog = false;
         this.fetchDivisions();
       },
@@ -344,29 +333,31 @@ export class ManageDivisionComponent implements OnInit {
     });
   }
 
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
-  }
-
   submitDivision(): void {
     console.log('Submitting Division. Mode:', this.mode);
     this.isProcessing = true;
     this.saveDivision();
   }
 
+  private searchTimeout: any;
+
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchDivisions();
+    }, 500);
+  }
+
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchDivisions();
   }
 
   async confirmDuplicate(name: string): Promise<boolean> {

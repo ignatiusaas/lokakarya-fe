@@ -15,7 +15,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
@@ -47,16 +46,17 @@ export class ManageTechnicalSkillComponent implements OnInit {
   isEditFormLoading: boolean = false;
   displayEditDialog: boolean = false;
   editForm!: FormGroup;
-  allTechSkills: any[] = [];
   globalFilterValue: string = '';
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'technical_skill';
+  selectedOrderDirection: string = 'asc';
 
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private primengConfig: PrimeNGConfig,
-    private router: Router
+    private primengConfig: PrimeNGConfig
   ) {}
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -104,67 +104,46 @@ export class ManageTechnicalSkillComponent implements OnInit {
 
   fetchTechSkills(event?: any): void {
     console.log('Fetching Technical Skills...');
+    console.log('Global Filter Value:', this.globalFilterValue);
 
-    if (!this.allTechSkills.length || this.allTechSkills.length > 0) {
-      this.loading = true;
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/technicalskill/all')
-        .pipe(finalize(() => (this.loading = false)))
-        .subscribe({
-          next: (response) => {
-            console.log('Technical Skills Fetched:', response);
-            this.allTechSkills = response.content || [];
-            this.totalRecords = this.allTechSkills.length;
+    const pageIndex = event?.first ? event.first / event.rows : 0;
+    const pageSize = event?.rows || this.rowsPerPage;
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Technical Skills:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch technical skills.',
-            });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
-  }
+    this.loading = true;
+    this.currentPage = pageIndex + 1;
+    this.rowsPerPage = pageSize;
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
+    const param = {
+      keyword: this.globalFilterValue,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+    };
 
-    let filteredSkills = this.globalFilterValue
-      ? this.allTechSkills.filter((techSkill) =>
-          Object.values(techSkill).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allTechSkills];
+    const url = `https://hiremeplease.freeddns.org/technicalskill/sorch`;
 
-    console.log(this.allTechSkills);
+    console.log('Parameters:', param);
 
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredSkills.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
+    this.loading = true;
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (response) => {
+          console.log('Technical Skills Fetched:', response);
+          this.techSkills = response.content || [];
+          this.totalRecords = response.total_data;
+        },
+        error: (error) => {
+          console.error('Error Fetching Technical Skills:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch technical skills.',
+          });
+        },
       });
-    }
-
-    this.techSkills = filteredSkills.slice(startIndex, endIndex);
-
-    this.totalRecords = filteredSkills.length;
   }
 
   openCreateDialog(): void {
@@ -359,8 +338,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
       dt.sortField = null;
       dt.sortOrder = null;
     }
-
-    this.applyFiltersAndPagination({ first: 0 });
   }
 
   submitTechnicalSkill(): void {
@@ -369,9 +346,25 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.saveTechnicalSkill();
   }
 
+  private searchTimeout: any;
+
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchTechSkills();
+    }, 500);
+  }
+
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchTechSkills();
   }
 
   async confirmDuplicate(name: string): Promise<boolean> {

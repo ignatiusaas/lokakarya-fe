@@ -5,253 +5,258 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    flex-wrap: wrap;
 
     .search-container {
-      flex: 1; /* Take up all available space */
-      max-width: 400px; /* Set a maximum width for the search bar */
+      flex: 1;
+      max-width: 400px;
+      margin-bottom: 1rem;
+    }
+
+    .order-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: auto;
+
+      .order-dropdown {
+        min-width: 200px;
+      }
+
+      .toggle-order-button {
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     .create-button {
-      margin-left: auto; /* Push the button to the far right */
       font-size: 1rem;
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
+      margin-left: auto;
     }
   }
-}
 
-.p-table {
-  margin-top: 1rem;
-  min-height: 400px;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-.p-field {
-  margin-bottom: 2rem;
-}
-
-.dialog-footer {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-p-calendar {
-  .ui-datepicker {
-    font-size: 0.75rem; /* Smaller overall font */
-    padding: 0.4rem; /* Minimized padding for the container */
+  .p-table {
+    margin-top: 1rem;
+    min-height: 400px;
   }
 
-  .ui-datepicker-header {
+  .dialog-footer {
     display: flex;
-    justify-content: space-between;
-    padding: 0.2rem 0.4rem; /* Compact header padding */
-    font-size: 0.8rem; /* Slightly larger header font for clarity */
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 
-  .ui-datepicker-title {
-    font-size: 0.75rem; /* Compact title font size */
-    margin: 0;
+  .p-field {
+    margin-bottom: 2rem;
   }
 
-  .ui-datepicker-calendar {
-    font-size: 0.7rem;
-    gap: 0.1rem;
+  dialog-footer {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
   }
 
-  .ui-datepicker-calendar th,
-  .ui-datepicker-calendar td {
-    padding: 0.2rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-  }
-
-  .ui-datepicker-next,
-  .ui-datepicker-prev {
-    font-size: 0.7rem;
-    padding: 0.2rem;
-  }
-
-  .ui-datepicker-today-button,
-  .ui-datepicker-clear-button {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.5rem;
-  }
-
-  .ui-datepicker-year,
-  .ui-datepicker-month {
-    font-size: 0.7rem;
-    padding: 0.2rem;
-  }
-}
-
-.p-dropdown {
-  width: 100%;
-}
-
-.input {
-  padding: 0.75rem;
-}
-.radio-buttons {
-  display: flex;
-  align-items: center;
-  gap: 2rem; /* Generous spacing between buttons */
-
-  p-radioButton {
-    margin: 0;
-
-    .p-radiobutton-box {
-      border-radius: 50%;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease;
-
-      &:focus-within {
-        box-shadow: none; /* Remove focus shadow */
-        outline: none; /* Remove any outline */
-      }
-
-      &:hover {
-        border-color: var(--primary-color, #007ad9);
-      }
-
-      &:active {
-        box-shadow: inset 0 0 4px var(--primary-color, #007ad9);
-      }
+  p-calendar {
+    .ui-datepicker {
+      font-size: 0.75rem;
+      padding: 0.4rem;
+    }
+    .ui-datepicker-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.8rem;
+    }
+    .ui-datepicker-title {
+      font-size: 0.75rem;
+      margin: 0;
+    }
+    .ui-datepicker-calendar {
+      font-size: 0.7rem;
+      gap: 0.1rem;
+    }
+    .ui-datepicker-calendar th,
+    .ui-datepicker-calendar td {
+      padding: 0.2rem;
+      min-width: 1.5rem;
+      min-height: 1.5rem;
+    }
+    .ui-datepicker-next,
+    .ui-datepicker-prev {
+      font-size: 0.7rem;
+      padding: 0.2rem;
+    }
+    .ui-datepicker-today-button,
+    .ui-datepicker-clear-button {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.5rem;
+    }
+    .ui-datepicker-year,
+    .ui-datepicker-month {
+      font-size: 0.7rem;
+      padding: 0.2rem;
     }
   }
 
-  .p-radiobutton-input {
-    outline: none !important; /* Eliminate persistent browser focus styling */
+  .p-dropdown {
+    width: 100%;
+  }
+
+  .input {
+    padding: 0.75rem;
+  }
+
+  .radio-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    p-radioButton {
+      margin: 0;
+
+      .p-radiobutton-box {
+        border-radius: 50%;
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+
+        &:focus-within {
+          box-shadow: none;
+          outline: none;
+        }
+
+        &:hover {
+          border-color: var(--primary-color, #007ad9);
+        }
+
+        &:active {
+          box-shadow: inset 0 0 4px var(--primary-color, #007ad9);
+        }
+      }
+    }
+
+    .p-radiobutton-input {
+      outline: none !important;
+    }
+  }
+
+  td button {
+    margin-right: 0.5rem;
+  }
+
+  td button:last-child {
+    margin-right: 0;
+  }
+
+  .roles-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .role-checkbox {
+    display: flex;
+    align-items: center;
+  }
+
+  .page-title {
+    text-align: center;
+    margin: 1rem auto;
+  }
+
+  .p-table-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+
+  .disabled-row {
+    color: #a7a5a5;
+  }
+
+  .search-container {
+    margin-bottom: 1rem;
+  }
+
+  .search-container .p-input-icon-left {
+    width: 100%;
+  }
+
+  .search-container input {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .pi-check-circle {
+    font-size: 5rem;
+    margin: 1rem;
+    color: green;
+  }
+
+  .message-container {
+    text-align: center;
+  }
+
+  .success-message {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0 0 1rem 0;
+  }
+
+  .user-info-container > .copy-text {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+
+  .copy-text {
+    margin-top: 1rem;
+  }
+
+  .clickable-text {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .clickable-text:hover {
+    color: #007bff;
+  }
+
+  .required {
+    color: red;
   }
 }
-td button {
-  margin-right: 0.5rem;
-}
 
-td button:last-child {
-  margin-right: 0;
-}
-
-.roles-container {
+.table-filters {
   display: flex;
-  flex-wrap: wrap; /* Allows wrapping if there are too many items */
-  gap: 1rem; /* Adds space between checkboxes */
-  justify-content: start; /* Align items to the start horizontally */
-  align-items: center; /* Center items vertically */
-}
+  justify-content: flex-end;
+  padding-bottom: 1rem;
 
-.role-checkbox {
-  display: flex; /* Ensures the checkbox and label align properly */
-  align-items: center; /* Aligns the label and checkbox vertically */
-}
-
-.page-title {
-  text-align: center;
-  margin: 1rem auto;
-}
-.p-table-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 400px; /* Total height for the table (header + body + footer) */
-}
-.disabled-row {
-  color: #a7a5a5;
-}
-
-.search-container {
-  margin-bottom: 1rem;
-}
-
-.search-container .p-input-icon-left {
-  width: 100%;
-}
-
-.search-container input {
-  width: 100%;
-  max-width: 400px;
-}
-
-.icon-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%; /* or specify a fixed height */
-  width: 100%; /* or specify a fixed width */
-}
-
-.pi-check-circle {
-  font-size: 5rem; /* Make the icon larger */
-  margin: 1rem; /* Add spacing around the icon */
-  color: green; /* Keep the green color */
-}
-
-.message-container {
-  text-align: center;
-}
-
-.success-message {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0 0 1rem 0; /* Add 1rem spacing below the message */
-}
-
-.user-info-container > .copy-text {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem; /* Add 1rem spacing between username and password sections */
-}
-
-.label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.copy-text {
-  margin-top: 1rem;
-}
-
-.clickable-text {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.message-container {
-  text-align: center;
-}
-
-.success-message {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 0 0 1rem 0; /* Add 1rem spacing below the message */
-}
-
-.user-info-container > .copy-text {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem; /* Add 1rem spacing between username and password sections */
-}
-
-.label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.clickable-text {
-  cursor: pointer; /* Makes the text clickable */
-  text-decoration: underline; /* Optional: Indicates it is interactive */
-}
-
-.clickable-text:hover {
-  color: #007bff; /* Optional: Change color on hover for better feedback */
-}
-
-.required {
-  color: red;
+  .order-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }

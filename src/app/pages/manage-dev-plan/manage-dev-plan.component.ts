@@ -47,16 +47,17 @@ export class ManageDevPlanComponent implements OnInit {
   isEditFormLoading: boolean = false;
   displayEditDialog: boolean = false;
   editForm!: FormGroup;
-  allPlans: any[] = [];
   globalFilterValue: string = '';
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'plan';
+  selectedOrderDirection: string = 'asc';
 
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private primengConfig: PrimeNGConfig,
-    private router: Router
+    private primengConfig: PrimeNGConfig
   ) {}
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -104,67 +105,44 @@ export class ManageDevPlanComponent implements OnInit {
 
   fetchPlans(event?: any): void {
     console.log('Fetching Development Plans...');
+    console.log('Global Filter Value:', this.globalFilterValue);
 
-    if (!this.allPlans.length || this.allPlans.length > 0) {
-      this.loading = true;
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/devplan/all')
-        .pipe(finalize(() => (this.loading = false)))
-        .subscribe({
-          next: (response) => {
-            console.log('Development Plans Fetched:', response);
-            this.allPlans = response.content || [];
-            this.totalRecords = this.allPlans.length;
+    const pageIndex = event?.first ? event.first / event.rows : 0;
+    const pageSize = event?.rows || this.rowsPerPage;
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Development Plans:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch development plans.',
-            });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
-  }
+    this.loading = true;
+    this.currentPage = pageIndex + 1;
+    this.rowsPerPage = pageSize;
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
+    const param = {
+      keyword: this.globalFilterValue,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+    };
 
-    let filteredSkills = this.globalFilterValue
-      ? this.allPlans.filter((plan) =>
-          Object.values(plan).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allPlans];
+    const url = `https://hiremeplease.freeddns.org/devplan/sorch`;
 
-    console.log(this.allPlans);
-
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredSkills.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
+    this.loading = true;
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (response) => {
+          console.log('Development Plans Fetched:', response);
+          this.plans = response.content || [];
+          this.totalRecords = response.total_data;
+        },
+        error: (error) => {
+          console.error('Error Fetching Development Plans:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch development plans.',
+          });
+        },
       });
-    }
-
-    this.plans = filteredSkills.slice(startIndex, endIndex);
-
-    this.totalRecords = filteredSkills.length;
   }
 
   openCreateDialog(): void {
@@ -329,8 +307,6 @@ export class ManageDevPlanComponent implements OnInit {
           detail: 'Dev plan saved successfully.',
         });
 
-        this.resetSortAndFilter();
-
         this.displayEditDialog = false;
         this.fetchPlans();
       },
@@ -345,29 +321,31 @@ export class ManageDevPlanComponent implements OnInit {
     });
   }
 
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
-  }
-
   submitPlan(): void {
     console.log('Submitting Development Plan. Mode:', this.mode);
     this.isProcessing = true;
     this.savePlan();
   }
 
+  private searchTimeout: any;
+
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchPlans();
+    }, 500);
+  }
+
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchPlans();
   }
 
   async confirmDuplicate(name: string): Promise<boolean> {

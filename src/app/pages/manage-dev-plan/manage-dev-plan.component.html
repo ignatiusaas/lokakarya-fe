@@ -42,12 +42,27 @@
         [resizableColumns]="true"
         responsiveLayout="scroll"
         [sortMode]="'single'"
+        [rowsPerPageOptions]="[5, 10, 20]"
       >
+        <ng-template pTemplate="caption">
+          <div class="table-filters">
+            <div class="order-actions">
+              <button
+                pButton
+                icon="{{
+                  selectedOrderDirection === 'asc'
+                    ? 'pi pi-arrow-up'
+                    : 'pi pi-arrow-down'
+                }}"
+                class="p-button-secondary toggle-order-button"
+                (click)="toggleOrderDirection()"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="plan">
-              Plan <p-sortIcon field="plan"></p-sortIcon>
-            </th>
+            <th>Plan</th>
             <th>Actions</th>
           </tr>
         </ng-template>

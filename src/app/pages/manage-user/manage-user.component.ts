@@ -12,13 +12,13 @@ import { PrimeNGConfig } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { FormArray } from '@angular/forms';
 import { jwtDecode } from 'jwt-decode';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import e from 'express';
 
 @Component({
   selector: 'app-manage-user',
@@ -45,28 +45,37 @@ export class ManageUserComponent implements OnInit {
   divisions: any[] = [];
   currentYear: string = new Date().getFullYear().toString();
   mode: 'create' | 'edit' = 'create';
-  roles: any[] = []; // Stores the available roles
+  roles: any[] = [];
   selectedRoles: { [roleId: string]: boolean } = {};
   currentUserId: string = this.decodeJWT() || '';
   isEditFormLoading: boolean = false;
   displayEditDialog: boolean = false;
   displayCreatedDialog: boolean = false;
   editForm!: FormGroup;
-  allEmployees: any[] = [];
   globalFilterValue: string = '';
   userName: string = '';
   generatedPassword: string = '';
-  private previouslyAssignedRoles: string[] = [];
   selectedUserId: string = '';
   selectedEmail: string = '';
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'full_name';
+  selectedOrderDirection: string = 'asc';
+
+  orderColumns: { label: string; value: string }[] = [
+    { label: 'Username', value: 'username' },
+    { label: 'Full Name', value: 'full_name' },
+    { label: 'Email Address', value: 'email_address' },
+    { label: 'Position', value: 'position' },
+    { label: 'Status', value: 'employee_status' },
+    { label: 'Division', value: 'division_name' },
+  ];
 
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private fb: FormBuilder,
-    private primengConfig: PrimeNGConfig,
-    private router: Router
+    private primengConfig: PrimeNGConfig
   ) {}
 
   ngOnInit(): void {
@@ -74,7 +83,6 @@ export class ManageUserComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    this.fetchEmployees();
     this.fetchRoles();
     console.log('Component Initialized');
   }
@@ -121,81 +129,59 @@ export class ManageUserComponent implements OnInit {
     console.log('Form Initialized:', this.editForm.value);
   }
 
-  navigateHome() {
-    console.log('Navigating to Home');
-    this.router.navigate(['/home']);
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchEmployees();
   }
+
   fetchEmployees(event?: any): void {
     console.log('Fetching Employees...');
+    console.log('Global Filter Value:', this.globalFilterValue);
 
-    if (!this.allEmployees.length || this.allEmployees.length > 0) {
-      this.loading = true;
+    const pageIndex = event?.first ? event.first / event.rows : 0;
+    const pageSize = event?.rows || this.rowsPerPage;
 
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/appuser/get/all')
-        .pipe(finalize(() => (this.loading = false)))
-        .subscribe({
-          next: (response) => {
-            this.allEmployees = response.content || [];
-            this.totalRecords = this.allEmployees.length;
+    this.loading = true;
+    this.currentPage = pageIndex + 1;
+    this.rowsPerPage = pageSize;
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Employees:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch employees.',
-            });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
-  }
+    const param = {
+      keyword: this.globalFilterValue,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+    };
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
+    const url = `https://hiremeplease.freeddns.org/appuser/sorch`;
 
-    // Apply global filtering (search)
-    let filteredEmployees = this.globalFilterValue
-      ? this.allEmployees.filter((employee) =>
-          Object.values(employee).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allEmployees]; // Clone array for sorting
+    console.log('Page Index:', pageIndex);
+    console.log('Page Size:', pageSize);
+    console.log('URL:', url);
+    console.log('Param:', param);
 
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1; // 1 = ascending, -1 = descending
-      filteredEmployees.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0; // Handle null/undefined values
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (response) => {
+          this.employees = response.content || [];
+          this.totalRecords = response.total_data;
+          console.log('Employees Fetched:', this.employees);
+          console.log('Total Records:', this.totalRecords);
+        },
+        error: (error) => {
+          console.error('Error Fetching Employees:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch employees.',
+          });
+        },
       });
-    }
-
-    // Apply pagination
-    this.employees = filteredEmployees.slice(startIndex, endIndex);
-
-    // Update totalRecords for pagination
-    this.totalRecords = filteredEmployees.length;
-  }
-
-  paginateEmployees(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    this.employees = this.allEmployees.slice(startIndex, endIndex);
   }
 
   openCreateDialog(): void {
@@ -438,10 +424,6 @@ export class ManageUserComponent implements OnInit {
           detail: 'Employee saved successfully.',
         });
 
-        // Reset sort and filter
-        this.resetSortAndFilter();
-
-        // Mbuh
         if (this.mode === 'create') {
           this.displayCreatedDialog = true;
         }
@@ -459,20 +441,6 @@ export class ManageUserComponent implements OnInit {
         });
       },
     });
-  }
-
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
   }
 
   fetchRoles(): void {
@@ -549,72 +517,6 @@ export class ManageUserComponent implements OnInit {
           },
         });
     });
-  }
-
-  assignRolesToUser(userId: string): void {
-    const rolesToAssign = this.roles
-      .map((role, index) => (this.rolesFormArray.value[index] ? role.id : null))
-      .filter((roleId) => roleId !== null);
-
-    if (rolesToAssign.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'No roles selected for assignment.',
-      });
-      return;
-    }
-
-    const roleRequests = rolesToAssign.map((roleId) =>
-      this.http
-        .get<any>(
-          `https://hiremeplease.freeddns.org/appuserrole/${userId}/${roleId}`
-        )
-        .pipe(
-          finalize(() => (this.isProcessing = false)),
-          finalize(() => console.log(`Check for role ${roleId} completed.`))
-        )
-        .toPromise()
-        .then((response) => {
-          if (response?.content) {
-            console.log(`Role already assigned: ${roleId}`);
-            return null;
-          } else {
-            return this.http
-              .post('https://hiremeplease.freeddns.org/appuserrole/create', {
-                role_id: roleId,
-                user_id: userId,
-              })
-              .toPromise()
-              .then(() => {
-                console.log(`Role assigned successfully: ${roleId}`);
-              });
-          }
-        })
-    );
-
-    this.isProcessing = true;
-
-    Promise.all(roleRequests)
-      .then(() => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Roles assigned successfully!',
-        });
-        console.log('All roles assigned successfully:', rolesToAssign);
-      })
-      .catch((err) => {
-        console.error('Failed to assign some roles:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to assign roles.',
-        });
-      })
-      .finally(() => {
-        this.isProcessing = false;
-      });
   }
 
   private updateUserRoles(
@@ -752,19 +654,17 @@ export class ManageUserComponent implements OnInit {
     });
   }
 
+  private searchTimeout: any;
+
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
-  }
 
-  filterGlobal(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const table = document.querySelector('p-table') as any;
-    table.filterGlobal(filterValue, 'contains');
-  }
+    clearTimeout(this.searchTimeout);
 
-  applyGlobalFilter(): void {
-    console.log('Global filter applied:', this.globalFilterValue);
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchEmployees();
+    }, 500);
   }
 
   copyToClipboard(value: string): void {

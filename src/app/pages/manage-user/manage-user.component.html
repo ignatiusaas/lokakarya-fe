@@ -26,6 +26,7 @@
         [disabled]="isProcessing || isEditFormLoading"
       ></button>
     </div>
+
     <p-card>
       <p-table
         #dt
@@ -34,32 +35,47 @@
         [paginator]="true"
         [rows]="rowsPerPage"
         [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="[5, 10, 20]"
         [loading]="loading"
         (onLazyLoad)="fetchEmployees($event)"
         [resizableColumns]="true"
         responsiveLayout="scroll"
         [sortMode]="'single'"
       >
+        <ng-template pTemplate="caption">
+          <div class="table-filters">
+            <div class="order-actions">
+              <div class="order-dropdown">
+                <p-dropdown
+                  [options]="orderColumns"
+                  [(ngModel)]="selectedOrderColumn"
+                  placeholder="Select Column"
+                  optionLabel="label"
+                  optionValue="value"
+                  (onChange)="fetchEmployees()"
+                ></p-dropdown>
+              </div>
+              <button
+                pButton
+                icon="{{
+                  selectedOrderDirection === 'asc'
+                    ? 'pi pi-arrow-up'
+                    : 'pi pi-arrow-down'
+                }}"
+                class="p-button-secondary toggle-order-button"
+                (click)="toggleOrderDirection()"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="username">
-              Username <p-sortIcon field="username"></p-sortIcon>
-            </th>
-            <th pSortableColumn="full_name">
-              Full Name <p-sortIcon field="full_name"></p-sortIcon>
-            </th>
-            <th pSortableColumn="position">
-              Position <p-sortIcon field="position"></p-sortIcon>
-            </th>
-            <th pSortableColumn="position">
-              Status <p-sortIcon field="status"></p-sortIcon>
-            </th>
-            <th pSortableColumn="email_address">
-              Email Address <p-sortIcon field="email_address"></p-sortIcon>
-            </th>
-            <th pSortableColumn="division_name">
-              Division <p-sortIcon field="division_name"></p-sortIcon>
-            </th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Email Address</th>
+            <th>Division</th>
             <th>Actions</th>
           </tr>
         </ng-template>
