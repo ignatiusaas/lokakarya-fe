@@ -14,7 +14,7 @@
               type="text"
               placeholder="Search..."
               [(ngModel)]="globalFilterValue"
-              (input)="applyFiltersAndPagination()"
+              (input)="onSearch()"
             />
           </span>
         </div>
@@ -39,7 +39,7 @@
 
     <p-card>
       <p-table
-        [value]="filteredGroupedSkills"
+        [value]="groupedAttitudeSkills"
         responsiveLayout="scroll"
         [paginator]="true"
         [rows]="rowsPerPage"
@@ -57,7 +57,6 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-group>
-          <!-- Check if group.skills has any achievements -->
           <tr
             *ngIf="group.skills.length === 0"
             [ngClass]="{ 'disabled-row': group.enabled === false }"
