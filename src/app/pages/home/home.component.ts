@@ -40,6 +40,13 @@ export class HomeComponent {
   passwordMatches: boolean = false;
   currentRoles: any[] = this.extractCurrentRoles() || [];
 
+  isAttSkillFilled: boolean = false;
+  isDevPlanFilled: boolean = false;
+  isSuggestionFilled: boolean = false;
+  isTechSkillFilled: boolean = false;
+  isAchFilled: boolean = false;
+  isAssFilled: boolean = false;
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -51,6 +58,9 @@ export class HomeComponent {
   ngOnInit(): void {
     this.loadUserData();
     this.initializeForm();
+    if (this.currentRoles.includes('USER')) {
+      this.checkSubmission();
+    }
   }
 
   loadUserData(): void {
@@ -231,6 +241,50 @@ export class HomeComponent {
     } catch (error) {
       console.error('Error decoding JWT:', error);
       return [];
+    }
+  }
+
+  async checkSubmission(): Promise<void> {
+    console.log('Checking submission...');
+    const currentYear = new Date().getFullYear();
+    console.log('Current Year:', currentYear);
+    console.log('User ID:', this.userId);
+    const urls = [
+      `https://hiremeplease.freeddns.org/empattitudeskill/get/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/empachievementskill/get/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/empsuggestion/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/empdevplan/get/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.userId}/${currentYear}`,
+    ];
+
+    try {
+      const [
+        AttSkillResponse,
+        AchResponse,
+        SuggestionResponse,
+        DevPlanResponse,
+        TechSkillResponse,
+        AssResponse,
+      ] = await Promise.all(
+        urls.map((url) => this.http.get<any>(url).toPromise())
+      );
+
+      this.isAttSkillFilled = AttSkillResponse?.content.length > 0;
+      this.isAchFilled = AchResponse?.content.length > 0;
+      this.isSuggestionFilled = SuggestionResponse?.content !== null;
+      this.isDevPlanFilled = DevPlanResponse?.content.length > 0;
+      this.isTechSkillFilled = TechSkillResponse?.content.length > 0;
+      this.isAssFilled = AssResponse?.content !== null;
+
+      console.log('isAttSkillFilled:', this.isAttSkillFilled);
+      console.log('isAchFilled:', this.isAchFilled);
+      console.log('isSuggestionFilled:', this.isSuggestionFilled);
+      console.log('isDevPlanFilled:', this.isDevPlanFilled);
+      console.log('isTechSkillFilled:', this.isTechSkillFilled);
+      console.log('isAssFilled:', this.isAssFilled);
+    } catch (error) {
+      console.error('Error while checking submission:', error);
     }
   }
 }

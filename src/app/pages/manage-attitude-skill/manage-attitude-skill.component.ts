@@ -54,10 +54,8 @@ export class ManageAttitudeSkillComponent implements OnInit {
   groupedAttitudeSkills: any[] = [];
   groupOptions: any[] = [];
   currentPage: number = 1;
-  selectedOrderColumnGroup: string = 'group_name';
-  selectedOrderDirectionGroup: string = 'asc';
-  selectedOrderColumnAttitudeSkill: string = 'attitude_skill';
-  selectedOrderDirectionAttitudeSkill: string = 'asc';
+  selectedOrderColumn: string = 'group_name';
+  selectedOrderDirection: string = 'asc';
 
   orderColumnGroupOptions: any[] = [
     { label: 'Group Name', value: 'group_name' },
@@ -134,85 +132,57 @@ export class ManageAttitudeSkillComponent implements OnInit {
     console.log('Fetching Groups and Attitude Skills...');
     this.loading = true;
 
-    const groupUrl =
-      'https://hiremeplease.freeddns.org/groupattitudeskill/sorch';
-    const attitudeSkillUrl =
-      'https://hiremeplease.freeddns.org/attitudeskill/sorch';
+    const url = 'https://hiremeplease.freeddns.org/attitudeskill/sorch';
 
-    const paramGroup = {
+    const param = {
       keyword: this.globalFilterValue,
       page: 1,
       pageSize: 999,
-      column: this.selectedOrderColumnGroup,
-      order: this.selectedOrderDirectionGroup,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
     };
 
-    const paramAttitudeSkill = {
-      keyword: this.globalFilterValue,
-      page: 1,
-      pageSize: 999,
-      column: this.selectedOrderColumnAttitudeSkill,
-      order: this.selectedOrderDirectionAttitudeSkill,
-    };
-
-    const groupsRequest = this.http.get<any>(groupUrl, { params: paramGroup });
-    const attitudeSkillRequest = this.http.get<any>(attitudeSkillUrl, {
-      params: paramAttitudeSkill,
-    });
-
-    forkJoin([groupsRequest, attitudeSkillRequest])
+    this.loading = true;
+    this.http
+      .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: async ([groupsResponse, attSkillResponse]) => {
-          let groups = groupsResponse.content || [];
-          const attitudeSkills = attSkillResponse.content || [];
-          let groupedSkills: any[] = [];
+        next: (response) => {
+          console.log('Attitude Skills Fetched:', response);
+          this.allAttSkills = response.content || [];
+          this.totalRecords = response.total_data;
 
-          const groupIds = [
-            ...new Set(attitudeSkills.map((a: any) => a.group_id)),
-          ];
-          console.log('Group IDs to fetch:', groupIds);
-
-          const groupRequests = groupIds.map((groupId) =>
-            this.http
-              .get<any>(
-                `https://hiremeplease.freeddns.org/groupattitudeskill/${groupId}`
-              )
-              .toPromise()
+          // Combine the groups and skills
+          this.groupedAttitudeSkills = this.allAttSkills.reduce(
+            (groups: any[], skill: any) => {
+              const groupIndex = groups.findIndex(
+                (g) => g.group_id === skill.group_id
+              );
+              if (groupIndex === -1) {
+                // Add a new group with its first skill
+                groups.push({
+                  group_id: skill.group_id,
+                  group_name: skill.group_name,
+                  group_enabled: skill.group_enabled,
+                  percentage: skill.percentage,
+                  skills: [skill],
+                });
+              } else {
+                // Add the skill to the existing group
+                groups[groupIndex].skills.push(skill);
+              }
+              return groups;
+            },
+            []
           );
-
-          try {
-            const fetchedGroups = await Promise.all(groupRequests);
-            groups = fetchedGroups.map((res: any) => res.content || []);
-          } catch (error) {
-            console.error('Error fetching groups by attitude skills:', error);
-          }
-
-          groupedSkills = groups.map((group: any) => ({
-            ...group,
-            skills:
-              attitudeSkills.filter(
-                (skill: any) => skill.group_id === group.id
-              ) || [],
-          }));
-
-          console.log('Final Groups:', groups);
-          console.log('Achievements:', attitudeSkills);
-          console.log('Grouped Attitude Skills:', groupedSkills);
-
-          this.groupedAttitudeSkills = groupedSkills;
-
-          this.groupOptions = groups.map((group: any) => ({
-            label: group.group_name,
-            value: group.id,
-          }));
+          console.log('Grouped Attitude Skills:', this.groupedAttitudeSkills);
         },
         error: (error) => {
-          console.error('Error Fetching Data:', error);
+          console.error('Error Fetching Attitude Skills:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to fetch groups and attitude skills.',
+            detail: 'Failed to fetch attitude skills.',
           });
         },
       });
@@ -649,9 +619,9 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   toggleOrderDirection(): void {
-    this.selectedOrderDirectionGroup =
-      this.selectedOrderDirectionGroup === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirectionGroup);
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
 
     this.fetchData();
   }
