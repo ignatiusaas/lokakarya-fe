@@ -52,6 +52,14 @@ export class ManageAchievementComponent implements OnInit {
   filteredAchievements: any[] = [];
   allAchievements: any[] = [];
   groupOptions: any[] = [];
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'group_name';
+  selectedOrderDirection: string = 'asc';
+
+  orderColumnGroupOptions: any[] = [
+    { label: 'Group Name', value: 'group_name' },
+    { label: 'Weight', value: 'percentage' },
+  ];
 
   constructor(
     private http: HttpClient,
@@ -121,42 +129,56 @@ export class ManageAchievementComponent implements OnInit {
     console.log('Fetching Groups and Achievements...');
     this.loading = true;
 
-    const groupsRequest = this.http.get<any>(
-      'https://hiremeplease.freeddns.org/groupachievement/all'
-    );
-    const attAchievementsRequest = this.http.get<any>(
-      'https://hiremeplease.freeddns.org/achievement/all'
-    );
+    const url = 'https://hiremeplease.freeddns.org/achievement/sorch';
 
-    forkJoin([groupsRequest, attAchievementsRequest])
+    const param = {
+      keyword: this.globalFilterValue,
+      page: 1,
+      pageSize: 999,
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+    };
+
+    this.loading = true;
+    this.http
+      .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: ([groupsResponse, attAchievementsResponse]) => {
-          const groups = groupsResponse.content || [];
-          const attAchievements = attAchievementsResponse.content || [];
+        next: (response) => {
+          console.log('Attitude Skills Fetched:', response);
+          this.allAchievements = response.content || [];
+          this.totalRecords = response.total_data;
 
-          this.groupedAchievements = groups.map((group: any) => ({
-            ...group,
-            skills:
-              attAchievements.filter(
-                (skill: any) => skill.group_id === group.id
-              ) || [],
-          }));
-          this.allAchievements = attAchievements;
-
-          this.groupOptions = groups.map((group: any) => ({
-            label: group.group_name,
-            value: group.id,
-          }));
-
-          this.applyFiltersAndPagination();
+          // Combine the groups and skills
+          this.groupedAchievements = this.allAchievements.reduce(
+            (groups: any[], skill: any) => {
+              const groupIndex = groups.findIndex(
+                (g) => g.group_id === skill.group_id
+              );
+              if (groupIndex === -1) {
+                groups.push({
+                  group_id: skill.group_id,
+                  group_name: skill.group_name,
+                  group_enabled: skill.group_enabled,
+                  percentage: skill.percentage,
+                  skills: [skill],
+                });
+              } else {
+                // Add the skill to the existing group
+                groups[groupIndex].skills.push(skill);
+              }
+              return groups;
+            },
+            []
+          );
+          console.log('Grouped Achievements:', this.groupedAchievements);
         },
         error: (error) => {
-          console.error('Error Fetching Data:', error);
+          console.error('Error Fetching Attitude Skills:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to fetch groups and achievements.',
+            detail: 'Failed to fetch attitude skills.',
           });
         },
       });
@@ -585,9 +607,25 @@ export class ManageAchievementComponent implements OnInit {
     this.saveGroupAchievement();
   }
 
+  private searchTimeout: any;
+
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchData();
+    }, 500);
+  }
+
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchData();
   }
 
   async confirmDuplicateAchievement(achievement: string): Promise<boolean> {

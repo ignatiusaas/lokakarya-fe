@@ -14,7 +14,7 @@
               type="text"
               placeholder="Search..."
               [(ngModel)]="globalFilterValue"
-              (input)="applyFiltersAndPagination()"
+              (input)="onSearch()"
             />
           </span>
         </div>
@@ -39,7 +39,7 @@
 
     <p-card>
       <p-table
-        [value]="filteredGroupedAchievements"
+        [value]="groupedAchievements"
         responsiveLayout="scroll"
         [paginator]="true"
         [rows]="rowsPerPage"
