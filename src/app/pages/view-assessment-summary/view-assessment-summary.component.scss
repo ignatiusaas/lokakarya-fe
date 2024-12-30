@@ -281,3 +281,21 @@ button:hover:not(:disabled) {
     background-color: #f1f1f1;
   }
 }
+
+.table-filters {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+
+  .order-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

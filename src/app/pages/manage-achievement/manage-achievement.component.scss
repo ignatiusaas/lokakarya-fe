@@ -155,3 +155,15 @@ td button:last-child {
 .required {
   color: red;
 }
+
+.table-filters {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 1rem;
+
+  .order-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

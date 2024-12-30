@@ -28,7 +28,7 @@
           <p-dropdown
             id="divisionSelect"
             [options]="divisions"
-            [(ngModel)]="selectedDivisionId"
+            [(ngModel)]="selectedDivisionIdFilter"
             optionLabel="division_name"
             optionValue="id"
             placeholder="Select division"
@@ -56,7 +56,7 @@
     <p-card>
       <p-table
         #dt
-        [value]="summaries"
+        [value]="allSummaries"
         [lazy]="true"
         [paginator]="true"
         [rows]="rowsPerPage"
@@ -66,34 +66,61 @@
         [resizableColumns]="true"
         responsiveLayout="scroll"
         sortMode="single"
-      >
+        ><ng-template pTemplate="caption">
+          <div class="table-filters">
+            <div class="order-actions">
+              <div class="order-dropdown">
+                <p-dropdown
+                  [options]="orderColumns"
+                  [(ngModel)]="selectedOrderColumn"
+                  placeholder="Select Column"
+                  optionLabel="label"
+                  optionValue="value"
+                  (onChange)="fetchAssessmentSummaries()"
+                ></p-dropdown>
+              </div>
+              <button
+                pButton
+                icon="{{
+                  selectedOrderDirection === 'asc'
+                    ? 'pi pi-arrow-up'
+                    : 'pi pi-arrow-down'
+                }}"
+                class="p-button-secondary toggle-order-button"
+                (click)="toggleOrderDirection()"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="full_name">
-              Name <p-sortIcon field="full_name"></p-sortIcon>
-            </th>
+            <th>Name</th>
             <th>Division</th>
+            <th>Score</th>
             <th>Status</th>
-            <th pSortableColumn="score">
-              Score <p-sortIcon field="score"></p-sortIcon>
-            </th>
-            <th class="actions-column">Actions</th>
+            <th>Approval Date</th>
+            <th>Approver</th>
+            <th>Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-summary>
           <tr>
             <td>{{ summary.full_name }}</td>
             <td>{{ summary.division_name }}</td>
-            <td>{{ summary.status == 1 ? "Permanent" : "Contract" }}</td>
             <td>{{ summary.score }}</td>
-            <td class="actions-cell">
+            <td>{{ summary.status == 1 ? "Pending" : "Accepted" }}</td>
+            <td>{{ summary.approved_at ?? "Pending" }}</td>
+            <td>{{ summary.approver_name ?? "Pending" }}</td>
+            <td>
               <button
                 pButton
                 [icon]="
                   isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-external-link'
                 "
                 class="p-button-rounded"
-                (click)="fetchViewAssessmentSummary(summary.user_id)"
+                (click)="
+                  fetchViewAssessmentSummary(summary.user_id, summary.id)
+                "
                 [disabled]="isLoading"
               ></button>
             </td>
@@ -121,8 +148,8 @@
   >
     <p><strong>Division:</strong> {{ selectedDivision }}</p>
     <p><strong>Position:</strong> {{ selectedPosition }}</p>
-    <p *ngIf="selectedStatus === 1"><strong>Status:</strong> Permanent</p>
-    <p *ngIf="selectedStatus === 2"><strong>Status:</strong> Contract</p>
+    <p *ngIf="selectedStatus === 1"><strong>Status:</strong> Pending</p>
+    <p *ngIf="selectedStatus === 2"><strong>Status:</strong> Approved</p>
 
     <h4>Achievements</h4>
     <div class="table-container">
@@ -265,6 +292,19 @@
           </tr>
         </ng-template>
       </table>
+    </div>
+    <div
+      *ngIf="currentRoles.includes('SVP') && selectedStatus === 1"
+      class="dialog-footer"
+    >
+      <button
+        pButton
+        label="Approve Assessment"
+        class="p-button-success"
+        icon="pi pi-check"
+        (click)="approveAssessment()"
+        [disabled]="isLoading"
+      ></button>
     </div>
   </p-dialog>
 </div>

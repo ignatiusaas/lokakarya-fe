@@ -57,7 +57,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
   selectedOrderColumn: string = 'group_name';
   selectedOrderDirection: string = 'asc';
 
-  orderColumnGroupOptions: any[] = [
+  orderColumns: any[] = [
     { label: 'Group Name', value: 'group_name' },
     { label: 'Weight', value: 'percentage' },
   ];

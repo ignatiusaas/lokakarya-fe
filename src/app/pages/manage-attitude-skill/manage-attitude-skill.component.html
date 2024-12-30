@@ -47,6 +47,32 @@
         [loading]="loading"
         [sortMode]="'single'"
       >
+        <ng-template pTemplate="caption">
+          <div class="table-filters">
+            <div class="order-actions">
+              <div class="order-dropdown">
+                <p-dropdown
+                  [options]="orderColumns"
+                  [(ngModel)]="selectedOrderColumn"
+                  placeholder="Select Column"
+                  optionLabel="label"
+                  optionValue="value"
+                  (onChange)="fetchData()"
+                ></p-dropdown>
+              </div>
+              <button
+                pButton
+                icon="{{
+                  selectedOrderDirection === 'asc'
+                    ? 'pi pi-arrow-up'
+                    : 'pi pi-arrow-down'
+                }}"
+                class="p-button-secondary toggle-order-button"
+                (click)="toggleOrderDirection()"
+              ></button>
+            </div>
+          </div>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
             <th>Group Name</th>

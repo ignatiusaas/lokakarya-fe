@@ -26,6 +26,7 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
+import { app } from '../../../../server';
 
 @Component({
   selector: 'app-view-assessment-summary',
@@ -75,6 +76,8 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   totalAttitudeScore: number = 0;
   selectedDivision: string = '';
   selectedDivisionId: string = '';
+  selectedDivisionIdFilter: string = '';
+  selectedDivisionFilter: string = '';
   selectedPosition: string = '';
   isLoading: boolean = true;
   empUrl: string = '';
@@ -85,11 +88,23 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   rowsPerPage: number = 5;
   globalFilterValue: string = '';
   fetchAllUrl: string = '';
+  currentPage: number = 1;
+  selectedOrderColumn: string = 'au.full_name';
+  selectedOrderDirection: string = 'asc';
+  selectedAssessmentSummaryId: string = '';
+
+  orderColumns: { label: string; value: string }[] = [
+    { label: 'Full Name', value: 'au.full_name' },
+    { label: 'Division Name', value: 'division_name' },
+    { label: 'Score', value: 'score' },
+    { label: 'Approval Status', value: 'status' },
+  ];
 
   constructor(
     private http: HttpClient,
     private messageService: MessageService,
-    private primengConfig: PrimeNGConfig
+    private primengConfig: PrimeNGConfig,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -151,11 +166,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     }
   }
   fetchSelectedUserDetails(): Promise<void> {
-    // if (!this.selectedUserId || this.selectedUserId === '') {
-    //   console.warn('No user selected.');
-    //   this.selectedUserId = this.currentUserId;
-    // }
-
     const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
@@ -174,9 +184,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
             this.selectedPosition = user.position;
             console.log('Fetched User Position:', this.selectedPosition);
-
-            this.selectedStatus = user.employee_status;
-            console.log('Fetched User Status:', this.selectedStatus);
           } else {
             console.warn('User full name not found in response.');
             this.selectedName = '';
@@ -318,11 +325,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
   fetchSuggestion(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // if (!this.selectedUserId) {
-      //   console.warn('No user selected.');
-      //   this.selectedUserId = this.currentUserId;
-      // }
-
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
       console.log(
@@ -365,39 +367,41 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
     this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-    if (!this.allSummaries.length || this.allSummaries.length > 0) {
-      this.isLoading = true;
+    const url = 'https://hiremeplease.freeddns.org/assessmentsummary/sorch';
 
-      if (this.selectedDivisionId) {
-        this.fetchAllUrl = `https://hiremeplease.freeddns.org/assessmentsummary/divyear/${this.selectedDivisionId}/${this.selectedYear}`;
-        console.log('Sending Request to URL:', this.fetchAllUrl);
-      } else {
-        this.fetchAllUrl = `https://hiremeplease.freeddns.org/assessmentsummary/year/${this.selectedYear}`;
-        console.log('Sending Request to URL:', this.fetchAllUrl);
-      }
+    const param = {
+      ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      assessmentYear: this.selectedYear,
+      ...(this.selectedDivisionIdFilter
+        ? { divisionId: this.selectedDivisionIdFilter }
+        : {}),
+    };
 
-      this.http
-        .get<any>(this.fetchAllUrl)
-        .pipe(finalize(() => (this.isLoading = false)))
-        .subscribe({
-          next: (response) => {
-            this.allSummaries = response.content || [];
-            this.totalRecords = this.allSummaries.length;
+    console.log('Sending Request to URL:', url, param);
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Assessment Summaries:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch assessment summaries.',
-            });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          this.allSummaries = response.content || [];
+          this.totalRecords = response.total_data;
+          console.log('Fetched Assessment Summaries:', this.allSummaries);
+          console.log('Response:', response);
+        },
+        error: (error) => {
+          console.error('Error Fetching Assessment Summaries:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch assessment summaries.',
+          });
+        },
+      });
   }
 
   resetViewAssessmentSummary(): void {
@@ -408,6 +412,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     this.totalAttitudePercentage = 0;
     this.totalAchievementScore = 0;
     this.totalAttitudeScore = 0;
+    this.selectedStatus = 0;
   }
 
   adjustPercentages(): void {
@@ -487,19 +492,25 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     return this.totalAchievementScore + this.totalAttitudeScore;
   }
 
-  async fetchViewAssessmentSummary(userId: string): Promise<void> {
+  async fetchViewAssessmentSummary(
+    userId: string,
+    summaryId: string
+  ): Promise<void> {
     console.log('Fetching summaries for user: ', userId);
     this.displayAssessmentSummaryDialog = true;
     this.resetViewAssessmentSummary();
     try {
       this.selectedUserId = userId;
+      this.selectedAssessmentSummaryId = summaryId;
       await Promise.all([
         this.fetchSelectedUserDetails(),
         this.fetchAchievementSummary(),
         this.fetchAttitudeSkillSummary(),
         this.fetchSuggestion(),
+        this.checkAssessmentStatus(),
       ]);
       this.adjustPercentages();
+      console.log('Assessment STatus:', this.selectedStatus);
     } catch (error) {
       console.error('Error fetching summaries:', error);
 
@@ -511,58 +522,101 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     }
   }
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    let filteredSummaries = this.globalFilterValue
-      ? this.allSummaries.filter((summary) =>
-          Object.values(summary).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allSummaries];
-
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredSummaries.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
-      });
-    }
-
-    this.summaries = filteredSummaries.slice(startIndex, endIndex);
-
-    this.totalRecords = filteredSummaries.length;
-  }
-
-  paginateSummaries(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    this.summaries = this.allSummaries.slice(startIndex, endIndex);
-  }
+  private searchTimeout: any;
 
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
+
+    clearTimeout(this.searchTimeout);
+
+    this.searchTimeout = setTimeout(() => {
+      console.log('Searching with:', this.globalFilterValue);
+      this.fetchAssessmentSummaries();
+    }, 500);
   }
 
-  filterGlobal(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    const table = document.querySelector('p-table') as any;
-    table.filterGlobal(filterValue, 'contains');
+  toggleOrderDirection(): void {
+    this.selectedOrderDirection =
+      this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
+    console.log('Order direction toggled:', this.selectedOrderDirection);
+
+    this.fetchAssessmentSummaries();
   }
 
-  applyGlobalFilter(): void {
-    console.log('Global filter applied:', this.globalFilterValue);
+  checkAssessmentStatus(): Promise<any> {
+    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+
+    return new Promise((resolve, reject) => {
+      this.http.get<any>(url).subscribe({
+        next: (response) => {
+          this.selectedStatus = response.content?.status;
+          console.log('Assessment status:', response.content?.status);
+          resolve(response.content?.status || null);
+        },
+        error: (error) => {
+          console.error('Error checking assessment status:', error);
+          reject(null);
+        },
+      });
+    });
+  }
+
+  approveAssessment(): void {
+    this.isLoading = true;
+    this.confirmationService.confirm({
+      message: 'Are you sure? Once submitted, changes cannot be undone.',
+      header: 'Confirm Submission',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        console.log('Submitting Assessment Summary...');
+
+        const url =
+          'https://hiremeplease.freeddns.org/assessmentsummary/update';
+
+        const payload = {
+          id: this.selectedAssessmentSummaryId,
+          user_id: this.selectedUserId,
+          year: this.selectedYear,
+          score: this.totalFinalScore,
+          status: 2,
+          approved_by: this.currentUserId,
+          updated_by: this.currentUserId,
+          approved_at: new Date().toISOString(),
+        };
+
+        console.log('Payload:', payload);
+
+        this.http
+          .put(url, payload)
+          .pipe(finalize(() => (this.isLoading = false)))
+          .subscribe({
+            next: (response) => {
+              console.log('Assessment Summary submitted successfully.');
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Assessment Summary has been approved successfully.',
+              });
+              this.fetchAssessmentSummaries();
+              this.displayAssessmentSummaryDialog = false;
+              this.isLoading = false;
+            },
+            error: (error) => {
+              console.error('Error submitting Assessment Summary:', error);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to approve Assessment Summary.',
+              });
+              this.isLoading = false;
+              this.displayAssessmentSummaryDialog = false;
+            },
+          });
+      },
+      reject: () => {
+        console.log('Submission canceled.');
+        this.isLoading = false;
+      },
+    });
   }
 }
