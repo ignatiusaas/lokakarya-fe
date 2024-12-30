@@ -109,7 +109,13 @@
             <td>{{ summary.division_name }}</td>
             <td>{{ summary.score }}</td>
             <td>{{ summary.status == 1 ? "Pending" : "Accepted" }}</td>
-            <td>{{ summary.approved_at ?? "Pending" }}</td>
+            <td>
+              {{
+                summary.approved_at
+                  ? (summary.approved_at | date : "dd/MM/yyyy")
+                  : "Pending"
+              }}
+            </td>
             <td>{{ summary.approver_name ?? "Pending" }}</td>
             <td>
               <button

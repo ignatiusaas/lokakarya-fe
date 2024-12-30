@@ -23,10 +23,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { finalize } from 'rxjs/operators';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
 import { ConfirmationService } from 'primeng/api';
-import { app } from '../../../../server';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-view-assessment-summary',
@@ -52,7 +50,7 @@ import { app } from '../../../../server';
   ],
   templateUrl: './view-assessment-summary.component.html',
   styleUrls: ['./view-assessment-summary.component.scss'],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService, MessageService, DecimalPipe],
 })
 export class ViewAssessmentSummaryComponent implements OnInit {
   maxDate: Date = new Date();
@@ -104,7 +102,8 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     private http: HttpClient,
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private decimal: DecimalPipe
   ) {}
 
   ngOnInit(): void {
@@ -573,11 +572,16 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         const url =
           'https://hiremeplease.freeddns.org/assessmentsummary/update';
 
+        const finalScore = this.decimal.transform(
+          this.totalFinalScore,
+          '1.2-2'
+        );
+
         const payload = {
           id: this.selectedAssessmentSummaryId,
           user_id: this.selectedUserId,
           year: this.selectedYear,
-          score: this.totalFinalScore,
+          score: finalScore,
           status: 2,
           approved_by: this.currentUserId,
           updated_by: this.currentUserId,
