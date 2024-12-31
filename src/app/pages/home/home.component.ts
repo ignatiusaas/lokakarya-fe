@@ -64,13 +64,6 @@ export class HomeComponent {
     if (this.currentRoles.includes('USER')) {
       this.checkSubmission();
     }
-    this.showIncomplete =
-      !this.isAttSkillFilled ||
-      !this.isAchFilled ||
-      !this.isSuggestionFilled ||
-      !this.isDevPlanFilled ||
-      !this.isTechSkillFilled ||
-      !this.isAssFilled;
   }
 
   navigateTo(path: string, event?: MouseEvent): void {
@@ -304,6 +297,16 @@ export class HomeComponent {
       console.log('isDevPlanFilled:', this.isDevPlanFilled);
       console.log('isTechSkillFilled:', this.isTechSkillFilled);
       console.log('isAssFilled:', this.isAssFilled);
+
+      this.showIncomplete =
+        !this.isAttSkillFilled ||
+        !this.isAchFilled ||
+        !this.isSuggestionFilled ||
+        !this.isDevPlanFilled ||
+        !this.isTechSkillFilled ||
+        !this.isAssFilled;
+
+      console.log('showIncomplete:', this.showIncomplete);
     } catch (error) {
       console.error('Error while checking submission:', error);
     }

@@ -49,7 +49,7 @@
               <th>Score</th>
               <th
                 *ngIf="
-                  !isExist &&
+                  !isLocked &&
                   selectedUserId === currentUserId &&
                   currentRoles.includes('USER')
                 "
@@ -70,7 +70,7 @@
                 <td [attr.rowspan]="group.skillEntrys.length + 1">
                   {{ group.technical_skill_name }}
                 </td>
-                <td *ngIf="!isExist" colspan="3">
+                <td *ngIf="!isLocked" colspan="3">
                   <button
                     *ngIf="
                       currentRoles.includes('USER') &&
@@ -92,7 +92,7 @@
                   </p>
                 </td>
                 <td
-                  *ngIf="isExist && group.skillEntrys.length === 0"
+                  *ngIf="isLocked && group.skillEntrys.length === 0"
                   colspan="3"
                 >
                   <p style="text-align: center; font-style: italic">No Skill</p>
@@ -115,7 +115,7 @@
                     [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
-                      isExist
+                      isLocked
                     "
                   />
                 </td>
@@ -132,13 +132,13 @@
                     [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
-                      isExist
+                      isLocked
                     "
                   ></p-dropdown>
                 </td>
                 <td
                   *ngIf="
-                    !isExist &&
+                    !isLocked &&
                     selectedUserId === currentUserId &&
                     currentRoles.includes('USER')
                   "
@@ -159,7 +159,7 @@
     <div class="dialog-footer">
       <button
         *ngIf="
-          !isExist &&
+          !isLocked &&
           selectedUserId === currentUserId &&
           currentRoles.includes('USER')
         "

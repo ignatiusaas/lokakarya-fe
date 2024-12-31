@@ -76,6 +76,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   groupedEmpTechnicalSkills: any[] = []; // For grouped data
   assessmentYear: Date | null = null;
   isExist: boolean = false;
+  isLocked: boolean = false;
 
   scoreOptions: { label: string; value: number }[] = [
     { label: 'Starting', value: 10 },
@@ -304,6 +305,17 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
             // Group the technical skills after fetching data
             this.groupAllTechnicalSkills();
+
+            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+            this.http.get<any>(summaryUrl).subscribe({
+              next: (summaryResponse) => {
+                this.isLocked = summaryResponse?.content?.status === 2;
+                console.log('Assessment summary locked status:', this.isLocked);
+              },
+              error: (err) => {
+                console.error('Error fetching assessment summary:', err);
+              },
+            });
 
             resolve();
           },

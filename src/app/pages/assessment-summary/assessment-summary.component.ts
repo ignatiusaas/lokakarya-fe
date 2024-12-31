@@ -83,6 +83,7 @@ export class AssessmentSummaryComponent implements OnInit {
   isLoading: boolean = true;
   empUrl: string = '';
   isExist: boolean = false;
+  isLocked: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -240,9 +241,6 @@ export class AssessmentSummaryComponent implements OnInit {
 
             this.selectedPosition = user.position;
             console.log('Fetched User Position:', this.selectedPosition);
-
-            this.selectedStatus = user.employee_status;
-            console.log('Fetched User Status:', this.selectedStatus);
           } else {
             console.warn('User full name not found in response.');
             this.selectedName = '';
@@ -280,6 +278,25 @@ export class AssessmentSummaryComponent implements OnInit {
       console.error('Error decoding JWT:', error);
       return [];
     }
+  }
+
+  checkAssessmentStatus(): Promise<any> {
+    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+
+    return new Promise((resolve, reject) => {
+      this.http.get<any>(url).subscribe({
+        next: (response) => {
+          this.selectedStatus = response.content?.status;
+          this.isLocked = response.content?.status === 2;
+          console.log('Assessment status:', response.content?.status);
+          resolve(response.content?.status || null);
+        },
+        error: (error) => {
+          console.error('Error checking assessment status:', error);
+          reject(null);
+        },
+      });
+    });
   }
 
   fetchAchievementSummary(): Promise<void> {
@@ -493,6 +510,7 @@ export class AssessmentSummaryComponent implements OnInit {
         this.fetchAchievementSummary(),
         this.fetchAttitudeSkillSummary(),
         this.fetchSuggestion(),
+        this.checkAssessmentStatus(),
       ]);
       this.checkAssessmentSummary();
       this.adjustPercentages();
@@ -564,7 +582,7 @@ export class AssessmentSummaryComponent implements OnInit {
               user_id: this.selectedUserId,
               year: this.selectedYear,
               score: this.totalFinalScore,
-              status: this.selectedStatus,
+              status: 1,
               updated_by: this.currentUserId,
             };
 

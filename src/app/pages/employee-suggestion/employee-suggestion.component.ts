@@ -192,9 +192,9 @@ export class EmployeeSuggestionComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.allEmpSuggestions = response.content || [];
+
             this.totalRecords = this.allEmpSuggestions.length;
 
-            // Apply filtering, sorting, and pagination
             this.applyFiltersAndPagination(event);
           },
           error: (error) => {

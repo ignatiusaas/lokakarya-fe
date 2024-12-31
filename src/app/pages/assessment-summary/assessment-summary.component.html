@@ -67,8 +67,12 @@
   <form (ngSubmit)="submitAssessmentSummary()">
     <p><strong>Division:</strong> {{ selectedDivision }}</p>
     <p><strong>Position:</strong> {{ selectedPosition }}</p>
-    <p *ngIf="selectedStatus === 1"><strong>Status:</strong> Permanent</p>
-    <p *ngIf="selectedStatus === 2"><strong>Status:</strong> Contract</p>
+    <p *ngIf="selectedStatus === 1" style="color: red">
+      <strong style="color: black">Status:</strong> Pending
+    </p>
+    <p *ngIf="selectedStatus === 2" style="color: green">
+      <strong style="color: black">Status:</strong> Approved
+    </p>
 
     <!-- Achievements Table -->
     <h4>Achievements</h4>
@@ -234,7 +238,7 @@
     </span>
     <button
       *ngIf="
-        !isExist &&
+        !isLocked &&
         selectedUserId === currentUserId &&
         currentRoles.includes('USER')
       "

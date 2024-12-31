@@ -290,11 +290,6 @@ export class EmployeeDevPlanComponent implements OnInit {
               },
               error: (err) => {
                 console.error('Error fetching assessment summary:', err);
-                this.messageService.add({
-                  severity: 'error',
-                  summary: 'Error',
-                  detail: 'Failed to fetch assessment summary.',
-                });
               },
             });
 
