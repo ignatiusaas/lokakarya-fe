@@ -108,7 +108,8 @@
             <td>{{ summary.full_name }}</td>
             <td>{{ summary.division_name }}</td>
             <td>{{ summary.score }}</td>
-            <td>{{ summary.status == 1 ? "Pending" : "Accepted" }}</td>
+            <td *ngIf="summary.status == 1" style="color: red">Pending</td>
+            <td *ngIf="summary.status == 2" style="color: green">Accepted</td>
             <td>
               {{
                 summary.approved_at
@@ -134,7 +135,7 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="5" style="text-align: center; font-style: italic">
+            <td colspan="7" style="text-align: center; font-style: italic">
               No data available.
             </td>
           </tr>

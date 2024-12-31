@@ -233,3 +233,64 @@ h1 {
     text-align: center;
   }
 }
+
+/* notification-dropdown.component.scss (or add to your existing SCSS) */
+.notification-dropdown {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 2rem;
+  background: #fff5eb;
+  border-left: 8px solid #ffab40;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+
+  .dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    cursor: pointer;
+
+    h2.card-title {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #e65100;
+    }
+
+    .dropdown-caret {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid #e65100;
+      transition: transform 0.3s ease;
+      &.open {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .dropdown-content {
+    padding: 0 1rem 1rem;
+    .pending-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: #bf360c;
+        font-weight: 600;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: rgba(255, 171, 64, 0.2);
+        }
+      }
+    }
+  }
+}

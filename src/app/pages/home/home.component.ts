@@ -47,12 +47,15 @@ export class HomeComponent {
   isAchFilled: boolean = false;
   isAssFilled: boolean = false;
 
+  showIncomplete: boolean = false;
+  showDropdown: boolean = false;
+
   constructor(
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    public messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +64,24 @@ export class HomeComponent {
     if (this.currentRoles.includes('USER')) {
       this.checkSubmission();
     }
+    this.showIncomplete =
+      !this.isAttSkillFilled ||
+      !this.isAchFilled ||
+      !this.isSuggestionFilled ||
+      !this.isDevPlanFilled ||
+      !this.isTechSkillFilled ||
+      !this.isAssFilled;
+  }
+
+  navigateTo(path: string, event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.router.navigate([`/${path}`]);
+  }
+
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
   }
 
   loadUserData(): void {

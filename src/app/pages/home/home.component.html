@@ -16,6 +16,62 @@
   </div>
 
   <div *ngIf="!loading && !errorMessage">
+    <div
+      class="notification-dropdown"
+      *ngIf="showIncomplete && currentRoles.includes('USER')"
+    >
+      <div class="dropdown-header" (click)="toggleDropdown()">
+        <h2 class="card-title">Pending Submissions</h2>
+        <span class="dropdown-caret" [class.open]="showDropdown"></span>
+      </div>
+
+      <div class="dropdown-content" *ngIf="showDropdown">
+        <ul class="pending-list">
+          <li
+            *ngIf="!isAttSkillFilled"
+            (click)="navigateTo('employee-attitude-skill', $event)"
+          >
+            Attitude Skill hasn't been submitted
+          </li>
+          <li
+            *ngIf="!isAchFilled"
+            (click)="
+              messageService.add({
+                severity: 'info',
+                summary: 'Info',
+                detail: 'Please contact HR for clarifications.',
+              })
+            "
+          >
+            Achievement hasn't been submitted
+          </li>
+          <li
+            *ngIf="!isSuggestionFilled"
+            (click)="navigateTo('employee-suggestion', $event)"
+          >
+            Suggestion hasn't been submitted
+          </li>
+          <li
+            *ngIf="!isDevPlanFilled"
+            (click)="navigateTo('employee-dev-plan', $event)"
+          >
+            Development Plan hasn't been submitted
+          </li>
+          <li
+            *ngIf="!isTechSkillFilled"
+            (click)="navigateTo('employee-technical-skill', $event)"
+          >
+            Technical Skill hasn't been submitted
+          </li>
+          <li
+            *ngIf="!isAssFilled"
+            (click)="navigateTo('assessment-summary', $event)"
+          >
+            Assessment Summary hasn't been submitted
+          </li>
+        </ul>
+      </div>
+    </div>
     <div class="profile-card">
       <h2 class="card-title">Profile</h2>
       <p><strong>Name:</strong> {{ userDetails?.full_name }}</p>
