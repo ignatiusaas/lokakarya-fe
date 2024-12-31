@@ -85,6 +85,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
   empUrl: string = '';
   isExist: boolean = false;
+  isLocked: boolean = false;
 
   groupedEmpAchievementSkills: any[] = [];
 
@@ -309,13 +310,12 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       `Fetching ${this.selectedYear} EmpAchievementSkills for User ID: ${this.selectedUserId}`
     );
 
-    this.loading = true; // Show the spinner
+    this.loading = true;
 
     const skillUrl = `https://hiremeplease.freeddns.org/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
-
     this.http
       .get<any>(skillUrl)
-      .pipe(finalize(() => (this.loading = false))) // Hide spinner after loading
+      .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
           if (response.content.length > 0) {
@@ -326,14 +326,25 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           console.log('Fetched EmpAchievementSkills:', response.content);
           console.log('isExist:', this.isExist);
           this.empAchievementSkills = response.content || [];
-          console.log(
-            'Fetched EmpAchievementSkills:',
-            this.empAchievementSkills
-          );
-
-          // Prepare the data structure for the view
           this.groupAllAchievements();
+
+          const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+          this.http.get<any>(summaryUrl).subscribe({
+            next: (summaryResponse) => {
+              this.isLocked = summaryResponse?.content?.status === 2;
+              console.log('Assessment summary locked status:', this.isLocked);
+            },
+            error: (err) => {
+              console.error('Error fetching assessment summary:', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch assessment summary.',
+              });
+            },
+          });
         },
+
         error: (error) => {
           console.error('Error Fetching Employee AchievementSkills:', error);
           this.messageService.add({

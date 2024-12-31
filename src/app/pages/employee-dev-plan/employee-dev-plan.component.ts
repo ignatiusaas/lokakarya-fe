@@ -75,6 +75,7 @@ export class EmployeeDevPlanComponent implements OnInit {
   groupedEmpDevPlans: any[] = []; // For grouped data
   assessmentYear: Date | null = null;
   isExist: boolean = false;
+  isLocked: boolean = false;
 
   devPlansMap: Map<string, string> = new Map();
 
@@ -279,8 +280,23 @@ export class EmployeeDevPlanComponent implements OnInit {
             this.empDevPlans = response.content || [];
             console.log('Fetched EmpDevPlans:', this.empDevPlans);
 
-            // Group the dev plans after fetching data
             this.groupAllDevPlans();
+
+            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+            this.http.get<any>(summaryUrl).subscribe({
+              next: (summaryResponse) => {
+                this.isLocked = summaryResponse?.content?.status === 2;
+                console.log('Assessment summary locked status:', this.isLocked);
+              },
+              error: (err) => {
+                console.error('Error fetching assessment summary:', err);
+                this.messageService.add({
+                  severity: 'error',
+                  summary: 'Error',
+                  detail: 'Failed to fetch assessment summary.',
+                });
+              },
+            });
 
             resolve();
           },
@@ -300,7 +316,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   private groupAllDevPlans(includeAll: boolean = false): void {
     const grouped = new Map<string, any>();
 
-    // Initialize groups with all dev plans
     this.devPlans.forEach((devPlan) => {
       grouped.set(devPlan.id, {
         dev_plan_id: devPlan.id,

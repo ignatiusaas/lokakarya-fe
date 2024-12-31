@@ -50,7 +50,7 @@
               <th>Plan</th>
               <th
                 *ngIf="
-                  !isExist &&
+                  !isLocked &&
                   selectedUserId === currentUserId &&
                   currentRoles.includes('USER')
                 "
@@ -70,7 +70,7 @@
                 <td [attr.rowspan]="group.descriptions.length + 1">
                   {{ group.dev_plan_name }}
                 </td>
-                <td *ngIf="!isExist" colspan="3">
+                <td *ngIf="!isLocked" colspan="3">
                   <button
                     *ngIf="
                       currentRoles.includes('USER') &&
@@ -92,7 +92,7 @@
                   </p>
                 </td>
                 <td
-                  *ngIf="isExist && group.descriptions.length === 0"
+                  *ngIf="isLocked && group.descriptions.length === 0"
                   colspan="3"
                 >
                   <p style="text-align: center; font-style: italic">No Plan</p>
@@ -115,11 +115,11 @@
                     [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
-                      isExist
+                      isLocked
                     "
                   />
                 </td>
-                <td *ngIf="!isExist">
+                <td *ngIf="!isLocked">
                   <button
                     type="button"
                     (click)="removePlanEntry(group, i)"
@@ -138,7 +138,7 @@
         *ngIf="
           currentRoles.includes('USER') &&
           selectedUserId === currentUserId &&
-          !isExist
+          !isLocked
         "
         pButton
         type="submit"
