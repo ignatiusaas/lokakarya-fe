@@ -20,18 +20,19 @@
         </div>
         <button
           pButton
-          label="Create Achievement"
-          icon="pi pi-plus"
-          class="create-button"
-          (click)="openCreateAchievementDialog()"
-          [disabled]="isProcessing || isEditFormLoading"
-        ></button>
-        <button
-          pButton
           label="Create Group Achievement"
           icon="pi pi-plus"
           class="create-button"
           (click)="openCreateGroupDialog()"
+          [disabled]="isProcessing || isEditFormLoading"
+          style="background-color: #cd7313"
+        ></button>
+        <button
+          pButton
+          label="Create Achievement"
+          icon="pi pi-plus"
+          class="create-button"
+          (click)="openCreateAchievementDialog()"
           [disabled]="isProcessing || isEditFormLoading"
         ></button>
       </div>
