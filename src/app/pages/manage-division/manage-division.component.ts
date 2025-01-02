@@ -63,7 +63,6 @@ export class ManageDivisionComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    this.fetchDivisions();
     console.log('Component Initialized');
   }
 

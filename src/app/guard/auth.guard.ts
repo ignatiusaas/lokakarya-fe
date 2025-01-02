@@ -2,7 +2,6 @@ import { ActivatedRouteSnapshot, CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../services/auth.service';
 
 export const authGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
@@ -10,55 +9,70 @@ export const authGuard: CanActivateFn = async (
 ) => {
   const router = inject(Router);
   const http = inject(HttpClient);
-  const authService = inject(AuthService);
 
-  // Jika SSR, skip guard dan izinkan saja
-  // (karena tidak ada "window" maupun "localStorage" di SSR)
-  if (!authService.getToken()) {
-    console.log('SSR atau token tidak tersedia, skip guard...');
-    return true;
+  if (typeof window === 'undefined' || !window.localStorage) {
+    console.error('Session storage is not available.');
+    return false;
   }
 
-  const token = authService.getToken();
-  if (!authService.isTokenValid(token)) {
-    console.warn('Token invalid/expired, redirect ke /login');
+  const token = localStorage.getItem('auth-token');
+
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  if (!token || isTokenExpired(token)) {
     await router.navigate(['/login']);
     return false;
   }
 
-  // Roles disimpan di AuthService
-  const userRoles = authService.getUserRoles();
-  const currentRoutePath = route.routeConfig?.path || '';
+  let userRoles: string[] = [];
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    userRoles = payload.roles || [];
+  } catch (e) {
+    console.error('Failed to parse token payload:', e);
+    await router.navigate(['/login']);
+    return false;
+  }
 
+  const currentRoutePath = route.routeConfig?.path || '';
   console.log(
-    `Checking access for route: ${currentRoutePath} with roles: `,
+    `Checking access for route: ${currentRoutePath} with roles:`,
     userRoles
   );
 
-  // Contoh basic: definisikan menu default
-  const availableMenus = new Set<string>(['home', 'login']);
+  const availableMenus = new Set<string>();
 
-  // Tambah menu berdasarkan role
-  if (
-    userRoles.includes('HR') ||
-    userRoles.includes('MGR') ||
-    userRoles.includes('SVP')
-  ) {
-    availableMenus.add('view-assessment-summary');
-  } else {
-    availableMenus.add('assessment-summary');
-  }
-
-  // Coba fetch menu tambahan dari server
   try {
+    // 🛑 Wait for role menu requests to finish before proceeding
     const roleRequests = userRoles.map((role) =>
       http
         .get<any>(`https://hiremeplease.freeddns.org/approlemenu/role/${role}`)
         .toPromise()
     );
 
-    // Tunggu semua request selesai
+    // ⏳ Wait for all the requests to resolve
     const responses = await Promise.all(roleRequests);
+
+    // Add globally accessible menus
+    availableMenus.add('home');
+    availableMenus.add('login');
+    if (
+      userRoles.includes('HR') ||
+      userRoles.includes('MGR') ||
+      userRoles.includes('SVP')
+    ) {
+      availableMenus.add('view-assessment-summary');
+    } else {
+      availableMenus.add('assessment-summary');
+    }
 
     responses.forEach((response) => {
       if (response && response.content) {
@@ -69,19 +83,18 @@ export const authGuard: CanActivateFn = async (
     });
 
     console.log('Available menus for user:', Array.from(availableMenus));
+
+    if (availableMenus.has(currentRoutePath)) {
+      console.log(`✅ Access granted to route: ${currentRoutePath}`);
+      return true;
+    } else {
+      console.warn(`❌ Access denied to route: ${currentRoutePath}`);
+      await router.navigate(['/home']);
+      return false;
+    }
   } catch (error) {
     console.error('💥 Error while fetching menus for roles:', error);
     await router.navigate(['/login']);
-    return false;
-  }
-
-  // Cek apakah currentRoutePath termasuk dalam availableMenus
-  if (availableMenus.has(currentRoutePath)) {
-    console.log(`✅ Access granted to route: ${currentRoutePath}`);
-    return true;
-  } else {
-    console.warn(`❌ Access denied to route: ${currentRoutePath}`);
-    await router.navigate(['/home']);
     return false;
   }
 };

@@ -86,6 +86,7 @@ export class ManageUserComponent implements OnInit {
     this.fetchRoles();
     console.log('Component Initialized');
   }
+
   private decodeJWT(): string | null {
     const token = localStorage.getItem('auth-token');
 

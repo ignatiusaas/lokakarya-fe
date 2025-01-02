@@ -62,7 +62,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    this.fetchTechSkills();
     console.log('Component Initialized');
   }
 
