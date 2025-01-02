@@ -1,5 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformServer } from '@angular/common';
+import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -8,52 +7,15 @@ import { StorageService } from './storage.service';
 export class AuthService {
   private roles: string[] = [];
 
-  constructor(
-    private storageService: StorageService,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
+  constructor(private storageService: StorageService) {
     this.loadRoles();
   }
 
-  // Deteksi apakah sedang berjalan di SSR (Server-Side Rendering)
-  private isSSR(): boolean {
-    return isPlatformServer(this.platformId);
-  }
-
-  // Ambil token dari storage
-  public getToken(): string | null {
-    if (this.isSSR()) {
-      return null;
-    }
-    return this.storageService.getItem('auth-token');
-  }
-
-  // Cek apakah token valid
-  public isTokenValid(token: string | null): boolean {
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Math.floor(Date.now() / 1000);
-      return payload.exp > currentTime;
-    } catch {
-      return false;
-    }
-  }
-
-  // Parsing roles dari token
   loadRoles(): void {
-    if (this.isSSR()) {
-      this.roles = [];
-      return;
-    }
-    const token = this.getToken();
+    const token = this.storageService.getItem('auth-token');
     if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        this.roles = payload.roles || [];
-      } catch {
-        this.roles = [];
-      }
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      this.roles = payload.roles || [];
     }
   }
 
@@ -62,8 +24,7 @@ export class AuthService {
     return this.roles;
   }
 
-  // Cek user punya role tertentu
   public hasRole(role: string): boolean {
-    return this.getUserRoles().includes(role);
+    return this.roles.includes(role);
   }
 }
