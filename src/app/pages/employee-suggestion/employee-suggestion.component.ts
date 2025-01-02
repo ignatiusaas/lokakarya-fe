@@ -82,6 +82,8 @@ export class EmployeeSuggestionComponent implements OnInit {
   showOnlyMine: boolean = false;
   selectedOrderDirection: 'asc' | 'desc' = 'asc';
   selectedOrderColumn: string = 'assessment_year';
+  currentPage: number = 1;
+  checkedSuggestions: any[] = [];
 
   constructor(
     private http: HttpClient,
@@ -96,7 +98,6 @@ export class EmployeeSuggestionComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    this.fetchEmpSuggestions();
     console.log('Component Initialized');
   }
 
@@ -171,44 +172,66 @@ export class EmployeeSuggestionComponent implements OnInit {
 
   fetchEmpSuggestions(event?: any): void {
     console.log('Fetching Employee Suggestions...');
+    this.loading = true;
 
-    if (!this.allEmpSuggestions.length || this.allEmpSuggestions.length > 0) {
-      this.loading = true;
+    this.checkedSuggestions = [];
 
-      let suggestionUrl = '';
-      if (this.currentRoles.includes('HR')) {
-        suggestionUrl =
-          'https://hiremeplease.freeddns.org/empsuggestion/get/all';
-      } else {
-        suggestionUrl =
-          'https://hiremeplease.freeddns.org/empsuggestion/by/' +
-          this.currentUserId;
-      }
-      console.log('Suggestion URL:', suggestionUrl);
+    const url = 'https://hiremeplease.freeddns.org/empsuggestion/sorch';
 
-      this.http
-        .get<any>(suggestionUrl)
-        .pipe(finalize(() => (this.loading = false)))
-        .subscribe({
-          next: (response) => {
-            this.allEmpSuggestions = response.content || [];
+    const param = {
+      ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
+      column: this.selectedOrderColumn,
+      order: this.selectedOrderDirection,
+      page: this.currentPage,
+      pageSize: this.rowsPerPage,
+      ...(this.currentRoles.includes('USER')
+        ? { userId: this.currentUserId }
+        : {}),
+    };
 
-            this.totalRecords = this.allEmpSuggestions.length;
+    console.log('Sending Request to URL:', url, param);
 
-            this.applyFiltersAndPagination(event);
-          },
-          error: (error) => {
-            console.error('Error Fetching Employee Suggestions:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch employee suggestions.',
+    this.http
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (response) => {
+          this.allEmpSuggestions = response.content || [];
+          this.totalRecords = response.total_data;
+
+          console.log('Fetched Employee Suggestions:', this.allEmpSuggestions);
+          console.log('Checked:', this.checkedSuggestions);
+
+          this.allEmpSuggestions.forEach((empSuggestion) => {
+            const userId = empSuggestion.user_id;
+            const assessmentYear = empSuggestion.assessment_year;
+            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${userId}/${assessmentYear}`;
+
+            this.http.get<any>(summaryUrl).subscribe({
+              next: (summaryResponse) => {
+                const suggestion = {
+                  ...empSuggestion,
+                  status: summaryResponse?.content?.status,
+                };
+                this.checkedSuggestions.push(suggestion);
+              },
+              error: (err) => {
+                console.error('Error fetching assessment summary:', err);
+              },
             });
-          },
-        });
-    } else {
-      this.applyFiltersAndPagination(event);
-    }
+          });
+
+          console.log('Fetched Employee Suggestions:', this.checkedSuggestions);
+        },
+        error: (error) => {
+          console.error('Error Fetching Employee Suggestions:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch employee suggestions.',
+          });
+        },
+      });
   }
 
   applyFiltersAndPagination(event?: any): void {

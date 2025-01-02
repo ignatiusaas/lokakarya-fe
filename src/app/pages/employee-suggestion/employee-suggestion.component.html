@@ -44,7 +44,7 @@
     <p-card>
       <p-table
         #dt
-        [value]="empSuggestions"
+        [value]="checkedSuggestions"
         [lazy]="true"
         [paginator]="true"
         [rows]="rowsPerPage"
@@ -57,7 +57,7 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th>Full Name</th>
+            <th *ngIf="currentRoles.includes('HR')">Full Name</th>
             <th>Suggestion</th>
             <th>Assessment Year</th>
             <th>Actions</th>
@@ -72,7 +72,10 @@
             <td>{{ empSuggestion.assessment_year }}</td>
             <td>
               <button
-                *ngIf="empSuggestion.user_id === currentUserId"
+                *ngIf="
+                  empSuggestion.user_id === currentUserId ||
+                  empSuggestion.status === 1
+                "
                 pButton
                 [icon]="
                   isEditFormLoading || isProcessing
@@ -84,7 +87,10 @@
                 [disabled]="isEditFormLoading || isProcessing"
               ></button>
               <button
-                *ngIf="empSuggestion.user_id === currentUserId"
+                *ngIf="
+                  empSuggestion.user_id === currentUserId ||
+                  empSuggestion.status === 1
+                "
                 pButton
                 [icon]="
                   isEditFormLoading || isProcessing
