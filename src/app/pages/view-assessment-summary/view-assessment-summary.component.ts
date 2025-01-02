@@ -119,8 +119,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     ) {
       this.selectedDivisionIdFilter = this.extractCurrentDivisionId() || '';
     }
-
-    this.fetchAssessmentSummaries();
     this.fetchDivisions();
   }
 

@@ -184,7 +184,7 @@ export class EmployeeSuggestionComponent implements OnInit {
       order: this.selectedOrderDirection,
       page: this.currentPage,
       pageSize: this.rowsPerPage,
-      ...(this.currentRoles.includes('USER')
+      ...(!this.currentRoles.includes('HR')
         ? { userId: this.currentUserId }
         : {}),
     };

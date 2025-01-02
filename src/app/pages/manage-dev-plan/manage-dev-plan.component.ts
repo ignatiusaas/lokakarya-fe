@@ -63,7 +63,6 @@ export class ManageDevPlanComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    this.fetchPlans();
     console.log('Component Initialized');
   }
 

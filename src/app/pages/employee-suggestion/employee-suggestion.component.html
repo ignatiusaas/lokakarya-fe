@@ -60,7 +60,7 @@
             <th *ngIf="currentRoles.includes('HR')">Full Name</th>
             <th>Suggestion</th>
             <th>Assessment Year</th>
-            <th>Actions</th>
+            <th *ngIf="currentRoles.includes('USER')">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-empSuggestion>
@@ -70,10 +70,10 @@
             </td>
             <td>{{ empSuggestion.suggestion }}</td>
             <td>{{ empSuggestion.assessment_year }}</td>
-            <td>
+            <td *ngIf="currentRoles.includes('USER')">
               <button
                 *ngIf="
-                  empSuggestion.user_id === currentUserId ||
+                  empSuggestion.user_id === currentUserId &&
                   empSuggestion.status === 1
                 "
                 pButton
@@ -88,7 +88,7 @@
               ></button>
               <button
                 *ngIf="
-                  empSuggestion.user_id === currentUserId ||
+                  empSuggestion.user_id === currentUserId &&
                   empSuggestion.status === 1
                 "
                 pButton
