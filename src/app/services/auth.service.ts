@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -7,24 +8,63 @@ import { StorageService } from './storage.service';
 export class AuthService {
   private roles: string[] = [];
 
-  constructor(private storageService: StorageService) {
+  constructor(
+    private storageService: StorageService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
     this.loadRoles();
   }
 
-  loadRoles(): void {
-    const token = this.storageService.getItem('auth-token');
-    if (token) {
+  // Deteksi apakah sedang berjalan di SSR (Server-Side Rendering)
+  private isSSR(): boolean {
+    return isPlatformServer(this.platformId);
+  }
+
+  // Ambil token dari storage
+  public getToken(): string | null {
+    if (this.isSSR()) {
+      return null;
+    }
+    return this.storageService.getItem('auth-token');
+  }
+
+  // Cek apakah token valid
+  public isTokenValid(token: string | null): boolean {
+    if (!token) return false;
+    try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      this.roles = payload.roles || [];
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp > currentTime;
+    } catch {
+      return false;
     }
   }
 
+  // Parsing roles dari token
+  loadRoles(): void {
+    if (this.isSSR()) {
+      this.roles = [];
+      return;
+    }
+    const token = this.getToken();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        this.roles = payload.roles || [];
+      } catch {
+        this.roles = [];
+      }
+    }
+  }
+
+  // Untuk ambil roles yang sudah disimpan
   public getUserRoles(): string[] {
     this.loadRoles();
     return this.roles;
   }
 
+  // Cek user punya role tertentu
   public hasRole(role: string): boolean {
-    return this.roles.includes(role);
+    return this.getUserRoles().includes(role);
   }
 }
