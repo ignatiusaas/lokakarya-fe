@@ -12,7 +12,6 @@ export const authGuard: CanActivateFn = async (
 
   if (typeof window === 'undefined' || !window.localStorage) {
     console.error('Session storage is not available.');
-    await router.navigate(['/login']);
     return false;
   }
 
