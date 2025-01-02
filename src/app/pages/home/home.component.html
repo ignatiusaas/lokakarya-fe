@@ -27,47 +27,70 @@
 
       <div class="dropdown-content" *ngIf="showDropdown">
         <ul class="pending-list">
-          <li
-            *ngIf="!isAttSkillFilled"
-            (click)="navigateTo('employee-attitude-skill', $event)"
-          >
-            Attitude Skill hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="navigateTo('employee-attitude-skill', $event)"
+              label="Attitude Skill"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isAttSkillFilled"
+            ></p-checkbox>
           </li>
-          <li
-            *ngIf="!isAchFilled"
-            (click)="
-              messageService.add({
-                severity: 'info',
-                summary: 'Info',
-                detail: 'Please contact HR for clarifications.',
-              })
-            "
-          >
-            Achievement hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="
+                messageService.add({
+                  severity: 'info',
+                  summary: 'Info',
+                  detail: 'Please contact HR for clarifications.',
+                })
+              "
+              label="Achievements"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isAchFilled"
+            >
+            </p-checkbox>
           </li>
-          <li
-            *ngIf="!isSuggestionFilled"
-            (click)="navigateTo('employee-suggestion', $event)"
-          >
-            Suggestion hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="navigateTo('employee-suggestion', $event)"
+              label="Suggestion"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isSuggestionFilled"
+            >
+            </p-checkbox>
           </li>
-          <li
-            *ngIf="!isDevPlanFilled"
-            (click)="navigateTo('employee-dev-plan', $event)"
-          >
-            Development Plan hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="navigateTo('employee-dev-plan', $event)"
+              label="Development Plan"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isDevPlanFilled"
+            >
+            </p-checkbox>
           </li>
-          <li
-            *ngIf="!isTechSkillFilled"
-            (click)="navigateTo('employee-technical-skill', $event)"
-          >
-            Technical Skill hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="navigateTo('employee-technical-skill', $event)"
+              label="Technical Skill"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isTechSkillFilled"
+            >
+            </p-checkbox>
           </li>
-          <li
-            *ngIf="!isAssFilled"
-            (click)="navigateTo('assessment-summary', $event)"
-          >
-            Assessment Summary hasn't been submitted
+          <li>
+            <p-checkbox
+              (click)="navigateTo('assessment-summary', $event)"
+              label="Assessment Summary"
+              [disabled]="true"
+              [binary]="true"
+              [ngModel]="isAssFilled"
+            >
+            </p-checkbox>
           </li>
         </ul>
       </div>

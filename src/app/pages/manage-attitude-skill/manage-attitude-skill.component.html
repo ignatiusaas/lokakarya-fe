@@ -20,18 +20,19 @@
         </div>
         <button
           pButton
-          label="Create Attitude Skill"
-          icon="pi pi-plus"
-          class="create-button"
-          (click)="openCreateAttitudeSkillDialog()"
-          [disabled]="isProcessing || isEditFormLoading"
-        ></button>
-        <button
-          pButton
           label="Create Group Attitude Skill"
           icon="pi pi-plus"
           class="create-button"
           (click)="openCreateGroupDialog()"
+          [disabled]="isProcessing || isEditFormLoading"
+          style="background-color: #cd7313"
+        ></button>
+        <button
+          pButton
+          label="Create Attitude Skill"
+          icon="pi pi-plus"
+          class="create-button"
+          (click)="openCreateAttitudeSkillDialog()"
           [disabled]="isProcessing || isEditFormLoading"
         ></button>
       </div>
@@ -85,7 +86,10 @@
         <ng-template pTemplate="body" let-group>
           <tr
             *ngIf="group.skills.length === 0"
-            [ngClass]="{ 'disabled-row': group.enabled === false }"
+            [ngClass]="{
+              'disabled-row': group.enabled === false,
+              'group-row': true
+            }"
           >
             <td>{{ group.group_name }}</td>
             <td>{{ group.percentage }}</td>
@@ -119,7 +123,12 @@
           </tr>
 
           <ng-container *ngFor="let skill of group.skills; let i = index">
-            <tr [ngClass]="{ 'disabled-row': group.enabled === false }">
+            <tr
+              [ngClass]="{
+                'disabled-row': group.enabled === false,
+                'group-row': i === 0
+              }"
+            >
               <td *ngIf="i === 0" [attr.rowspan]="group.skills.length">
                 {{ group.group_name }}
               </td>
@@ -195,8 +204,8 @@
       <form [formGroup]="editForm" (ngSubmit)="submitAttitudeSkill()">
         <div class="p-fluid">
           <div class="p-field">
-            <label for="attitude_skill"
-              >Attitude Skill
+            <label for="attitude_skill">
+              Attitude Skill
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -208,10 +217,9 @@
               ></textarea>
             </div>
           </div>
-
           <div class="p-field">
-            <label for="group_id"
-              >Group
+            <label for="group_id">
+              Group
               <span class="required">*</span>
             </label>
             <p-dropdown
@@ -225,7 +233,6 @@
               [appendTo]="'body'"
             ></p-dropdown>
           </div>
-
           <div class="p-field" *ngIf="mode === 'edit'">
             <label for="enabled">Enabled Status</label>
             <div style="padding: 0.5rem 0">
@@ -283,8 +290,8 @@
       <form [formGroup]="editGroupForm" (ngSubmit)="submitGroupAttitudeSkill()">
         <div class="p-fluid">
           <div class="p-field">
-            <label for="group_name"
-              >Group Name
+            <label for="group_name">
+              Group Name
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -296,10 +303,9 @@
               />
             </div>
           </div>
-
           <div class="p-field">
-            <label for="percentage"
-              >Weight
+            <label for="percentage">
+              Weight
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -318,7 +324,6 @@
               </div>
             </div>
           </div>
-
           <div class="p-field" *ngIf="mode === 'edit'">
             <label for="enabled">Enabled Status</label>
             <div style="padding: 0.5rem 0">
