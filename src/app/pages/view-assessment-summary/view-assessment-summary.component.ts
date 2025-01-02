@@ -25,6 +25,10 @@ import { finalize } from 'rxjs/operators';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { ConfirmationService } from 'primeng/api';
 import { DecimalPipe } from '@angular/common';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-view-assessment-summary',
@@ -623,5 +627,160 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  exportAsPDF(): void {
+    // Create a new jsPDF instance
+    const doc = new jsPDF('p', 'pt', 'a4');
+
+    // Title or heading for the PDF
+    doc.text(
+      `${this.selectedName}'s ${this.selectedYear} Assessment Summary`,
+      40,
+      40
+    );
+
+    // Build table data for Achievements
+    const achievementsData = this.achievements.map((ach) => [
+      ach.group_name,
+      ach.sum_score,
+      `${ach.percentage}%`,
+      ((ach.sum_score * ach.percentage) / 100).toFixed(2),
+    ]);
+
+    // Add Achievements autoTable
+    autoTable(doc, {
+      startY: 60,
+      head: [['Category', 'Score', 'Percentage', 'Final Score']],
+      body: achievementsData,
+      foot: [
+        [
+          { content: 'Total:', colSpan: 2, styles: { halign: 'right' } },
+          `${this.totalAchievementPercentage.toFixed(2)}%`,
+          this.totalAchievementScore.toFixed(2),
+        ],
+      ],
+      margin: { left: 40, right: 40 },
+    });
+
+    // A little spacing
+    let finalY = (doc as any).lastAutoTable.finalY + 20;
+
+    // Build table data for Attitude Skills
+    const attitudeData = this.attitudeSkills.map((att) => [
+      att.group_name,
+      att.sum_score,
+      `${att.percentage}%`,
+      ((att.sum_score * att.percentage) / 100).toFixed(2),
+    ]);
+
+    // Attitude Skills table
+    autoTable(doc, {
+      startY: finalY,
+      head: [['Category', 'Score', 'Percentage', 'Final Score']],
+      body: attitudeData,
+      foot: [
+        [
+          { content: 'Total:', colSpan: 2, styles: { halign: 'right' } },
+          `${this.totalAttitudePercentage.toFixed(2)}%`,
+          this.totalAttitudeScore.toFixed(2),
+        ],
+      ],
+      margin: { left: 40, right: 40 },
+    });
+
+    finalY = (doc as any).lastAutoTable.finalY + 20;
+
+    // Final Score line
+    autoTable(doc, {
+      startY: finalY,
+      body: [
+        [
+          {
+            content: 'Total:',
+            colSpan: 1,
+            styles: { halign: 'right', fontStyle: 'bold' },
+          },
+          `${this.totalPercentage.toFixed(2)}%`,
+          this.totalFinalScore.toFixed(2),
+        ],
+      ],
+      margin: { left: 40, right: 40 },
+      theme: 'plain',
+    });
+
+    finalY = (doc as any).lastAutoTable.finalY + 20;
+
+    // Suggestion (if needed)
+    if (this.suggestion) {
+      autoTable(doc, {
+        startY: finalY,
+        body: [[`Suggestion: ${this.suggestion}`]],
+        margin: { left: 40, right: 40 },
+        theme: 'plain',
+      });
+    }
+
+    doc.save(`AssessmentSummary_${this.selectedName}_${this.selectedYear}.pdf`);
+  }
+
+  exportAsExcel(): void {
+    const workbook = XLSX.utils.book_new();
+
+    const achievementSheetData = [
+      ['Category', 'Score', 'Percentage', 'Final Score'],
+      ...this.achievements.map((ach) => [
+        ach.group_name,
+        ach.sum_score,
+        `${ach.percentage}%`,
+        ((ach.sum_score * ach.percentage) / 100).toFixed(2),
+      ]),
+      [
+        'Total:',
+        '',
+        `${this.totalAchievementPercentage.toFixed(2)}%`,
+        this.totalAchievementScore.toFixed(2),
+      ],
+    ];
+
+    const achievementSheet = XLSX.utils.aoa_to_sheet(achievementSheetData);
+    XLSX.utils.book_append_sheet(workbook, achievementSheet, 'Achievements');
+
+    const attitudeSheetData = [
+      ['Category', 'Score', 'Percentage', 'Final Score'],
+      ...this.attitudeSkills.map((skill) => [
+        skill.group_name,
+        skill.sum_score,
+        `${skill.percentage}%`,
+        ((skill.sum_score * skill.percentage) / 100).toFixed(2),
+      ]),
+      [
+        'Total:',
+        '',
+        `${this.totalAttitudePercentage.toFixed(2)}%`,
+        this.totalAttitudeScore.toFixed(2),
+      ],
+    ];
+
+    const attitudeSheet = XLSX.utils.aoa_to_sheet(attitudeSheetData);
+    XLSX.utils.book_append_sheet(workbook, attitudeSheet, 'AttitudeSkills');
+
+    const suggestionSheetData = [
+      ['Suggestion'],
+      [this.suggestion || 'No suggestion data'],
+    ];
+    const suggestionSheet = XLSX.utils.aoa_to_sheet(suggestionSheetData);
+    XLSX.utils.book_append_sheet(workbook, suggestionSheet, 'Suggestion');
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(
+      file,
+      `AssessmentSummary_${this.selectedName}_${this.selectedYear}.xlsx`
+    );
   }
 }

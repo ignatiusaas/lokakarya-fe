@@ -149,6 +149,7 @@
     [dismissableMask]="true"
     [style]="{ width: '50vw' }"
     [resizable]="false"
+    id="assessmentSummaryDialog"
   >
     <p><strong>Division:</strong> {{ selectedDivision }}</p>
     <p><strong>Position:</strong> {{ selectedPosition }}</p>
@@ -157,7 +158,7 @@
 
     <h4>Achievements</h4>
     <div class="table-container">
-      <table class="achievement-table">
+      <table class="combined-table">
         <thead>
           <tr>
             <th>Category</th>
@@ -166,6 +167,7 @@
             <th>Final Score</th>
           </tr>
         </thead>
+
         <tbody>
           <ng-container
             *ngIf="
@@ -187,39 +189,28 @@
               </tr>
             </ng-container>
           </ng-container>
-        </tbody>
-        <tr>
-          <td colspan="2" style="text-align: right; font-weight: bold">
-            Total:
-          </td>
-          <td>{{ totalAchievementPercentage | number : "1.2-2" }}%</td>
-          <td>
-            {{ totalAchievementScore | number : "1.2-2" }}
-          </td>
-        </tr>
-
-        <ng-template #noDataAchievements>
           <tr>
-            <td colspan="4" style="text-align: center; font-style: italic">
-              No Achievements data available for the selected assessment year.
+            <td colspan="2" style="text-align: right; font-weight: bold">
+              Total:
             </td>
+            <td>{{ totalAchievementPercentage | number : "1.2-2" }}%</td>
+            <td>{{ totalAchievementScore | number : "1.2-2" }}</td>
           </tr>
-        </ng-template>
-      </table>
-    </div>
 
-    <h4>Attitude Skill</h4>
-    <div class="table-container">
-      <table class="attitude-skill-table">
-        <thead>
+          <!-- Fallback if no Achievements -->
+          <ng-template #noDataAchievements>
+            <tr>
+              <td colspan="4" style="text-align: center; font-style: italic">
+                No Achievements data available for the selected assessment year.
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Attitude Skill header row -->
           <tr>
-            <th>Category</th>
-            <th>Score</th>
-            <th>Percentage</th>
-            <th>Final Score</th>
+            <td colspan="4" class="section-header">Attitude Skill</td>
           </tr>
-        </thead>
-        <tbody>
+          <!-- Attitude Skill Section -->
           <ng-container
             *ngIf="
               attitudeSkills.length > 0 && !isLoading;
@@ -240,71 +231,86 @@
               </tr>
             </ng-container>
           </ng-container>
-        </tbody>
-        <tr>
-          <td colspan="2" style="text-align: right; font-weight: bold">
-            Total:
-          </td>
-          <td>{{ totalAttitudePercentage | number : "1.2-2" }}%</td>
-          <td>
-            {{ totalAttitudeScore | number : "1.2-2" }}
-          </td>
-        </tr>
-
-        <ng-template #noDataAttitudeSkills>
           <tr>
-            <td colspan="4" style="text-align: center; font-style: italic">
-              No Attitude Skill data available for the selected assessment year.
+            <td colspan="2" style="text-align: right; font-weight: bold">
+              Total:
             </td>
+            <td>{{ totalAttitudePercentage | number : "1.2-2" }}%</td>
+            <td>{{ totalAttitudeScore | number : "1.2-2" }}</td>
           </tr>
-        </ng-template>
-      </table>
-    </div>
 
-    <div class="table-container">
-      <table class="total-final-score-table">
-        <tbody>
+          <!-- Fallback if no Attitude Skills -->
+          <ng-template #noDataAttitudeSkills>
+            <tr>
+              <td colspan="4" style="text-align: center; font-style: italic">
+                No Attitude Skill data available for the selected assessment
+                year.
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Final Score header row -->
+          <tr>
+            <td colspan="4" class="section-header">Final Score</td>
+          </tr>
+          <!-- Total Final Score Row -->
           <tr>
             <td colspan="3" style="text-align: right; font-weight: bold">
               Total:
             </td>
-            <td>{{ totalPercentage | number : "1.2-2" }}%</td>
             <td>
+              {{ totalPercentage | number : "1.2-2" }}% /
               {{ totalFinalScore | number : "1.2-2" }}
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <h4>Suggestion</h4>
-    <div class="table-container">
-      <table class="suggestion-table">
-        <tbody>
-          <ng-container *ngIf="suggestion && !isLoading; else noData">
+          <!-- Suggestion header row -->
+          <tr>
+            <td colspan="4" class="section-header">Suggestion</td>
+          </tr>
+          <!-- Suggestion Section -->
+          <ng-container *ngIf="suggestion && !isLoading; else noDataSuggestion">
             <tr>
-              <td>{{ suggestion }}</td>
+              <td colspan="4">{{ suggestion }}</td>
             </tr>
           </ng-container>
-        </tbody>
 
-        <ng-template #noData>
-          <tr>
-            <td colspan="4" style="text-align: center; font-style: italic">
-              No data available for the selected assessment year.
-            </td>
-          </tr>
-        </ng-template>
+          <!-- Fallback if no Suggestion -->
+          <ng-template #noDataSuggestion>
+            <tr>
+              <td colspan="4" style="text-align: center; font-style: italic">
+                No data available for the selected assessment year.
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
       </table>
     </div>
-    <div
-      *ngIf="currentRoles.includes('SVP') && selectedStatus === 1"
-      class="dialog-footer"
-    >
+
+    <div class="dialog-footer">
       <button
         pButton
-        label="Approve Assessment"
+        label="Export as PDF"
+        icon="pi pi-file-pdf"
+        class="p-button-warning"
+        (click)="exportAsPDF()"
+        [disabled]="isLoading"
+      ></button>
+
+      <button
+        pButton
+        label="Export as Excel"
+        icon="pi pi-file-excel"
         class="p-button-success"
+        (click)="exportAsExcel()"
+        [disabled]="isLoading"
+      ></button>
+
+      <button
+        *ngIf="currentRoles.includes('SVP') && selectedStatus === 1"
+        pButton
+        label="Approve Assessment"
+        class="p-button-info"
         icon="pi pi-check"
         (click)="approveAssessment()"
         [disabled]="isLoading"
