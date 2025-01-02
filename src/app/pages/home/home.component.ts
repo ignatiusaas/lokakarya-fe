@@ -50,6 +50,8 @@ export class HomeComponent {
   showIncomplete: boolean = false;
   showDropdown: boolean = false;
 
+  currentYear: number = new Date().getFullYear();
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -260,16 +262,15 @@ export class HomeComponent {
 
   async checkSubmission(): Promise<void> {
     console.log('Checking submission...');
-    const currentYear = new Date().getFullYear();
-    console.log('Current Year:', currentYear);
+    console.log('Current Year:', this.currentYear);
     console.log('User ID:', this.userId);
     const urls = [
-      `https://hiremeplease.freeddns.org/empattitudeskill/get/${this.userId}/${currentYear}`,
-      `https://hiremeplease.freeddns.org/empachievementskill/get/${this.userId}/${currentYear}`,
-      `https://hiremeplease.freeddns.org/empsuggestion/${this.userId}/${currentYear}`,
-      `https://hiremeplease.freeddns.org/empdevplan/get/${this.userId}/${currentYear}`,
-      `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.userId}/${currentYear}`,
-      `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.userId}/${currentYear}`,
+      `https://hiremeplease.freeddns.org/empattitudeskill/get/${this.userId}/${this.currentYear}`,
+      `https://hiremeplease.freeddns.org/empachievementskill/get/${this.userId}/${this.currentYear}`,
+      `https://hiremeplease.freeddns.org/empsuggestion/${this.userId}/${this.currentYear}`,
+      `https://hiremeplease.freeddns.org/empdevplan/get/${this.userId}/${this.currentYear}`,
+      `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.userId}/${this.currentYear}`,
+      `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.userId}/${this.currentYear}`,
     ];
 
     try {

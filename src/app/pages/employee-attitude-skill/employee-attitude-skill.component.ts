@@ -85,6 +85,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
   empUrl: string = '';
   isExist: boolean = false;
+  isLocked: boolean = false;
 
   groupedEmpAttitudeSkills: any[] = []; // For grouped data
 
@@ -262,7 +263,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    if (this.currentRoles.includes('HR') || this.currentRoles.includes('SVP')) {
+    if (this.currentRoles.includes('HR')) {
       this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
     } else {
       this.empUrl =
@@ -319,6 +320,16 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           console.log('Fetched EmpAttitudeSkills:', this.empAttitudeSkills);
 
           this.groupAllAttitudeSkills();
+          const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+          this.http.get<any>(summaryUrl).subscribe({
+            next: (summaryResponse) => {
+              this.isLocked = summaryResponse?.content?.status === 2;
+              console.log('Assessment summary locked status:', this.isLocked);
+            },
+            error: (err) => {
+              console.error('Error fetching assessment summary:', err);
+            },
+          });
         },
         error: (error) => {
           console.error('Error Fetching Employee AttitudeSkills:', error);

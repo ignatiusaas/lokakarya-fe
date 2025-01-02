@@ -21,7 +21,7 @@
       *ngIf="showIncomplete && currentRoles.includes('USER')"
     >
       <div class="dropdown-header" (click)="toggleDropdown()">
-        <h2 class="card-title">Pending Submissions</h2>
+        <h2 class="card-title">Pending Submissions for {{ currentYear }}</h2>
         <span class="dropdown-caret" [class.open]="showDropdown"></span>
       </div>
 

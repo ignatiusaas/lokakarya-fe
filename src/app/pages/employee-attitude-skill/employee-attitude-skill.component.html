@@ -8,7 +8,6 @@
   </div>
   <div class="header-actions">
     <div class="top-row">
-      <!-- For HR users, show the user dropdown -->
       <div
         *ngIf="
           currentRoles.includes('HR') ||
@@ -83,9 +82,11 @@
                         placeholder="Select Score"
                         [disabled]="
                           isProcessing ||
-                          !currentRoles.includes('USER') ||
-                          selectedUserId !== currentUserId ||
-                          isExist
+                          (currentRoles.includes('USER') &&
+                            selectedUserId !== currentUserId) ||
+                          (!currentRoles.includes('SVP') &&
+                            !currentRoles.includes('USER')) ||
+                          isLocked
                         "
                         appendTo="body"
                       ></p-dropdown>
@@ -101,9 +102,10 @@
     <div class="dialog-footer">
       <button
         *ngIf="
-          currentRoles.includes('USER') &&
-          selectedUserId === currentUserId &&
-          !isExist
+          ((currentRoles.includes('USER') &&
+            selectedUserId === currentUserId) ||
+            currentRoles.includes('SVP')) &&
+          !isLocked
         "
         pButton
         type="submit"

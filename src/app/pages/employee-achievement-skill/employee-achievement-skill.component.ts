@@ -262,7 +262,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    if (this.currentRoles.includes('HR') || this.currentRoles.includes('SVP')) {
+    if (this.currentRoles.includes('HR')) {
       this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
     } else {
       this.empUrl =

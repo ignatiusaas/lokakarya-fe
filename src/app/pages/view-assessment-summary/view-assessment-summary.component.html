@@ -20,10 +20,7 @@
         </div>
       </div>
       <div class="second-row">
-        <div
-          *ngIf="currentRoles.includes('HR') || currentRoles.includes('SVP')"
-          class="user-selection"
-        >
+        <div *ngIf="currentRoles.includes('HR')" class="user-selection">
           <label for="divisionSelect">Select Division: </label>
           <p-dropdown
             id="divisionSelect"

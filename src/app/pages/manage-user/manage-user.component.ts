@@ -370,6 +370,7 @@ export class ManageUserComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
+        console.log('Save Employee Response:', response);
         let userId: string = '';
         console.log(response.content);
         if (this.mode === 'create') {

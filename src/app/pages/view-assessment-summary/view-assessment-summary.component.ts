@@ -109,10 +109,11 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   ngOnInit(): void {
     this.primengConfig.ripple = true;
     if (
-      this.currentRoles.includes('MGR') &&
-      (!this.currentRoles.includes('HR') || !this.currentRoles.includes('SVP'))
+      (this.currentRoles.includes('MGR') ||
+        this.currentRoles.includes('SVP')) &&
+      !this.currentRoles.includes('HR')
     ) {
-      this.selectedDivisionId = this.extractCurrentDivisionId() || '';
+      this.selectedDivisionIdFilter = this.extractCurrentDivisionId() || '';
     }
 
     this.fetchAssessmentSummaries();
@@ -126,8 +127,8 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         next: (response) => {
           const all = { id: null, division_name: 'All' };
           const res = response.content || [];
-          this.divisions = res.slice(); // Ensure `this.divisions` starts fresh if needed
-          this.divisions.unshift(all); // Add `all` at the beginning
+          this.divisions = res.slice();
+          this.divisions.unshift(all);
           console.log('Fetched Divisions:', this.divisions);
         },
         error: (error) => {
