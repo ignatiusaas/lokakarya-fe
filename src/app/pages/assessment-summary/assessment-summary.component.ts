@@ -1,6 +1,6 @@
 import { NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { jwtDecode } from 'jwt-decode';
 import {
@@ -79,7 +79,8 @@ export class AssessmentSummaryComponent implements OnInit {
     private http: HttpClient,
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   get totalFinalScore(): number {
@@ -97,36 +98,24 @@ export class AssessmentSummaryComponent implements OnInit {
     return this.totalAchievementScore + this.totalAttitudeScore;
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.primengConfig.ripple = true;
 
-    this.fetchSelectedUserDetails()
-      .then(() => {
-        if (
-          this.currentRoles.includes('HR') ||
-          this.currentRoles.includes('SVP') ||
-          this.currentRoles.includes('MGR')
-        ) {
-          return Promise.all([
-            this.fetchDivisions(),
-            this.fetchEmployees(),
-          ]).then(() => {
-            return;
-          });
-        } else {
-          this.selectedUserId = this.currentUserId;
-          return Promise.resolve();
-        }
-      })
-      .then(() => {
-        return this.fetchAssessmentSummary();
-      })
-      .then(() => {
-        this.isLoading = false;
-      })
-      .catch((error) => {
-        console.error('Error while loading data:', error);
-      });
+    await this.fetchSelectedUserDetails();
+
+    if (
+      this.currentRoles.includes('HR') ||
+      this.currentRoles.includes('SVP') ||
+      this.currentRoles.includes('MGR')
+    ) {
+      await Promise.all([this.fetchDivisions(), this.fetchEmployees()]);
+    } else {
+      this.selectedUserId = this.currentUserId;
+    }
+
+    await this.fetchAssessmentSummary();
+
+    this.isLoading = false;
   }
 
   async fetchEmployees(): Promise<void> {
@@ -434,6 +423,7 @@ export class AssessmentSummaryComponent implements OnInit {
         this.checkAssessmentStatus(),
       ]);
       this.adjustPercentages();
+      this.cdRef.detectChanges();
     } catch (error) {
       console.error('Error fetching summaries:', error);
 
