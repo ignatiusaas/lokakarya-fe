@@ -1,14 +1,26 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
-import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {finalize} from 'rxjs/operators';
-import {forkJoin} from 'rxjs';
-import {jwtDecode} from 'jwt-decode';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+} from 'primeng/api';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-manage-user',
@@ -28,7 +40,6 @@ import {NavbarComponent} from '../../shared/navbar/navbar.component';
 export class ManageUserComponent implements OnInit {
   employees: any[] = [];
   totalRecords: number = 0;
-  loading: boolean = false;
   isProcessing: boolean = false;
   rowsPerPage: number = 5;
   maxDate: Date = new Date();
@@ -52,12 +63,12 @@ export class ManageUserComponent implements OnInit {
   selectedOrderDirection: string = 'asc';
 
   orderColumns: { label: string; value: string }[] = [
-    {label: 'Username', value: 'username'},
-    {label: 'Full Name', value: 'full_name'},
-    {label: 'Email Address', value: 'email_address'},
-    {label: 'Position', value: 'position'},
-    {label: 'Status', value: 'employee_status'},
-    {label: 'Division', value: 'division_name'},
+    { label: 'Username', value: 'username' },
+    { label: 'Full Name', value: 'full_name' },
+    { label: 'Email Address', value: 'email_address' },
+    { label: 'Position', value: 'position' },
+    { label: 'Status', value: 'employee_status' },
+    { label: 'Division', value: 'division_name' },
   ];
   private searchTimeout: any;
 
@@ -67,8 +78,7 @@ export class ManageUserComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig
-  ) {
-  }
+  ) {}
 
   get rolesFormArray(): FormArray {
     return this.editForm.get('roles') as FormArray;
@@ -98,7 +108,7 @@ export class ManageUserComponent implements OnInit {
     const pageIndex = event?.first ? event.first / event.rows : 0;
     const pageSize = event?.rows || this.rowsPerPage;
 
-    this.loading = true;
+    this.isProcessing = true;
     this.currentPage = pageIndex + 1;
     this.rowsPerPage = pageSize;
 
@@ -118,8 +128,8 @@ export class ManageUserComponent implements OnInit {
     console.log('Param:', param);
 
     this.http
-      .get<any>(url, {params: param})
-      .pipe(finalize(() => (this.loading = false)))
+      .get<any>(url, { params: param })
+      .pipe(finalize(() => (this.isProcessing = false)))
       .subscribe({
         next: (response) => {
           this.employees = response.content || [];
@@ -307,20 +317,20 @@ export class ManageUserComponent implements OnInit {
     const payload = {
       ...this.editForm.value,
       ...(this.mode === 'create'
-        ? {created_by: this.currentUserId}
-        : {updated_by: this.currentUserId}),
+        ? { created_by: this.currentUserId }
+        : { updated_by: this.currentUserId }),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-          'https://hiremeplease.freeddns.org/appuser/create',
-          payload
-        )
+            'https://hiremeplease.freeddns.org/appuser/create',
+            payload
+          )
         : this.http.put(
-          'https://hiremeplease.freeddns.org/appuser/update',
-          payload
-        );
+            'https://hiremeplease.freeddns.org/appuser/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -568,8 +578,7 @@ export class ManageUserComponent implements OnInit {
         }
       },
 
-      reject: () => {
-      },
+      reject: () => {},
     });
   }
 

@@ -4,7 +4,7 @@
 <app-navbar></app-navbar>
 <div class="home-container">
   <h1 *ngIf="!loading && !errorMessage">
-    Welcome, {{ userDetails?.full_name }}!
+    Welcome, {{ userDetails.full_name }}!
   </h1>
 
   <div *ngIf="loading" class="loading-message">
@@ -113,7 +113,7 @@
           {{ role }}
           <span>
             <span *ngIf="role !== currentRoles[currentRoles.length - 1]"
-            >•</span
+              >•</span
             >
           </span>
         </span>
@@ -141,7 +141,7 @@
     <form (ngSubmit)="changePassword()" [formGroup]="changePasswordForm">
       <div class="p-field">
         <label for="currentPassword"
-        >Current Password
+          >Current Password
           <span class="required">*</span>
         </label>
         <p-password
@@ -160,7 +160,7 @@
 
       <div class="p-field">
         <label for="newPassword"
-        >New Password
+          >New Password
           <span class="required">*</span>
         </label>
         <p-password
@@ -179,7 +179,7 @@
 
       <div class="p-field">
         <label for="confirmPassword"
-        >Confirm Password
+          >Confirm Password
           <span class="required">*</span>
         </label>
         <p-password

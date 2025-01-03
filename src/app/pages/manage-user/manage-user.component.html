@@ -32,7 +32,7 @@
         #dt
         (onLazyLoad)="fetchEmployees($event)"
         [lazy]="true"
-        [loading]="loading"
+        [loading]="isProcessing"
         [paginator]="true"
         [resizableColumns]="true"
         [rowsPerPageOptions]="[5, 10, 20]"
@@ -131,7 +131,7 @@
         <div class="p-fluid">
           <div *ngIf="mode === 'create'" class="p-field">
             <label for="username"
-            >Username
+              >Username
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -146,7 +146,7 @@
 
           <div class="p-field">
             <label for="full_name"
-            >Full Name
+              >Full Name
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -161,7 +161,7 @@
 
           <div class="p-field">
             <label for="position"
-            >Position
+              >Position
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -176,7 +176,7 @@
 
           <div class="p-field">
             <label for="email_address"
-            >Email
+              >Email
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -191,7 +191,7 @@
 
           <div class="p-field">
             <label for="division_id"
-            >Division
+              >Division
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -229,7 +229,7 @@
 
           <div class="p-field">
             <label for="employee_status"
-            >Status
+              >Status
               <span class="required">*</span>
             </label>
             <div class="radio-buttons" style="padding: 0.5rem 0">
@@ -262,7 +262,7 @@
           </div>
           <div class="p-field">
             <label for="join_date"
-            >Join Date
+              >Join Date
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
