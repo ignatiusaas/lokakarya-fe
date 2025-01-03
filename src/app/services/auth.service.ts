@@ -11,8 +11,6 @@ export class AuthService {
     this.loadRoles();
   }
 
-  //a
-
   loadRoles(): void {
     const token = this.storageService.getItem('auth-token');
     if (token) {
