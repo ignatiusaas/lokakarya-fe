@@ -1,35 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  ConfirmationService,
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableModule } from 'primeng/table';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {TableModule} from 'primeng/table';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {finalize} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-employee-attitude-skill',
@@ -47,7 +36,6 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
     InputTextModule,
     NgForOf,
     NgIf,
-    PrimeTemplate,
     RadioButtonModule,
     ReactiveFormsModule,
     TableModule,
@@ -98,11 +86,11 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   assessmentYear: Date | null = null;
 
   scoreOptions: { label: string; value: number }[] = [
-    { label: 'Bad', value: 10 },
-    { label: 'Average', value: 20 },
-    { label: 'Good', value: 30 },
-    { label: 'Great', value: 40 },
-    { label: 'Excellent', value: 50 },
+    {label: 'Bad', value: 10},
+    {label: 'Average', value: 20},
+    {label: 'Good', value: 30},
+    {label: 'Great', value: 40},
+    {label: 'Excellent', value: 50},
   ];
 
   attitudeSkillsMap: Map<string, string> = new Map();
@@ -116,7 +104,8 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     console.log('Initializing EmployeeAttitudeSkillComponent');
@@ -147,93 +136,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     }
     this.selectedAssessmentYear = new Date();
     console.log('Component Initialized');
-  }
-
-  private extractCurrentDivisionId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.divisionId) {
-        console.log('Decoded userId:', decoded.divisionId);
-        return decoded.divisionId;
-      } else {
-        console.error('divisionId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentRoles(): any | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      user_id: [''],
-      attitude_skill_id: ['', Validators.required],
-      entryScore: [null, Validators.required],
-      skillEntry: ['', Validators.required],
-      assessment_year: ['', Validators.required],
-    });
-    this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   fetchSelectedUserName(): void {
@@ -624,6 +526,171 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     });
   }
 
+  prepareAttitudeSkillEntries(): void {
+    const grouped = new Map<string, any>();
+
+    // Initialize groups
+    this.groupAttitudeSkills.forEach((group) => {
+      grouped.set(group.id, {
+        group_id: group.id,
+        group_name: group.group_name,
+        attitudeSkills: [],
+      });
+    });
+
+    // Add attitude skills to their respective groups
+    this.attitudeSkills.forEach((attSkill) => {
+      const groupId = attSkill.group_id;
+      if (grouped.has(groupId)) {
+        grouped.get(groupId).attitudeSkills.push({
+          attitude_skill_id: attSkill.id,
+          attitude_skill_name: attSkill.attitude_skill,
+          score: null,
+        });
+      } else {
+        // Handle attitude skills without a group (optional)
+        console.warn(
+          `Group ID ${groupId} not found for attitude skill ${attSkill.id}`
+        );
+      }
+    });
+
+    // Merge employee data
+    this.empAttitudeSkills.forEach((empSkill) => {
+      const groupId = empSkill.group_id;
+      const attitudeSkillId = empSkill.attitude_skill_id;
+
+      const group = grouped.get(groupId);
+      if (group) {
+        const attitudeSkill = group.attitudeSkills.find(
+          (as: any) => as.attitude_skill_id === attitudeSkillId
+        );
+        if (attitudeSkill) {
+          attitudeSkill.score = empSkill.score;
+          attitudeSkill.emp_skill_id = empSkill.id; // Store the employee skill ID for updates
+        }
+      }
+    });
+
+    // Convert to array
+    this.attitudeSkillEntries = Array.from(grouped.values());
+  }
+
+  addSkillEntry(entry: any): void {
+    entry.skillEntrys.push({id: this.generateUniqueId(), value: ''});
+    entry.entryScores.push({id: this.generateUniqueId(), value: null});
+  }
+
+  generateUniqueId(): string {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  removeSkillEntry(entry: any, index: number): void {
+    if (entry.skillEntrys.length > 1) {
+      entry.skillEntrys.splice(index, 1);
+      entry.entryScores.splice(index, 1);
+    }
+  }
+
+  trackByAttitudeSkillId(index: number, entry: any): string {
+    return entry.attitude_skill_id;
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  trackById(index: number, item: { id: string }): string {
+    return item.id;
+  }
+
+  private extractCurrentDivisionId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.divisionId) {
+        console.log('Decoded userId:', decoded.divisionId);
+        return decoded.divisionId;
+      } else {
+        console.error('divisionId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      user_id: [''],
+      attitude_skill_id: ['', Validators.required],
+      entryScore: [null, Validators.required],
+      skillEntry: ['', Validators.required],
+      assessment_year: ['', Validators.required],
+    });
+    this.currentUserId = this.extractCurrentUserId() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
+  }
+
   private groupAllAttitudeSkills(): void {
     const grouped = new Map<string, any>();
 
@@ -676,83 +743,5 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     // Convert grouped data into an array for display
     this.groupedEmpAttitudeSkills = Array.from(grouped.values());
     console.log('Grouped: ', this.groupedEmpAttitudeSkills);
-  }
-
-  prepareAttitudeSkillEntries(): void {
-    const grouped = new Map<string, any>();
-
-    // Initialize groups
-    this.groupAttitudeSkills.forEach((group) => {
-      grouped.set(group.id, {
-        group_id: group.id,
-        group_name: group.group_name,
-        attitudeSkills: [],
-      });
-    });
-
-    // Add attitude skills to their respective groups
-    this.attitudeSkills.forEach((attSkill) => {
-      const groupId = attSkill.group_id;
-      if (grouped.has(groupId)) {
-        grouped.get(groupId).attitudeSkills.push({
-          attitude_skill_id: attSkill.id,
-          attitude_skill_name: attSkill.attitude_skill,
-          score: null,
-        });
-      } else {
-        // Handle attitude skills without a group (optional)
-        console.warn(
-          `Group ID ${groupId} not found for attitude skill ${attSkill.id}`
-        );
-      }
-    });
-
-    // Merge employee data
-    this.empAttitudeSkills.forEach((empSkill) => {
-      const groupId = empSkill.group_id;
-      const attitudeSkillId = empSkill.attitude_skill_id;
-
-      const group = grouped.get(groupId);
-      if (group) {
-        const attitudeSkill = group.attitudeSkills.find(
-          (as: any) => as.attitude_skill_id === attitudeSkillId
-        );
-        if (attitudeSkill) {
-          attitudeSkill.score = empSkill.score;
-          attitudeSkill.emp_skill_id = empSkill.id; // Store the employee skill ID for updates
-        }
-      }
-    });
-
-    // Convert to array
-    this.attitudeSkillEntries = Array.from(grouped.values());
-  }
-
-  addSkillEntry(entry: any): void {
-    entry.skillEntrys.push({ id: this.generateUniqueId(), value: '' });
-    entry.entryScores.push({ id: this.generateUniqueId(), value: null });
-  }
-
-  generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
-  }
-
-  removeSkillEntry(entry: any, index: number): void {
-    if (entry.skillEntrys.length > 1) {
-      entry.skillEntrys.splice(index, 1);
-      entry.entryScores.splice(index, 1);
-    }
-  }
-
-  trackByAttitudeSkillId(index: number, entry: any): string {
-    return entry.attitude_skill_id;
-  }
-
-  trackByIndex(index: number, item: any): number {
-    return index;
-  }
-
-  trackById(index: number, item: { id: string }): string {
-    return item.id;
   }
 }

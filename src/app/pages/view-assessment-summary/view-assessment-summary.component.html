@@ -10,11 +10,11 @@
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
-              pInputText
-              type="text"
-              placeholder="Search..."
-              [(ngModel)]="globalFilterValue"
               (input)="onSearch()"
+              [(ngModel)]="globalFilterValue"
+              pInputText
+              placeholder="Search..."
+              type="text"
             />
           </span>
         </div>
@@ -23,28 +23,28 @@
         <div *ngIf="currentRoles.includes('HR')" class="user-selection">
           <label for="divisionSelect">Select Division: </label>
           <p-dropdown
-            id="divisionSelect"
-            [options]="divisions"
+            (onChange)="fetchAssessmentSummaries()"
             [(ngModel)]="selectedDivisionIdFilter"
+            [options]="divisions"
+            appendTo="body"
+            id="divisionSelect"
             optionLabel="division_name"
             optionValue="id"
             placeholder="Select division"
-            (onChange)="fetchAssessmentSummaries()"
-            appendTo="body"
           ></p-dropdown>
         </div>
 
         <div class="assessment-year-selection">
           <label for="assessmentYear">Assessment Year: </label>
           <p-calendar
-            id="assessmentYear"
-            [(ngModel)]="selectedAssessmentYear"
-            view="year"
-            dateFormat="yy"
             (onSelect)="fetchAssessmentSummaries()"
+            [(ngModel)]="selectedAssessmentYear"
             [maxDate]="maxDate"
-            placeholder="{{ selectedYear }}"
             appendTo="body"
+            dateFormat="yy"
+            id="assessmentYear"
+            placeholder="{{ selectedYear }}"
+            view="year"
           ></p-calendar>
         </div>
       </div>
@@ -53,38 +53,39 @@
     <p-card>
       <p-table
         #dt
-        [value]="allSummaries"
+        (onLazyLoad)="fetchAssessmentSummaries($event)"
         [lazy]="true"
+        [loading]="isLoading"
         [paginator]="true"
+        [resizableColumns]="true"
         [rows]="rowsPerPage"
         [totalRecords]="totalRecords"
-        [loading]="isLoading"
-        (onLazyLoad)="fetchAssessmentSummaries($event)"
-        [resizableColumns]="true"
+        [value]="allSummaries"
         responsiveLayout="scroll"
         sortMode="single"
-        ><ng-template pTemplate="caption">
+      >
+        <ng-template pTemplate="caption">
           <div class="table-filters">
             <div class="order-actions">
               <div class="order-dropdown">
                 <p-dropdown
-                  [options]="orderColumns"
+                  (onChange)="fetchAssessmentSummaries()"
                   [(ngModel)]="selectedOrderColumn"
-                  placeholder="Select Column"
+                  [options]="orderColumns"
                   optionLabel="label"
                   optionValue="value"
-                  (onChange)="fetchAssessmentSummaries()"
+                  placeholder="Select Column"
                 ></p-dropdown>
               </div>
               <button
-                pButton
+                (click)="toggleOrderDirection()"
+                class="p-button-secondary toggle-order-button"
                 icon="{{
                   selectedOrderDirection === 'asc'
                     ? 'pi pi-arrow-up'
                     : 'pi pi-arrow-down'
                 }}"
-                class="p-button-secondary toggle-order-button"
-                (click)="toggleOrderDirection()"
+                pButton
               ></button>
             </div>
           </div>
@@ -100,7 +101,7 @@
             <th>Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-summary>
+        <ng-template let-summary pTemplate="body">
           <tr>
             <td>{{ summary.full_name }}</td>
             <td>{{ summary.division_name }}</td>
@@ -117,15 +118,15 @@
             <td>{{ summary.approver_name ?? "Pending" }}</td>
             <td>
               <button
-                pButton
-                [icon]="
-                  isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-external-link'
-                "
-                class="p-button-rounded"
                 (click)="
                   fetchViewAssessmentSummary(summary.user_id, summary.id)
                 "
                 [disabled]="isLoading"
+                [icon]="
+                  isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-external-link'
+                "
+                class="p-button-rounded"
+                pButton
               ></button>
             </td>
           </tr>
@@ -142,13 +143,13 @@
   </div>
 
   <p-dialog
-    header="{{ selectedName }}'s {{ selectedYear }} Assessment Summary"
     [(visible)]="displayAssessmentSummaryDialog"
-    [modal]="true"
     [closable]="true"
     [dismissableMask]="true"
-    [style]="{ width: '50vw' }"
+    [modal]="true"
     [resizable]="false"
+    [style]="{ width: '50vw' }"
+    header="{{ selectedName }}'s {{ selectedYear }} Assessment Summary"
     id="assessmentSummaryDialog"
   >
     <p><strong>Division:</strong> {{ selectedDivision }}</p>
@@ -160,160 +161,160 @@
     <div class="table-container">
       <table class="combined-table">
         <thead>
-          <tr>
-            <th>Category</th>
-            <th>Score</th>
-            <th>Percentage</th>
-            <th>Final Score</th>
-          </tr>
+        <tr>
+          <th>Category</th>
+          <th>Score</th>
+          <th>Percentage</th>
+          <th>Final Score</th>
+        </tr>
         </thead>
 
         <tbody>
-          <ng-container
-            *ngIf="
+        <ng-container
+          *ngIf="
               achievements.length > 0 && !isLoading;
               else noDataAchievements
             "
-          >
-            <ng-container *ngFor="let achievement of achievements">
-              <tr>
-                <td>{{ achievement.group_name }}</td>
-                <td>{{ achievement.sum_score }}</td>
-                <td>{{ achievement.percentage }}%</td>
-                <td>
-                  {{
-                    (achievement.sum_score * achievement.percentage) / 100
-                      | number : "1.2-2"
-                  }}
-                </td>
-              </tr>
-            </ng-container>
-          </ng-container>
-          <tr>
-            <td colspan="2" style="text-align: right; font-weight: bold">
-              Total:
-            </td>
-            <td>{{ totalAchievementPercentage | number : "1.2-2" }}%</td>
-            <td>{{ totalAchievementScore | number : "1.2-2" }}</td>
-          </tr>
-
-          <!-- Fallback if no Achievements -->
-          <ng-template #noDataAchievements>
+        >
+          <ng-container *ngFor="let achievement of achievements">
             <tr>
-              <td colspan="4" style="text-align: center; font-style: italic">
-                No Achievements data available for the selected assessment year.
+              <td>{{ achievement.group_name }}</td>
+              <td>{{ achievement.sum_score }}</td>
+              <td>{{ achievement.percentage }}%</td>
+              <td>
+                {{
+                  (achievement.sum_score * achievement.percentage) / 100
+                    | number : "1.2-2"
+                }}
               </td>
             </tr>
-          </ng-template>
+          </ng-container>
+        </ng-container>
+        <tr>
+          <td colspan="2" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td>{{ totalAchievementPercentage | number : "1.2-2" }}%</td>
+          <td>{{ totalAchievementScore | number : "1.2-2" }}</td>
+        </tr>
 
-          <!-- Attitude Skill header row -->
+        <!-- Fallback if no Achievements -->
+        <ng-template #noDataAchievements>
           <tr>
-            <td colspan="4" class="section-header">Attitude Skill</td>
+            <td colspan="4" style="text-align: center; font-style: italic">
+              No Achievements data available for the selected assessment year.
+            </td>
           </tr>
-          <!-- Attitude Skill Section -->
-          <ng-container
-            *ngIf="
+        </ng-template>
+
+        <!-- Attitude Skill header row -->
+        <tr>
+          <td class="section-header" colspan="4">Attitude Skill</td>
+        </tr>
+        <!-- Attitude Skill Section -->
+        <ng-container
+          *ngIf="
               attitudeSkills.length > 0 && !isLoading;
               else noDataAttitudeSkills
             "
-          >
-            <ng-container *ngFor="let attitudeSkill of attitudeSkills">
-              <tr>
-                <td>{{ attitudeSkill.group_name }}</td>
-                <td>{{ attitudeSkill.sum_score }}</td>
-                <td>{{ attitudeSkill.percentage }}%</td>
-                <td>
-                  {{
-                    (attitudeSkill.sum_score * attitudeSkill.percentage) / 100
-                      | number : "1.2-2"
-                  }}
-                </td>
-              </tr>
-            </ng-container>
-          </ng-container>
-          <tr>
-            <td colspan="2" style="text-align: right; font-weight: bold">
-              Total:
-            </td>
-            <td>{{ totalAttitudePercentage | number : "1.2-2" }}%</td>
-            <td>{{ totalAttitudeScore | number : "1.2-2" }}</td>
-          </tr>
-
-          <!-- Fallback if no Attitude Skills -->
-          <ng-template #noDataAttitudeSkills>
+        >
+          <ng-container *ngFor="let attitudeSkill of attitudeSkills">
             <tr>
-              <td colspan="4" style="text-align: center; font-style: italic">
-                No Attitude Skill data available for the selected assessment
-                year.
+              <td>{{ attitudeSkill.group_name }}</td>
+              <td>{{ attitudeSkill.sum_score }}</td>
+              <td>{{ attitudeSkill.percentage }}%</td>
+              <td>
+                {{
+                  (attitudeSkill.sum_score * attitudeSkill.percentage) / 100
+                    | number : "1.2-2"
+                }}
               </td>
             </tr>
-          </ng-template>
-
-          <!-- Final Score header row -->
-          <tr>
-            <td colspan="4" class="section-header">Final Score</td>
-          </tr>
-          <!-- Total Final Score Row -->
-          <tr>
-            <td colspan="3" style="text-align: right; font-weight: bold">
-              Total:
-            </td>
-            <td>
-              {{ totalPercentage | number : "1.2-2" }}% /
-              {{ totalFinalScore | number : "1.2-2" }}
-            </td>
-          </tr>
-
-          <!-- Suggestion header row -->
-          <tr>
-            <td colspan="4" class="section-header">Suggestion</td>
-          </tr>
-          <!-- Suggestion Section -->
-          <ng-container *ngIf="suggestion && !isLoading; else noDataSuggestion">
-            <tr>
-              <td colspan="4">{{ suggestion }}</td>
-            </tr>
           </ng-container>
+        </ng-container>
+        <tr>
+          <td colspan="2" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td>{{ totalAttitudePercentage | number : "1.2-2" }}%</td>
+          <td>{{ totalAttitudeScore | number : "1.2-2" }}</td>
+        </tr>
 
-          <!-- Fallback if no Suggestion -->
-          <ng-template #noDataSuggestion>
-            <tr>
-              <td colspan="4" style="text-align: center; font-style: italic">
-                No data available for the selected assessment year.
-              </td>
-            </tr>
-          </ng-template>
+        <!-- Fallback if no Attitude Skills -->
+        <ng-template #noDataAttitudeSkills>
+          <tr>
+            <td colspan="4" style="text-align: center; font-style: italic">
+              No Attitude Skill data available for the selected assessment
+              year.
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Final Score header row -->
+        <tr>
+          <td class="section-header" colspan="4">Final Score</td>
+        </tr>
+        <!-- Total Final Score Row -->
+        <tr>
+          <td colspan="3" style="text-align: right; font-weight: bold">
+            Total:
+          </td>
+          <td>
+            {{ totalPercentage | number : "1.2-2" }}% /
+            {{ totalFinalScore | number : "1.2-2" }}
+          </td>
+        </tr>
+
+        <!-- Suggestion header row -->
+        <tr>
+          <td class="section-header" colspan="4">Suggestion</td>
+        </tr>
+        <!-- Suggestion Section -->
+        <ng-container *ngIf="suggestion && !isLoading; else noDataSuggestion">
+          <tr>
+            <td colspan="4">{{ suggestion }}</td>
+          </tr>
+        </ng-container>
+
+        <!-- Fallback if no Suggestion -->
+        <ng-template #noDataSuggestion>
+          <tr>
+            <td colspan="4" style="text-align: center; font-style: italic">
+              No data available for the selected assessment year.
+            </td>
+          </tr>
+        </ng-template>
         </tbody>
       </table>
     </div>
 
     <div class="dialog-footer">
       <button
-        pButton
-        label="Export as PDF"
-        icon="pi pi-file-pdf"
-        class="p-button-warning"
         (click)="exportAsPDF()"
         [disabled]="isLoading"
+        class="p-button-warning"
+        icon="pi pi-file-pdf"
+        label="Export as PDF"
+        pButton
       ></button>
 
       <button
-        pButton
-        label="Export as Excel"
-        icon="pi pi-file-excel"
-        class="p-button-success"
         (click)="exportAsExcel()"
         [disabled]="isLoading"
+        class="p-button-success"
+        icon="pi pi-file-excel"
+        label="Export as Excel"
+        pButton
       ></button>
 
       <button
+        (click)="approveAssessment()"
         *ngIf="currentRoles.includes('SVP') && selectedStatus === 1"
-        pButton
-        label="Approve Assessment"
+        [disabled]="isLoading"
         class="p-button-info"
         icon="pi pi-check"
-        (click)="approveAssessment()"
-        [disabled]="isLoading"
+        label="Approve Assessment"
+        pButton
       ></button>
     </div>
   </p-dialog>

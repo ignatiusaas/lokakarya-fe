@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ManageRoleAccessComponent } from './manage-role-access.component';
+import {ManageRoleAccessComponent} from './manage-role-access.component';
 
 describe('ManageRoleAccessComponent', () => {
   let component: ManageRoleAccessComponent;
@@ -10,7 +10,7 @@ describe('ManageRoleAccessComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ManageRoleAccessComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ManageRoleAccessComponent);
     component = fixture.componentInstance;

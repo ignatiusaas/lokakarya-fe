@@ -1,33 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-  ConfirmationService,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {finalize} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-employee-dev-plan',
@@ -44,7 +33,6 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
     InputTextModule,
     NgForOf,
     NgIf,
-    PrimeTemplate,
     RadioButtonModule,
     ReactiveFormsModule,
     ToastModule,
@@ -84,7 +72,8 @@ export class EmployeeDevPlanComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     console.log('Initializing EmployeeDevPlanComponent');
@@ -110,68 +99,6 @@ export class EmployeeDevPlanComponent implements OnInit {
       });
 
     console.log('Component Initialized');
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentRoles(): any[] {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return [];
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return [];
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return [];
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      user_id: [''],
-      dev_plan_id: ['', Validators.required],
-      description: ['', Validators.required],
-      assessment_year: ['', Validators.required],
-    });
-    this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   fetchSelectedUserName(): void {
@@ -302,41 +229,6 @@ export class EmployeeDevPlanComponent implements OnInit {
     });
   }
 
-  private groupAllDevPlans(includeAll: boolean = false): void {
-    const grouped = new Map<string, any>();
-
-    this.devPlans.forEach((devPlan) => {
-      grouped.set(devPlan.id, {
-        dev_plan_id: devPlan.id,
-        dev_plan_name: devPlan.plan,
-        descriptions: [],
-      });
-    });
-
-    console.log('DevPlan: ', this.devPlans);
-
-    // Merge employee data
-    this.empDevPlans.forEach((empPlan) => {
-      const devPlanId = empPlan.dev_plan_id;
-      const group = grouped.get(devPlanId);
-      if (group) {
-        group.descriptions.push({
-          id: empPlan.id,
-          description: empPlan.too_bright,
-        });
-      } else {
-        console.warn(
-          `Dev Plan ID ${devPlanId} not found for employee plan ${empPlan.id}`
-        );
-      }
-    });
-
-    console.log('EmpDevPlan: ', this.empDevPlans);
-    console.log('Grouped: ', grouped);
-
-    this.groupedEmpDevPlans = Array.from(grouped.values());
-  }
-
   openEditDialog(): void {
     console.log('Opening Dev Plan Edit Form');
     this.displayEditDialog = true;
@@ -456,5 +348,102 @@ export class EmployeeDevPlanComponent implements OnInit {
 
   trackByIndex(index: number, item: any): number {
     return index;
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any[] {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return [];
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return [];
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      user_id: [''],
+      dev_plan_id: ['', Validators.required],
+      description: ['', Validators.required],
+      assessment_year: ['', Validators.required],
+    });
+    this.currentUserId = this.extractCurrentUserId() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
+  }
+
+  private groupAllDevPlans(includeAll: boolean = false): void {
+    const grouped = new Map<string, any>();
+
+    this.devPlans.forEach((devPlan) => {
+      grouped.set(devPlan.id, {
+        dev_plan_id: devPlan.id,
+        dev_plan_name: devPlan.plan,
+        descriptions: [],
+      });
+    });
+
+    console.log('DevPlan: ', this.devPlans);
+
+    // Merge employee data
+    this.empDevPlans.forEach((empPlan) => {
+      const devPlanId = empPlan.dev_plan_id;
+      const group = grouped.get(devPlanId);
+      if (group) {
+        group.descriptions.push({
+          id: empPlan.id,
+          description: empPlan.too_bright,
+        });
+      } else {
+        console.warn(
+          `Dev Plan ID ${devPlanId} not found for employee plan ${empPlan.id}`
+        );
+      }
+    });
+
+    console.log('EmpDevPlan: ', this.empDevPlans);
+    console.log('Grouped: ', grouped);
+
+    this.groupedEmpDevPlans = Array.from(grouped.values());
   }
 }

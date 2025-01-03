@@ -9,61 +9,61 @@
         <span class="p-input-icon-left">
           <i class="pi pi-search"></i>
           <input
-            pInputText
-            type="text"
-            placeholder="Search..."
-            [(ngModel)]="globalFilterValue"
             (input)="onSearch()"
+            [(ngModel)]="globalFilterValue"
+            pInputText
+            placeholder="Search..."
+            type="text"
           />
         </span>
       </div>
       <button
-        pButton
-        label="Create"
-        icon="pi pi-plus"
-        class="create-button"
         (click)="openCreateDialog()"
         [disabled]="isProcessing || isEditFormLoading"
+        class="create-button"
+        icon="pi pi-plus"
+        label="Create"
+        pButton
       ></button>
     </div>
 
     <p-card>
       <p-table
         #dt
-        [value]="employees"
-        [lazy]="true"
-        [paginator]="true"
-        [rows]="rowsPerPage"
-        [totalRecords]="totalRecords"
-        [rowsPerPageOptions]="[5, 10, 20]"
-        [loading]="loading"
         (onLazyLoad)="fetchEmployees($event)"
+        [lazy]="true"
+        [loading]="loading"
+        [paginator]="true"
         [resizableColumns]="true"
-        responsiveLayout="scroll"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [rows]="rowsPerPage"
         [sortMode]="'single'"
+        [totalRecords]="totalRecords"
+        [value]="employees"
+        responsiveLayout="scroll"
       >
         <ng-template pTemplate="caption">
           <div class="table-filters">
             <div class="order-actions">
               <div class="order-dropdown">
                 <p-dropdown
-                  [options]="orderColumns"
+                  (onChange)="fetchEmployees()"
                   [(ngModel)]="selectedOrderColumn"
-                  placeholder="Select Column"
+                  [options]="orderColumns"
                   optionLabel="label"
                   optionValue="value"
-                  (onChange)="fetchEmployees()"
+                  placeholder="Select Column"
                 ></p-dropdown>
               </div>
               <button
-                pButton
+                (click)="toggleOrderDirection()"
+                class="p-button-secondary toggle-order-button"
                 icon="{{
                   selectedOrderDirection === 'asc'
                     ? 'pi pi-arrow-up'
                     : 'pi pi-arrow-down'
                 }}"
-                class="p-button-secondary toggle-order-button"
-                (click)="toggleOrderDirection()"
+                pButton
               ></button>
             </div>
           </div>
@@ -79,7 +79,7 @@
             <th>Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-employee>
+        <ng-template let-employee pTemplate="body">
           <tr [ngClass]="{ 'disabled-row': employee.enabled === false }">
             <td>{{ employee.username }}</td>
             <td>{{ employee.full_name }}</td>
@@ -90,27 +90,27 @@
             <td>{{ employee.division_name }}</td>
             <td>
               <button
-                pButton
+                (click)="editEmployee(employee.id)"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-pencil'
                 "
                 class="p-button-rounded p-button-primary"
-                (click)="editEmployee(employee.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
               <button
-                pButton
+                (click)="deleteEmployee(employee.id)"
                 *ngIf="currentUserId !== employee.id"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-trash'
                 "
                 class="p-button-rounded p-button-danger"
-                (click)="deleteEmployee(employee.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
             </td>
           </tr>
@@ -119,89 +119,89 @@
     </p-card>
 
     <p-dialog
-      header="{{ mode === 'create' ? 'Create Employee' : 'Edit Employee' }}"
       [(visible)]="displayEditDialog"
-      [modal]="true"
       [closable]="true"
       [dismissableMask]="true"
-      [style]="{ width: '50vw' }"
+      [modal]="true"
       [resizable]="false"
+      [style]="{ width: '50vw' }"
+      header="{{ mode === 'create' ? 'Create Employee' : 'Edit Employee' }}"
     >
-      <form [formGroup]="editForm" (ngSubmit)="submitEmployee()">
+      <form (ngSubmit)="submitEmployee()" [formGroup]="editForm">
         <div class="p-fluid">
           <div *ngIf="mode === 'create'" class="p-field">
             <label for="username"
-              >Username
+            >Username
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="username"
                 id="username"
                 pInputText
-                formControlName="username"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
 
           <div class="p-field">
             <label for="full_name"
-              >Full Name
+            >Full Name
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="full_name"
                 id="full_name"
                 pInputText
-                formControlName="full_name"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
 
           <div class="p-field">
             <label for="position"
-              >Position
+            >Position
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="position"
                 id="position"
                 pInputText
-                formControlName="position"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
 
           <div class="p-field">
             <label for="email_address"
-              >Email
+            >Email
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="email_address"
                 id="email_address"
                 pInputText
-                formControlName="email_address"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
 
           <div class="p-field">
             <label for="division_id"
-              >Division
+            >Division
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <p-dropdown
+                [disabled]="isProcessing"
                 [options]="divisions"
-                optionLabel="division_name"
-                optionValue="id"
                 formControlName="division_id"
                 id="division_id"
-                [disabled]="isProcessing"
+                optionLabel="division_name"
+                optionValue="id"
                 placeholder="Select a Division"
               ></p-dropdown>
             </div>
@@ -229,82 +229,81 @@
 
           <div class="p-field">
             <label for="employee_status"
-              >Status
+            >Status
               <span class="required">*</span>
             </label>
             <div class="radio-buttons" style="padding: 0.5rem 0">
               <p-radioButton
-                name="employee_status"
-                id="employee_status"
-                value="1"
-                formControlName="employee_status"
-                label="Permanen"
                 [disabled]="isProcessing"
+                formControlName="employee_status"
+                id="employee_status"
+                label="Permanen"
+                name="employee_status"
+                value="1"
               ></p-radioButton>
               <p-radioButton
-                name="employee_status"
-                value="2"
+                [disabled]="isProcessing"
                 formControlName="employee_status"
                 label="Contract"
-                [disabled]="isProcessing"
+                name="employee_status"
+                value="2"
               ></p-radioButton>
             </div>
           </div>
-          <div class="p-field" *ngIf="mode === 'edit'">
+          <div *ngIf="mode === 'edit'" class="p-field">
             <label for="enabled">Enabled Status</label>
             <div style="padding: 0.5rem 0">
               <p-inputSwitch
-                id="enabled"
-                formControlName="enabled"
                 [disabled]="isProcessing"
+                formControlName="enabled"
+                id="enabled"
               ></p-inputSwitch>
             </div>
           </div>
           <div class="p-field">
             <label for="join_date"
-              >Join Date
+            >Join Date
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <p-calendar
-                id="join_date"
-                formControlName="join_date"
+                [appendTo]="'body'"
                 [disabled]="isProcessing"
                 [maxDate]="maxDate"
-                showIcon="true"
                 [monthNavigator]="true"
-                [yearNavigator]="true"
-                yearRange="2000:{{ currentYear }}"
                 [style]="{ width: '220px' }"
-                [appendTo]="'body'"
+                [yearNavigator]="true"
+                formControlName="join_date"
+                id="join_date"
+                showIcon="true"
+                yearRange="2000:{{ currentYear }}"
               ></p-calendar>
             </div>
           </div>
           <div>
             <p-button
-              *ngIf="mode === 'edit'"
-              type="button"
-              label="Reset Password"
-              icon="pi pi-key"
-              class="p-button-warning"
               (click)="resetPassword()"
+              *ngIf="mode === 'edit'"
+              class="p-button-warning"
+              icon="pi pi-key"
+              label="Reset Password"
+              type="button"
             ></p-button>
           </div>
         </div>
         <span class="required">*Required</span>
         <div class="dialog-footer">
           <button
+            (click)="displayEditDialog = false"
+            [disabled]="isProcessing"
+            class="p-button-text"
+            icon="pi pi-times"
+            label="Cancel"
             pButton
             type="button"
-            icon="pi pi-times"
-            class="p-button-text"
-            label="Cancel"
-            [disabled]="isProcessing"
-            (click)="displayEditDialog = false"
           ></button>
           <button
-            pButton
-            type="submit"
+            [disabled]="isProcessing"
             [label]="
               isProcessing
                 ? mode === 'create'
@@ -314,8 +313,9 @@
                 ? 'Create'
                 : 'Save'
             "
-            [disabled]="isProcessing"
             class="p-button-primary"
+            pButton
+            type="submit"
           >
             <ng-container *ngIf="isProcessing">
               <i class="pi pi-spin pi-spinner"></i>
@@ -325,13 +325,13 @@
       </form>
     </p-dialog>
     <p-dialog
-      header="🎉 Success"
       [(visible)]="displayCreatedDialog"
-      [modal]="true"
       [closable]="true"
       [dismissableMask]="true"
-      [style]="{ width: '40vw', maxWidth: '500px', minHeight: '300px' }"
+      [modal]="true"
       [resizable]="false"
+      [style]="{ width: '40vw', maxWidth: '500px', minHeight: '300px' }"
+      header="🎉 Success"
     >
       <div class="p-d-flex p-flex-column p-ai-center p-p-4">
         <div class="icon-container">
@@ -340,18 +340,18 @@
         <p-card class="p-mt-3" styleClass="p-card-success p-p-3">
           <div class="p-text-center message-container">
             <!-- Message -->
-            <p class="success-message" *ngIf="mode === 'create'">
+            <p *ngIf="mode === 'create'" class="success-message">
               User created successfully!
             </p>
-            <p class="success-message" *ngIf="mode === 'edit'">
+            <p *ngIf="mode === 'edit'" class="success-message">
               Password reset successfully!
             </p>
             <div class="p-d-flex p-flex-column p-ai-center user-info-container">
               <!-- Username Section -->
               <div
+                (click)="copyToClipboard(userName)"
                 class="copy-text"
                 title="Click to copy username"
-                (click)="copyToClipboard(userName)"
               >
                 <span class="label">Username:</span>
                 <span class="clickable-text">{{ userName }}</span>
@@ -359,9 +359,9 @@
 
               <!-- Password Section -->
               <div
+                (click)="copyToClipboard(generatedPassword)"
                 class="copy-text"
                 title="Click to copy password"
-                (click)="copyToClipboard(generatedPassword)"
               >
                 <span class="label">Password:</span>
                 <span class="clickable-text">{{ generatedPassword }}</span>

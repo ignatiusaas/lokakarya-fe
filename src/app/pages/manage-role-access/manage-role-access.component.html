@@ -9,9 +9,9 @@
   <div *ngIf="categorizedMenus.Manage.length > 0">
     <h2>Manage</h2>
     <p-table
+      [loading]="isLoading"
       [value]="categorizedMenus.Manage"
       responsiveLayout="scroll"
-      [loading]="isLoading"
     >
       <ng-template pTemplate="header">
         <tr>
@@ -19,18 +19,18 @@
           <th *ngFor="let role of roles">{{ role.rolename }}</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-menu>
+      <ng-template let-menu pTemplate="body">
         <tr>
           <td>{{ menu.displayName }}</td>
           <td *ngFor="let role of roles">
             <p-checkbox
+              (onChange)="toggleAssociation(role.id, menu.id)"
+              [(ngModel)]="checkboxStates[role.id + '~' + menu.id]"
               [disabled]="
                 role.rolename === 'HR' &&
                 menu.menu_name === 'manage-role-access'
               "
               binary="true"
-              [(ngModel)]="checkboxStates[role.id + '~' + menu.id]"
-              (onChange)="toggleAssociation(role.id, menu.id)"
             ></p-checkbox>
           </td>
         </tr>
@@ -42,9 +42,9 @@
   <div *ngIf="categorizedMenus.Submit.length > 0">
     <h2>Submit</h2>
     <p-table
+      [loading]="isLoading"
       [value]="categorizedMenus.Submit"
       responsiveLayout="scroll"
-      [loading]="isLoading"
     >
       <ng-template pTemplate="header">
         <tr>
@@ -52,14 +52,14 @@
           <th *ngFor="let role of roles">{{ role.rolename }}</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-menu>
+      <ng-template let-menu pTemplate="body">
         <tr>
           <td>{{ menu.displayName }}</td>
           <td *ngFor="let role of roles">
             <p-checkbox
-              binary="true"
-              [(ngModel)]="checkboxStates[role.id + '~' + menu.id]"
               (onChange)="toggleAssociation(role.id, menu.id)"
+              [(ngModel)]="checkboxStates[role.id + '~' + menu.id]"
+              binary="true"
             ></p-checkbox>
           </td>
         </tr>
@@ -69,20 +69,20 @@
 
   <div class="actions">
     <button
-      pButton
-      label="Save"
-      icon="pi pi-save"
-      class="p-button-primary"
       (click)="saveAssociations()"
       [disabled]="isLoading"
+      class="p-button-primary"
+      icon="pi pi-save"
+      label="Save"
+      pButton
     ></button>
     <button
-      pButton
-      label="Reset"
-      icon="pi pi-replay"
-      class="p-button-secondary"
       (click)="resetAssociations()"
       [disabled]="isLoading"
+      class="p-button-secondary"
+      icon="pi pi-replay"
+      label="Reset"
+      pButton
     ></button>
   </div>
 </div>

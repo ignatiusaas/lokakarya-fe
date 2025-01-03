@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <app-navbar></app-navbar>
-<br />
+<br/>
 <div class="employee-attitude-skill-container">
   <div class="page-title">
     <h1>{{ selectedName }}'s {{ selectedYear }} Attitude Skills</h1>
@@ -18,26 +18,26 @@
       >
         <label for="userSelect">Select User: </label>
         <p-dropdown
-          id="userSelect"
-          [options]="employees"
+          (onChange)="fetchEmpAttitudeSkills()"
           [(ngModel)]="selectedUserId"
+          [options]="employees"
+          appendTo="body"
+          id="userSelect"
           optionLabel="full_name"
           optionValue="id"
           placeholder="{{ selectedName }}"
-          (onChange)="fetchEmpAttitudeSkills()"
-          appendTo="body"
         ></p-dropdown>
       </div>
       <div class="assessment-year-selection">
         <label for="assessmentYear">Assessment Year: </label>
         <p-calendar
-          id="assessmentYear"
-          [(ngModel)]="selectedAssessmentYear"
-          view="year"
-          dateFormat="yy"
           (onSelect)="fetchEmpAttitudeSkills()"
+          [(ngModel)]="selectedAssessmentYear"
           [maxDate]="maxDate"
+          dateFormat="yy"
+          id="assessmentYear"
           placeholder="{{ selectedYear }}"
+          view="year"
         ></p-calendar>
       </div>
     </div>
@@ -48,39 +48,34 @@
       <div class="p-field">
         <table class="p-datatable edit-form-table">
           <thead>
-            <tr>
-              <th>Group Name</th>
-              <th>Attitude Skill</th>
-              <th>Score</th>
-            </tr>
+          <tr>
+            <th>Group Name</th>
+            <th>Attitude Skill</th>
+            <th>Score</th>
+          </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let group of groupedEmpAttitudeSkills">
-              <ng-container *ngIf="group.attitudeSkills.length > 0">
-                <ng-container
-                  *ngFor="
+          <ng-container *ngFor="let group of groupedEmpAttitudeSkills">
+            <ng-container *ngIf="group.attitudeSkills.length > 0">
+              <ng-container
+                *ngFor="
                     let attitudeSkill of group.attitudeSkills;
                     let i = index;
                     trackBy: trackById
                   "
-                >
-                  <tr>
-                    <td
-                      *ngIf="i === 0"
-                      [attr.rowspan]="group.attitudeSkills.length"
-                    >
-                      {{ group.group_name }}
-                    </td>
-                    <td>{{ attitudeSkill.attitude_skill_name }}</td>
-                    <td>
-                      <p-dropdown
-                        [(ngModel)]="attitudeSkill.score"
-                        name="Score_{{ group.group_id }}_{{ i }}"
-                        [options]="scoreOptions"
-                        optionLabel="label"
-                        optionValue="value"
-                        placeholder="Select Score"
-                        [disabled]="
+              >
+                <tr>
+                  <td
+                    *ngIf="i === 0"
+                    [attr.rowspan]="group.attitudeSkills.length"
+                  >
+                    {{ group.group_name }}
+                  </td>
+                  <td>{{ attitudeSkill.attitude_skill_name }}</td>
+                  <td>
+                    <p-dropdown
+                      [(ngModel)]="attitudeSkill.score"
+                      [disabled]="
                           isProcessing ||
                           (currentRoles.includes('USER') &&
                             selectedUserId !== currentUserId) ||
@@ -88,13 +83,18 @@
                             !currentRoles.includes('USER')) ||
                           isLocked
                         "
-                        appendTo="body"
-                      ></p-dropdown>
-                    </td>
-                  </tr>
-                </ng-container>
+                      [options]="scoreOptions"
+                      appendTo="body"
+                      name="Score_{{ group.group_id }}_{{ i }}"
+                      optionLabel="label"
+                      optionValue="value"
+                      placeholder="Select Score"
+                    ></p-dropdown>
+                  </td>
+                </tr>
               </ng-container>
             </ng-container>
+          </ng-container>
           </tbody>
         </table>
       </div>
@@ -107,11 +107,11 @@
             currentRoles.includes('SVP')) &&
           !isLocked
         "
+        [disabled]="isProcessing"
+        [label]="isProcessing ? 'Saving...' : 'Save'"
+        class="p-button-primary"
         pButton
         type="submit"
-        [label]="isProcessing ? 'Saving...' : 'Save'"
-        [disabled]="isProcessing"
-        class="p-button-primary"
       >
         <ng-container *ngIf="isProcessing">
           <i class="pi pi-spin pi-spinner"></i>

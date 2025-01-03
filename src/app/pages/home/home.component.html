@@ -17,24 +17,24 @@
 
   <div *ngIf="!loading && !errorMessage">
     <div
-      class="notification-dropdown"
       *ngIf="showIncomplete && currentRoles.includes('USER')"
+      class="notification-dropdown"
     >
-      <div class="dropdown-header" (click)="toggleDropdown()">
+      <div (click)="toggleDropdown()" class="dropdown-header">
         <h2 class="card-title">Pending Submissions for {{ currentYear }}</h2>
-        <span class="dropdown-caret" [class.open]="showDropdown"></span>
+        <span [class.open]="showDropdown" class="dropdown-caret"></span>
       </div>
 
-      <div class="dropdown-content" *ngIf="showDropdown">
+      <div *ngIf="showDropdown" class="dropdown-content">
         <ul class="pending-list">
           <li>
             <p-checkbox
               (click)="navigateTo('employee-attitude-skill', $event)"
-              label="Attitude Skill"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isAttSkillFilled"
               class="pending-checkbox"
+              label="Attitude Skill"
             ></p-checkbox>
           </li>
           <li>
@@ -46,55 +46,55 @@
                   detail: 'Please contact HR for clarifications.',
                 })
               "
-              label="Achievements"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isAchFilled"
               class="pending-checkbox"
+              label="Achievements"
             >
             </p-checkbox>
           </li>
           <li>
             <p-checkbox
               (click)="navigateTo('employee-suggestion', $event)"
-              label="Suggestion"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isSuggestionFilled"
               class="pending-checkbox"
+              label="Suggestion"
             >
             </p-checkbox>
           </li>
           <li>
             <p-checkbox
               (click)="navigateTo('employee-dev-plan', $event)"
-              label="Development Plan"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isDevPlanFilled"
               class="pending-checkbox"
+              label="Development Plan"
             >
             </p-checkbox>
           </li>
           <li>
             <p-checkbox
               (click)="navigateTo('employee-technical-skill', $event)"
-              label="Technical Skill"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isTechSkillFilled"
               class="pending-checkbox"
+              label="Technical Skill"
             >
             </p-checkbox>
           </li>
           <li>
             <p-checkbox
               (click)="navigateTo('assessment-summary', $event)"
-              label="Assessment Summary"
-              [disabled]="true"
               [binary]="true"
+              [disabled]="true"
               [ngModel]="isAssFilled"
               class="pending-checkbox"
+              label="Assessment Summary"
             >
             </p-checkbox>
           </li>
@@ -113,109 +113,109 @@
           {{ role }}
           <span>
             <span *ngIf="role !== currentRoles[currentRoles.length - 1]"
-              >•</span
+            >•</span
             >
           </span>
         </span>
       </p>
 
       <button
-        pButton
-        label="Change Password"
-        icon="pi pi-key"
-        class="p-button-warning change-password-button"
         (click)="openChangePasswordDialog()"
+        class="p-button-warning change-password-button"
+        icon="pi pi-key"
+        label="Change Password"
+        pButton
       ></button>
     </div>
   </div>
 
   <p-dialog
-    class="change-password-dialog"
     [(visible)]="displayChangePasswordDialog"
-    [modal]="true"
-    [style]="{ width: '500px' }"
-    [resizable]="false"
     [closable]="true"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '500px' }"
+    class="change-password-dialog"
   >
     <p-header>Change Password</p-header>
-    <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+    <form (ngSubmit)="changePassword()" [formGroup]="changePasswordForm">
       <div class="p-field">
         <label for="currentPassword"
-          >Current Password
+        >Current Password
           <span class="required">*</span>
         </label>
         <p-password
-          type="password"
-          id="currentPassword"
-          [toggleMask]="true"
+          [attr.disabled]="changePassLoading ? true : null"
           [feedback]="false"
           [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
           [style]="{ width: '120%' }"
+          [toggleMask]="true"
           formControlName="currentPassword"
+          id="currentPassword"
           placeholder="Enter current password"
           required
-          [attr.disabled]="changePassLoading ? true : null"
+          type="password"
         />
       </div>
 
       <div class="p-field">
         <label for="newPassword"
-          >New Password
+        >New Password
           <span class="required">*</span>
         </label>
         <p-password
-          type="password"
-          id="newPassword"
-          [toggleMask]="true"
+          [attr.disabled]="changePassLoading ? true : null"
           [feedback]="true"
           [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
           [style]="{ width: '120%' }"
+          [toggleMask]="true"
           formControlName="newPassword"
+          id="newPassword"
           placeholder="Enter new password"
           required
-          [attr.disabled]="changePassLoading ? true : null"
+          type="password"
         />
       </div>
 
       <div class="p-field">
         <label for="confirmPassword"
-          >Confirm Password
+        >Confirm Password
           <span class="required">*</span>
         </label>
         <p-password
-          type="password"
-          id="confirmPassword"
-          [toggleMask]="true"
+          (input)="checkPasswordMatch()"
+          [attr.disabled]="changePassLoading ? true : null"
           [feedback]="false"
           [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
           [style]="{ width: '120%' }"
+          [toggleMask]="true"
           formControlName="confirmPassword"
+          id="confirmPassword"
           placeholder="Confirm new password"
           required
-          [attr.disabled]="changePassLoading ? true : null"
-          (input)="checkPasswordMatch()"
+          type="password"
         />
       </div>
       <span class="required">*Required</span>
       <div class="dialog-footer">
         <button
-          pButton
-          type="button"
-          label="Cancel"
-          icon="pi pi-times"
-          class="p-button-text"
           (click)="displayChangePasswordDialog = false"
           [disabled]="changePassLoading"
+          class="p-button-text"
+          icon="pi pi-times"
+          label="Cancel"
+          pButton
+          type="button"
         ></button>
         <button
-          pButton
-          type="submit"
-          label="Submit"
-          icon="pi pi-check"
-          class="p-button-primary"
           [disabled]="
             changePassLoading || !changePasswordForm.valid || !passwordMatches
           "
+          class="p-button-primary"
+          icon="pi pi-check"
+          label="Submit"
+          pButton
+          type="submit"
         ></button>
       </div>
       <p

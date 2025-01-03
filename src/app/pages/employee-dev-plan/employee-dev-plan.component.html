@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <app-navbar></app-navbar>
-<br />
+<br/>
 <div class="employee-dev-plan-container">
   <div class="page-title">
     <h1>{{ selectedName }}'s {{ selectedYear }} Development Plan</h1>
@@ -13,28 +13,28 @@
       <div *ngIf="currentRoles.includes('HR')" class="user-selection">
         <label for="userSelect">Select User: </label>
         <p-dropdown
-          id="userSelect"
-          [options]="employees"
+          (onChange)="fetchEmpDevPlans()"
           [(ngModel)]="selectedUserId"
+          [options]="employees"
+          appendTo="body"
+          id="userSelect"
           optionLabel="full_name"
           optionValue="id"
           placeholder="{{ selectedName }}"
-          (onChange)="fetchEmpDevPlans()"
-          appendTo="body"
         ></p-dropdown>
       </div>
       <!-- Assessment Year -->
       <div class="assessment-year-selection">
         <label for="assessmentYear">Assessment Year: </label>
         <p-calendar
-          id="assessmentYear"
-          [(ngModel)]="selectedAssessmentYear"
-          view="year"
-          dateFormat="yy"
           (onSelect)="fetchEmpDevPlans()"
+          [(ngModel)]="selectedAssessmentYear"
           [maxDate]="maxDate"
-          placeholder="{{ selectedYear }}"
           appendTo="body"
+          dateFormat="yy"
+          id="assessmentYear"
+          placeholder="{{ selectedYear }}"
+          view="year"
         ></p-calendar>
       </div>
     </div>
@@ -45,90 +45,90 @@
       <div class="p-field">
         <table class="p-datatable edit-form-table">
           <thead>
-            <tr>
-              <th>Category</th>
-              <th>Plan</th>
-              <th
-                *ngIf="
+          <tr>
+            <th>Category</th>
+            <th>Plan</th>
+            <th
+              *ngIf="
                   !isLocked &&
                   selectedUserId === currentUserId &&
                   currentRoles.includes('USER')
                 "
-              >
-                Actions
-              </th>
-            </tr>
+            >
+              Actions
+            </th>
+          </tr>
           </thead>
           <tbody>
-            <ng-container
-              *ngFor="
+          <ng-container
+            *ngFor="
                 let group of groupedEmpDevPlans;
                 trackBy: trackByDevPlanId
               "
-            >
-              <tr>
-                <td [attr.rowspan]="group.descriptions.length + 1">
-                  {{ group.dev_plan_name }}
-                </td>
-                <td *ngIf="!isLocked" colspan="3">
-                  <button
-                    *ngIf="
+          >
+            <tr>
+              <td [attr.rowspan]="group.descriptions.length + 1">
+                {{ group.dev_plan_name }}
+              </td>
+              <td *ngIf="!isLocked" colspan="3">
+                <button
+                  (click)="addPlanEntry(group)"
+                  *ngIf="
                       currentRoles.includes('USER') &&
                       selectedUserId === currentUserId
                     "
-                    type="button"
-                    (click)="addPlanEntry(group)"
-                    pButton
-                    label="Add Plan"
-                  ></button>
-                  <p
-                    *ngIf="
+                  label="Add Plan"
+                  pButton
+                  type="button"
+                ></button>
+                <p
+                  *ngIf="
                       group.descriptions.length === 0 &&
                       selectedUserId !== currentUserId
                     "
-                    style="text-align: center; font-style: italic"
-                  >
-                    No Plan
-                  </p>
-                </td>
-                <td
-                  *ngIf="isLocked && group.descriptions.length === 0"
-                  colspan="3"
+                  style="text-align: center; font-style: italic"
                 >
-                  <p style="text-align: center; font-style: italic">No Plan</p>
-                </td>
-              </tr>
-              <!-- Skill Entries -->
-              <tr
-                *ngFor="
+                  No Plan
+                </p>
+              </td>
+              <td
+                *ngIf="isLocked && group.descriptions.length === 0"
+                colspan="3"
+              >
+                <p style="text-align: center; font-style: italic">No Plan</p>
+              </td>
+            </tr>
+            <!-- Skill Entries -->
+            <tr
+              *ngFor="
                   let entry of group.descriptions;
                   let i = index;
                   trackBy: trackByIndex
                 "
-              >
-                <td>
-                  <input
-                    [(ngModel)]="entry.description"
-                    name="PlanEntry_{{ group.dev_plan_id }}_{{ i }}"
-                    pInputText
-                    required
-                    [disabled]="
+            >
+              <td>
+                <input
+                  [(ngModel)]="entry.description"
+                  [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
                       isLocked
                     "
-                  />
-                </td>
-                <td *ngIf="!isLocked">
-                  <button
-                    type="button"
-                    (click)="removePlanEntry(group, i)"
-                    pButton
-                    icon="pi pi-trash"
-                  ></button>
-                </td>
-              </tr>
-            </ng-container>
+                  name="PlanEntry_{{ group.dev_plan_id }}_{{ i }}"
+                  pInputText
+                  required
+                />
+              </td>
+              <td *ngIf="!isLocked">
+                <button
+                  (click)="removePlanEntry(group, i)"
+                  icon="pi pi-trash"
+                  pButton
+                  type="button"
+                ></button>
+              </td>
+            </tr>
+          </ng-container>
           </tbody>
         </table>
       </div>
@@ -140,11 +140,11 @@
           selectedUserId === currentUserId &&
           !isLocked
         "
+        [disabled]="isProcessing"
+        [label]="isProcessing ? 'Saving...' : 'Save'"
+        class="p-button-primary"
         pButton
         type="submit"
-        [label]="isProcessing ? 'Saving...' : 'Save'"
-        [disabled]="isProcessing"
-        class="p-button-primary"
       >
         <ng-container *ngIf="isProcessing">
           <i class="pi pi-spin pi-spinner"></i>

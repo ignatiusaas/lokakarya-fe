@@ -1,35 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  ConfirmationService,
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableModule } from 'primeng/table';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {TableModule} from 'primeng/table';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {finalize} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-employee-achievement-skill',
@@ -47,7 +36,6 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
     InputTextModule,
     NgForOf,
     NgIf,
-    PrimeTemplate,
     RadioButtonModule,
     ReactiveFormsModule,
     TableModule,
@@ -98,11 +86,11 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   assessmentYear: Date | null = null;
 
   scoreOptions: { label: string; value: number }[] = [
-    { label: 'Bad', value: 10 },
-    { label: 'Average', value: 20 },
-    { label: 'Good', value: 30 },
-    { label: 'Great', value: 40 },
-    { label: 'Excellent', value: 50 },
+    {label: 'Bad', value: 10},
+    {label: 'Average', value: 20},
+    {label: 'Good', value: 30},
+    {label: 'Great', value: 40},
+    {label: 'Excellent', value: 50},
   ];
 
   achievementSkillsMap: Map<string, string> = new Map();
@@ -116,7 +104,8 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     console.log('Initializing EmployeeAchievementSkillComponent');
@@ -146,93 +135,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     }
     this.selectedAssessmentYear = new Date();
     console.log('Component Initialized');
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentDivisionId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.divisionId) {
-        console.log('Decoded userId:', decoded.divisionId);
-        return decoded.divisionId;
-      } else {
-        console.error('divisionId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentRoles(): any | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      user_id: [''],
-      achievement_id: ['', Validators.required],
-      entryScore: [null, Validators.required],
-      skillEntry: ['', Validators.required],
-      assessment_year: ['', Validators.required],
-    });
-    this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   fetchSelectedUserName(): void {
@@ -635,59 +537,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     });
   }
 
-  private groupAllAchievements(): void {
-    const grouped = new Map<string, any>();
-
-    // Initialize groups
-    this.groupAchievements.forEach((group) => {
-      grouped.set(group.id, {
-        group_id: group.id,
-        group_name: group.group_name,
-        achievements: [],
-      });
-    });
-
-    // Add achievements to their respective groups
-    this.achievementSkills.forEach((achievement) => {
-      const groupId = achievement.group_id;
-      if (grouped.has(groupId)) {
-        grouped.get(groupId).achievements.push({
-          achievement_id: achievement.id,
-          achievement_name: achievement.achievement,
-          notes: '', // Default empty notes
-          score: null, // Default null score
-          emp_skill_id: null, // For updating purposes
-        });
-      } else {
-        // Optionally handle achievements without a group
-        console.warn(
-          `Group ID ${groupId} not found for achievement ${achievement.id}`
-        );
-      }
-    });
-
-    // Merge employee data
-    this.empAchievementSkills.forEach((empSkill) => {
-      const groupId = empSkill.group_id;
-      const achievementId = empSkill.achievement_id;
-
-      const group = grouped.get(groupId);
-      if (group) {
-        const achievement = group.achievements.find(
-          (ach: any) => ach.achievement_id === achievementId
-        );
-        if (achievement) {
-          achievement.notes = empSkill.notes;
-          achievement.score = empSkill.score;
-          achievement.emp_skill_id = empSkill.id; // For updating purposes
-        }
-      }
-    });
-
-    // Convert grouped data into an array for display
-    this.groupedEmpAchievementSkills = Array.from(grouped.values());
-  }
-
   prepareAchievementSkillEntries(): void {
     const grouped = new Map<string, any>();
 
@@ -741,8 +590,8 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   addSkillEntry(entry: any): void {
-    entry.skillEntrys.push({ id: this.generateUniqueId(), value: '' });
-    entry.entryScores.push({ id: this.generateUniqueId(), value: null });
+    entry.skillEntrys.push({id: this.generateUniqueId(), value: ''});
+    entry.entryScores.push({id: this.generateUniqueId(), value: null});
   }
 
   generateUniqueId(): string {
@@ -766,5 +615,145 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
   trackById(index: number, item: { id: string }): string {
     return item.id;
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentDivisionId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.divisionId) {
+        console.log('Decoded userId:', decoded.divisionId);
+        return decoded.divisionId;
+      } else {
+        console.error('divisionId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      user_id: [''],
+      achievement_id: ['', Validators.required],
+      entryScore: [null, Validators.required],
+      skillEntry: ['', Validators.required],
+      assessment_year: ['', Validators.required],
+    });
+    this.currentUserId = this.extractCurrentUserId() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
+  }
+
+  private groupAllAchievements(): void {
+    const grouped = new Map<string, any>();
+
+    // Initialize groups
+    this.groupAchievements.forEach((group) => {
+      grouped.set(group.id, {
+        group_id: group.id,
+        group_name: group.group_name,
+        achievements: [],
+      });
+    });
+
+    // Add achievements to their respective groups
+    this.achievementSkills.forEach((achievement) => {
+      const groupId = achievement.group_id;
+      if (grouped.has(groupId)) {
+        grouped.get(groupId).achievements.push({
+          achievement_id: achievement.id,
+          achievement_name: achievement.achievement,
+          notes: '', // Default empty notes
+          score: null, // Default null score
+          emp_skill_id: null, // For updating purposes
+        });
+      } else {
+        // Optionally handle achievements without a group
+        console.warn(
+          `Group ID ${groupId} not found for achievement ${achievement.id}`
+        );
+      }
+    });
+
+    // Merge employee data
+    this.empAchievementSkills.forEach((empSkill) => {
+      const groupId = empSkill.group_id;
+      const achievementId = empSkill.achievement_id;
+
+      const group = grouped.get(groupId);
+      if (group) {
+        const achievement = group.achievements.find(
+          (ach: any) => ach.achievement_id === achievementId
+        );
+        if (achievement) {
+          achievement.notes = empSkill.notes;
+          achievement.score = empSkill.score;
+          achievement.emp_skill_id = empSkill.id; // For updating purposes
+        }
+      }
+    });
+
+    // Convert grouped data into an array for display
+    this.groupedEmpAchievementSkills = Array.from(grouped.values());
   }
 }

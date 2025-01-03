@@ -1,19 +1,13 @@
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { EMPTY, finalize, switchMap } from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {Router} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {EMPTY, finalize, switchMap} from 'rxjs';
+import {jwtDecode} from 'jwt-decode';
 
 @Component({
   selector: 'app-home',
@@ -58,7 +52,8 @@ export class HomeComponent {
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     public messageService: MessageService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.loadUserData();
@@ -99,22 +94,13 @@ export class HomeComponent {
           this.errorMessage = 'Failed to load user data.';
           console.error(err);
           this.router.navigate(['/login'], {
-            queryParams: { warning: 'Session expired. Please log in again.' },
+            queryParams: {warning: 'Session expired. Please log in again.'},
           });
         },
         complete: () => {
           this.loading = false;
         },
       });
-  }
-
-  private initializeForm() {
-    console.log('Initializing Change Password Form...');
-    this.changePasswordForm = this.fb.group({
-      currentPassword: ['', Validators.required],
-      newPassword: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
-    });
   }
 
   openChangePasswordDialog(): void {
@@ -236,30 +222,6 @@ export class HomeComponent {
     return this.passwordMatches;
   }
 
-  private extractCurrentRoles(): any[] {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return [];
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return [];
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return [];
-    }
-  }
-
   async checkSubmission(): Promise<void> {
     console.log('Checking submission...');
     console.log('Current Year:', this.currentYear);
@@ -310,6 +272,39 @@ export class HomeComponent {
       console.log('showIncomplete:', this.showIncomplete);
     } catch (error) {
       console.error('Error while checking submission:', error);
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Change Password Form...');
+    this.changePasswordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', Validators.required],
+      confirmPassword: ['', Validators.required],
+    });
+  }
+
+  private extractCurrentRoles(): any[] {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return [];
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return [];
     }
   }
 }

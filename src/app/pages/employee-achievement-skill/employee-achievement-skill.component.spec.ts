@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { EmployeeAchievementSkillComponent } from './employee-achievement-skill.component';
+import {EmployeeAchievementSkillComponent} from './employee-achievement-skill.component';
 
 describe('EmployeeAchievementSkillComponent', () => {
   let component: EmployeeAchievementSkillComponent;
@@ -10,7 +10,7 @@ describe('EmployeeAchievementSkillComponent', () => {
     await TestBed.configureTestingModule({
       imports: [EmployeeAchievementSkillComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EmployeeAchievementSkillComponent);
     component = fixture.componentInstance;

@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { finalize } from 'rxjs/operators';
-import { CheckboxModule } from 'primeng/checkbox';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import {CheckboxModule} from 'primeng/checkbox';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-manage-role-access',
@@ -40,7 +39,8 @@ export class ManageRoleAccessComponent implements OnInit {
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.fetchData();
@@ -196,7 +196,7 @@ export class ManageRoleAccessComponent implements OnInit {
 
         const saveRequests = newAssociations.map((key) => {
           const [roleId, menuId] = key.split('~');
-          const payload = { role_id: roleId, menu_id: menuId };
+          const payload = {role_id: roleId, menu_id: menuId};
           console.log('Payload:', payload);
           return this.http.post(
             'https://hiremeplease.freeddns.org/approlemenu/create',

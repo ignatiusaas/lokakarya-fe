@@ -10,21 +10,21 @@
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
-              pInputText
-              type="text"
-              placeholder="Search..."
-              [(ngModel)]="globalFilterValue"
               (input)="onSearch()"
+              [(ngModel)]="globalFilterValue"
+              pInputText
+              placeholder="Search..."
+              type="text"
             />
           </span>
         </div>
         <button
-          pButton
-          label="Create"
-          icon="pi pi-plus"
-          class="create-button"
           (click)="openCreateDialog()"
           [disabled]="isProcessing || isEditFormLoading"
+          class="create-button"
+          icon="pi pi-plus"
+          label="Create"
+          pButton
         ></button>
       </div>
     </div>
@@ -32,30 +32,30 @@
     <p-card>
       <p-table
         #dt
-        [value]="divisions"
-        [lazy]="true"
-        [paginator]="true"
-        [rows]="rowsPerPage"
-        [totalRecords]="totalRecords"
-        [loading]="loading"
         (onLazyLoad)="fetchDivisions($event)"
+        [lazy]="true"
+        [loading]="loading"
+        [paginator]="true"
         [resizableColumns]="true"
-        responsiveLayout="scroll"
-        [sortMode]="'single'"
         [rowsPerPageOptions]="[5, 10, 20]"
+        [rows]="rowsPerPage"
+        [sortMode]="'single'"
+        [totalRecords]="totalRecords"
+        [value]="divisions"
+        responsiveLayout="scroll"
       >
         <ng-template pTemplate="caption">
           <div class="table-filters">
             <div class="order-actions">
               <button
-                pButton
+                (click)="toggleOrderDirection()"
+                class="p-button-secondary toggle-order-button"
                 icon="{{
                   selectedOrderDirection === 'asc'
                     ? 'pi pi-arrow-up'
                     : 'pi pi-arrow-down'
                 }}"
-                class="p-button-secondary toggle-order-button"
-                (click)="toggleOrderDirection()"
+                pButton
               ></button>
             </div>
           </div>
@@ -66,31 +66,31 @@
             <th>Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-division>
+        <ng-template let-division pTemplate="body">
           <tr [ngClass]="{ 'disabled-row': division.enabled === false }">
             <td>{{ division.division_name }}</td>
             <td>
               <button
-                pButton
+                (click)="editDivision(division.id)"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-pencil'
                 "
                 class="p-button-rounded p-button-primary"
-                (click)="editDivision(division.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
               <button
-                pButton
+                (click)="deleteDivision(division.id)"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-trash'
                 "
                 class="p-button-rounded p-button-danger"
-                (click)="deleteDivision(division.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
             </td>
           </tr>
@@ -99,28 +99,28 @@
     </p-card>
 
     <p-dialog
-      header="{{ mode === 'create' ? 'Create Division' : 'Edit Division' }}"
       [(visible)]="displayEditDialog"
-      [modal]="true"
       [closable]="true"
       [dismissableMask]="true"
-      [style]="{ width: '50vw' }"
+      [modal]="true"
       [resizable]="false"
+      [style]="{ width: '50vw' }"
+      header="{{ mode === 'create' ? 'Create Division' : 'Edit Division' }}"
     >
-      <form [formGroup]="editForm" (ngSubmit)="submitDivision()">
+      <form (ngSubmit)="submitDivision()" [formGroup]="editForm">
         <div class="p-fluid">
           <div *ngIf="mode === 'create'" class="p-field"></div>
           <div class="p-field">
             <label for="division_name"
-              >Division
+            >Division
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="division_name"
                 id="division_name"
                 pInputText
-                formControlName="division_name"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
@@ -128,17 +128,16 @@
         <span class="required">*Required</span>
         <div class="dialog-footer">
           <button
+            (click)="displayEditDialog = false"
+            [disabled]="isProcessing"
+            class="p-button-text"
+            icon="pi pi-times"
+            label="Cancel"
             pButton
             type="button"
-            icon="pi pi-times"
-            class="p-button-text"
-            label="Cancel"
-            [disabled]="isProcessing"
-            (click)="displayEditDialog = false"
           ></button>
           <button
-            pButton
-            type="submit"
+            [disabled]="isProcessing"
             [label]="
               isProcessing
                 ? mode === 'create'
@@ -148,8 +147,9 @@
                 ? 'Create'
                 : 'Save'
             "
-            [disabled]="isProcessing"
             class="p-button-primary"
+            pButton
+            type="submit"
           >
             <ng-container *ngIf="isProcessing">
               <i class="pi pi-spin pi-spinner"></i>

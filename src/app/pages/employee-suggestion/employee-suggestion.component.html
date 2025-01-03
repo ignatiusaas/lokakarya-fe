@@ -10,22 +10,22 @@
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
-              pInputText
-              type="text"
-              placeholder="Search..."
-              [(ngModel)]="globalFilterValue"
               (input)="onSearch()"
+              [(ngModel)]="globalFilterValue"
+              pInputText
+              placeholder="Search..."
+              type="text"
             />
           </span>
         </div>
         <button
-          *ngIf="currentRoles.includes('USER')"
-          pButton
-          label="Create"
-          icon="pi pi-plus"
-          class="create-button"
           (click)="openCreateDialog()"
+          *ngIf="currentRoles.includes('USER')"
           [disabled]="isProcessing || isEditFormLoading"
+          class="create-button"
+          icon="pi pi-plus"
+          label="Create"
+          pButton
         ></button>
       </div>
     </div>
@@ -33,16 +33,16 @@
     <p-card>
       <p-table
         #dt
-        [value]="checkedSuggestions"
-        [lazy]="true"
-        [paginator]="true"
-        [rows]="rowsPerPage"
-        [totalRecords]="totalRecords"
-        [loading]="loading"
         (onLazyLoad)="fetchEmpSuggestions($event)"
+        [lazy]="true"
+        [loading]="loading"
+        [paginator]="true"
         [resizableColumns]="true"
-        responsiveLayout="scroll"
+        [rows]="rowsPerPage"
         [sortMode]="'single'"
+        [totalRecords]="totalRecords"
+        [value]="checkedSuggestions"
+        responsiveLayout="scroll"
       >
         <ng-template pTemplate="header">
           <tr>
@@ -52,7 +52,7 @@
             <th *ngIf="currentRoles.includes('USER')">Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-empSuggestion>
+        <ng-template let-empSuggestion pTemplate="body">
           <tr>
             <td *ngIf="currentRoles.includes('HR')">
               {{ empSuggestion.full_name }}
@@ -61,34 +61,34 @@
             <td>{{ empSuggestion.assessment_year }}</td>
             <td *ngIf="currentRoles.includes('USER')">
               <button
+                (click)="editEmpSuggestion(empSuggestion.id)"
                 *ngIf="
                   empSuggestion.user_id === currentUserId &&
                   empSuggestion.status !== 2
                 "
-                pButton
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-pencil'
                 "
                 class="p-button-rounded p-button-primary"
-                (click)="editEmpSuggestion(empSuggestion.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
               <button
+                (click)="deleteEmpSuggestion(empSuggestion.id)"
                 *ngIf="
                   empSuggestion.user_id === currentUserId &&
                   empSuggestion.status !== 2
                 "
-                pButton
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-trash'
                 "
                 class="p-button-rounded p-button-danger"
-                (click)="deleteEmpSuggestion(empSuggestion.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
             </td>
           </tr>
@@ -97,34 +97,34 @@
     </p-card>
 
     <p-dialog
+      [(visible)]="displayEditDialog"
+      [closable]="true"
+      [dismissableMask]="true"
+      [modal]="true"
+      [resizable]="false"
+      [style]="{ width: '50vw' }"
       header="{{
         mode === 'create'
           ? 'Create Employee Suggestion'
           : 'Edit Employee Suggestion'
       }}"
-      [(visible)]="displayEditDialog"
-      [modal]="true"
-      [closable]="true"
-      [dismissableMask]="true"
-      [style]="{ width: '50vw' }"
-      [resizable]="false"
     >
-      <form [formGroup]="editForm" (ngSubmit)="submitEmployeeSuggestion()">
+      <form (ngSubmit)="submitEmployeeSuggestion()" [formGroup]="editForm">
         <div class="p-fluid">
           <div *ngIf="mode === 'create'" class="p-field"></div>
           <div class="p-field">
             <label for="suggestion"
-              >Suggestion
+            >Suggestion
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <textarea
+                [disabled]="isProcessing"
+                cols="30"
+                formControlName="suggestion"
                 id="suggestion"
                 pInputTextarea
-                formControlName="suggestion"
-                [disabled]="isProcessing"
                 rows="5"
-                cols="30"
                 style="width: 100%; resize: none"
               ></textarea>
             </div>
@@ -132,17 +132,17 @@
 
           <div class="p-field">
             <label for="assessment_year"
-              >Assessment Year
+            >Assessment Year
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <p-calendar
-                id="assessment_year"
-                view="year"
-                formControlName="assessment_year"
-                dateFormat="yy"
                 [disabled]="mode === 'update'"
                 [maxDate]="maxDate"
+                dateFormat="yy"
+                formControlName="assessment_year"
+                id="assessment_year"
+                view="year"
               ></p-calendar>
             </div>
           </div>
@@ -150,17 +150,16 @@
         <span class="required">*Required</span>
         <div class="dialog-footer">
           <button
+            (click)="displayEditDialog = false"
+            [disabled]="isProcessing"
+            class="p-button-text"
+            icon="pi pi-times"
+            label="Cancel"
             pButton
             type="button"
-            icon="pi pi-times"
-            class="p-button-text"
-            label="Cancel"
-            [disabled]="isProcessing"
-            (click)="displayEditDialog = false"
           ></button>
           <button
-            pButton
-            type="submit"
+            [disabled]="isProcessing"
             [label]="
               isProcessing
                 ? mode === 'create'
@@ -170,8 +169,9 @@
                 ? 'Create'
                 : 'Save'
             "
-            [disabled]="isProcessing"
             class="p-button-primary"
+            pButton
+            type="submit"
           >
             <ng-container *ngIf="isProcessing">
               <i class="pi pi-spin pi-spinner"></i>

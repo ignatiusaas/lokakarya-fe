@@ -1,34 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-  ConfirmationService,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {finalize} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-employee-technical-skill',
@@ -45,7 +33,6 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
     InputTextModule,
     NgForOf,
     NgIf,
-    PrimeTemplate,
     RadioButtonModule,
     ReactiveFormsModule,
     ToastModule,
@@ -78,11 +65,11 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   isLocked: boolean = false;
 
   scoreOptions: { label: string; value: number }[] = [
-    { label: 'Starting', value: 10 },
-    { label: 'Beginner', value: 20 },
-    { label: 'Intermediate', value: 30 },
-    { label: 'Advanced', value: 40 },
-    { label: 'Professional', value: 50 },
+    {label: 'Starting', value: 10},
+    {label: 'Beginner', value: 20},
+    {label: 'Intermediate', value: 30},
+    {label: 'Advanced', value: 40},
+    {label: 'Professional', value: 50},
   ];
 
   technicalSkillsMap: Map<string, string> = new Map();
@@ -93,7 +80,8 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     console.log('Initializing EmployeeTechnicalSkillComponent');
@@ -119,69 +107,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       });
 
     console.log('Component Initialized');
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentRoles(): any[] {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return [];
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return [];
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return [];
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      user_id: [''],
-      technical_skill_id: ['', Validators.required],
-      entryScore: [null, Validators.required],
-      skillEntry: ['', Validators.required],
-      assessment_year: ['', Validators.required],
-    });
-    this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   onDialogClose(): void {
@@ -326,36 +251,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     });
   }
 
-  private groupAllTechnicalSkills(includeAll: boolean = false): void {
-    const grouped = new Map<string, any>();
-
-    this.technicalSkills.forEach((techSkill) => {
-      grouped.set(techSkill.id, {
-        technical_skill_id: techSkill.id,
-        technical_skill_name: techSkill.technical_skill,
-        skillEntrys: [],
-      });
-    });
-
-    this.empTechnicalSkills.forEach((empSkill) => {
-      const techSkillId = empSkill.technical_skill_id;
-      const group = grouped.get(techSkillId);
-      if (group) {
-        group.skillEntrys.push({
-          id: empSkill.id,
-          skillEntry: empSkill.skill,
-          entryScore: empSkill.score,
-        });
-      } else {
-        console.warn(
-          `Technical Skill ID ${techSkillId} not found for employee skill ${empSkill.id}`
-        );
-      }
-    });
-
-    this.groupedEmpTechnicalSkills = Array.from(grouped.values());
-  }
-
   openEditDialog(): void {
     console.log('Opening Technical Skill Edit Form');
     this.displayEditDialog = true;
@@ -497,5 +392,98 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
   trackByIndex(index: number, item: any): number {
     return index;
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any[] {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return [];
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return [];
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      user_id: [''],
+      technical_skill_id: ['', Validators.required],
+      entryScore: [null, Validators.required],
+      skillEntry: ['', Validators.required],
+      assessment_year: ['', Validators.required],
+    });
+    this.currentUserId = this.extractCurrentUserId() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
+  }
+
+  private groupAllTechnicalSkills(includeAll: boolean = false): void {
+    const grouped = new Map<string, any>();
+
+    this.technicalSkills.forEach((techSkill) => {
+      grouped.set(techSkill.id, {
+        technical_skill_id: techSkill.id,
+        technical_skill_name: techSkill.technical_skill,
+        skillEntrys: [],
+      });
+    });
+
+    this.empTechnicalSkills.forEach((empSkill) => {
+      const techSkillId = empSkill.technical_skill_id;
+      const group = grouped.get(techSkillId);
+      if (group) {
+        group.skillEntrys.push({
+          id: empSkill.id,
+          skillEntry: empSkill.skill,
+          entryScore: empSkill.score,
+        });
+      } else {
+        console.warn(
+          `Technical Skill ID ${techSkillId} not found for employee skill ${empSkill.id}`
+        );
+      }
+    });
+
+    this.groupedEmpTechnicalSkills = Array.from(grouped.values());
   }
 }

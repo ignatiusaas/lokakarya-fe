@@ -1,7 +1,6 @@
-import { ActivatedRouteSnapshot, CanActivateFn } from '@angular/router';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import {ActivatedRouteSnapshot, CanActivateFn, Router} from '@angular/router';
+import {inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 
 export const authGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,

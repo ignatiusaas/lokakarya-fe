@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <app-navbar></app-navbar>
-<br />
+<br/>
 <div class="employee-technical-skill-container">
   <div class="page-title">
     <h1>{{ selectedName }}'s {{ selectedYear }} Technical Skill</h1>
@@ -12,27 +12,27 @@
       <div *ngIf="currentRoles.includes('HR')" class="user-selection">
         <label for="userSelect">Select User: </label>
         <p-dropdown
-          id="userSelect"
-          [options]="employees"
+          (onChange)="fetchEmpTechnicalSkills()"
           [(ngModel)]="selectedUserId"
+          [options]="employees"
+          appendTo="body"
+          id="userSelect"
           optionLabel="full_name"
           optionValue="id"
           placeholder="{{ selectedName }}"
-          (onChange)="fetchEmpTechnicalSkills()"
-          appendTo="body"
         ></p-dropdown>
       </div>
       <!-- Assessment Year -->
       <div class="assessment-year-selection">
         <label for="assessmentYear">Assessment Year: </label>
         <p-calendar
-          id="assessmentYear"
-          [(ngModel)]="selectedAssessmentYear"
-          view="year"
-          dateFormat="yy"
           (onSelect)="fetchEmpTechnicalSkills()"
+          [(ngModel)]="selectedAssessmentYear"
           [maxDate]="maxDate"
+          dateFormat="yy"
+          id="assessmentYear"
           placeholder="{{ selectedYear }}"
+          view="year"
         ></p-calendar>
       </div>
     </div>
@@ -43,115 +43,115 @@
       <div class="p-field">
         <table class="p-datatable edit-form-table">
           <thead>
-            <tr>
-              <th>Technical Skill</th>
-              <th>Skill</th>
-              <th>Score</th>
-              <th
-                *ngIf="
+          <tr>
+            <th>Technical Skill</th>
+            <th>Skill</th>
+            <th>Score</th>
+            <th
+              *ngIf="
                   !isLocked &&
                   selectedUserId === currentUserId &&
                   currentRoles.includes('USER')
                 "
-              >
-                Actions
-              </th>
-            </tr>
+            >
+              Actions
+            </th>
+          </tr>
           </thead>
           <tbody>
-            <ng-container
-              *ngFor="
+          <ng-container
+            *ngFor="
                 let group of groupedEmpTechnicalSkills;
                 trackBy: trackByTechnicalSkillId
               "
-            >
-              <!-- Group Row -->
-              <tr>
-                <td [attr.rowspan]="group.skillEntrys.length + 1">
-                  {{ group.technical_skill_name }}
-                </td>
-                <td *ngIf="!isLocked" colspan="3">
-                  <button
-                    *ngIf="
+          >
+            <!-- Group Row -->
+            <tr>
+              <td [attr.rowspan]="group.skillEntrys.length + 1">
+                {{ group.technical_skill_name }}
+              </td>
+              <td *ngIf="!isLocked" colspan="3">
+                <button
+                  (click)="addSkillEntry(group)"
+                  *ngIf="
                       currentRoles.includes('USER') &&
                       selectedUserId === currentUserId
                     "
-                    type="button"
-                    (click)="addSkillEntry(group)"
-                    pButton
-                    label="Add Skill"
-                  ></button>
-                  <p
-                    *ngIf="
+                  label="Add Skill"
+                  pButton
+                  type="button"
+                ></button>
+                <p
+                  *ngIf="
                       group.skillEntrys.length === 0 &&
                       selectedUserId !== currentUserId
                     "
-                    style="text-align: center; font-style: italic"
-                  >
-                    No Skill
-                  </p>
-                </td>
-                <td
-                  *ngIf="isLocked && group.skillEntrys.length === 0"
-                  colspan="3"
+                  style="text-align: center; font-style: italic"
                 >
-                  <p style="text-align: center; font-style: italic">No Skill</p>
-                </td>
-              </tr>
-              <!-- Skill Entries -->
-              <tr
-                *ngFor="
+                  No Skill
+                </p>
+              </td>
+              <td
+                *ngIf="isLocked && group.skillEntrys.length === 0"
+                colspan="3"
+              >
+                <p style="text-align: center; font-style: italic">No Skill</p>
+              </td>
+            </tr>
+            <!-- Skill Entries -->
+            <tr
+              *ngFor="
                   let entry of group.skillEntrys;
                   let i = index;
                   trackBy: trackByIndex
                 "
-              >
-                <td>
-                  <input
-                    [(ngModel)]="entry.skillEntry"
-                    name="skillEntry_{{ group.technical_skill_id }}_{{ i }}"
-                    pInputText
-                    required
-                    [disabled]="
+            >
+              <td>
+                <input
+                  [(ngModel)]="entry.skillEntry"
+                  [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
                       isLocked
                     "
-                  />
-                </td>
-                <td>
-                  <p-dropdown
-                    [(ngModel)]="entry.entryScore"
-                    name="entryScore_{{ group.technical_skill_id }}_{{ i }}"
-                    [options]="scoreOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select Score"
-                    required
-                    appendTo="body"
-                    [disabled]="
+                  name="skillEntry_{{ group.technical_skill_id }}_{{ i }}"
+                  pInputText
+                  required
+                />
+              </td>
+              <td>
+                <p-dropdown
+                  [(ngModel)]="entry.entryScore"
+                  [disabled]="
                       !currentRoles.includes('USER') ||
                       selectedUserId !== currentUserId ||
                       isLocked
                     "
-                  ></p-dropdown>
-                </td>
-                <td
-                  *ngIf="
+                  [options]="scoreOptions"
+                  appendTo="body"
+                  name="entryScore_{{ group.technical_skill_id }}_{{ i }}"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select Score"
+                  required
+                ></p-dropdown>
+              </td>
+              <td
+                *ngIf="
                     !isLocked &&
                     selectedUserId === currentUserId &&
                     currentRoles.includes('USER')
                   "
-                >
-                  <button
-                    type="button"
-                    (click)="removeSkillEntry(group, i)"
-                    pButton
-                    icon="pi pi-trash"
-                  ></button>
-                </td>
-              </tr>
-            </ng-container>
+              >
+                <button
+                  (click)="removeSkillEntry(group, i)"
+                  icon="pi pi-trash"
+                  pButton
+                  type="button"
+                ></button>
+              </td>
+            </tr>
+          </ng-container>
           </tbody>
         </table>
       </div>
@@ -163,11 +163,11 @@
           selectedUserId === currentUserId &&
           currentRoles.includes('USER')
         "
+        [disabled]="isProcessing"
+        [label]="isProcessing ? 'Saving...' : 'Save'"
+        class="p-button-primary"
         pButton
         type="submit"
-        [label]="isProcessing ? 'Saving...' : 'Save'"
-        [disabled]="isProcessing"
-        class="p-button-primary"
       >
         <ng-container *ngIf="isProcessing">
           <i class="pi pi-spin pi-spinner"></i>

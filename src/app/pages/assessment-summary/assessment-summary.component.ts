@@ -1,35 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-  ConfirmationService,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormsModule, ReactiveFormsModule,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgForOf, NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {catchError, switchMap} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import {of} from 'rxjs';
 
 @Component({
   selector: 'app-assessment-summary',
@@ -46,7 +34,6 @@ import { of } from 'rxjs';
     InputTextModule,
     NgForOf,
     NgIf,
-    PrimeTemplate,
     RadioButtonModule,
     ReactiveFormsModule,
     ToastModule,
@@ -89,7 +76,23 @@ export class AssessmentSummaryComponent implements OnInit {
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {}
+  ) {
+  }
+
+  get totalFinalScore(): number {
+    this.totalAchievementScore = this.achievements.reduce(
+      (sum, achievement) =>
+        sum + (achievement.sum_score * achievement.percentage) / 100,
+      0
+    );
+
+    this.totalAttitudeScore = this.attitudeSkills.reduce(
+      (sum, skill) => sum + (skill.sum_score * skill.percentage) / 100,
+      0
+    );
+
+    return this.totalAchievementScore + this.totalAttitudeScore;
+  }
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -171,29 +174,6 @@ export class AssessmentSummaryComponent implements OnInit {
       });
   }
 
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
   fetchSelectedUserDetails(): Promise<void> {
     if (!this.selectedUserId || this.selectedUserId === '') {
       console.warn('No user selected.');
@@ -231,30 +211,6 @@ export class AssessmentSummaryComponent implements OnInit {
         },
       });
     });
-  }
-
-  private extractCurrentRoles(): any[] {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return [];
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return [];
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return [];
-    }
   }
 
   checkAssessmentStatus(): Promise<any> {
@@ -464,21 +420,6 @@ export class AssessmentSummaryComponent implements OnInit {
     console.log('New Combined Total Percentage:', this.totalPercentage);
   }
 
-  get totalFinalScore(): number {
-    this.totalAchievementScore = this.achievements.reduce(
-      (sum, achievement) =>
-        sum + (achievement.sum_score * achievement.percentage) / 100,
-      0
-    );
-
-    this.totalAttitudeScore = this.attitudeSkills.reduce(
-      (sum, skill) => sum + (skill.sum_score * skill.percentage) / 100,
-      0
-    );
-
-    return this.totalAchievementScore + this.totalAttitudeScore;
-  }
-
   async fetchAssessmentSummary(): Promise<void> {
     try {
       this.resetAssessmentSummary();
@@ -633,5 +574,53 @@ export class AssessmentSummaryComponent implements OnInit {
           this.isLoading = false;
         },
       });
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any[] {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return [];
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return [];
+    }
   }
 }

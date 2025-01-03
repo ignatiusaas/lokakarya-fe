@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ManageUserComponent } from './manage-user.component';
+import {ManageUserComponent} from './manage-user.component';
 
 describe('ManageUserComponent', () => {
   let component: ManageUserComponent;
@@ -10,7 +10,7 @@ describe('ManageUserComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ManageUserComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ManageUserComponent);
     component = fixture.componentInstance;

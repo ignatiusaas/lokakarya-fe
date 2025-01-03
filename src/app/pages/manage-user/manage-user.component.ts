@@ -1,24 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-  FormControl,
-} from '@angular/forms';
-import { PrimeNGConfig } from 'primeng/api';
-import { CommonModule } from '@angular/common';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
-import { FormArray } from '@angular/forms';
-import { jwtDecode } from 'jwt-decode';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import e from 'express';
+import {Component, OnInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
+import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {finalize} from 'rxjs/operators';
+import {forkJoin} from 'rxjs';
+import {jwtDecode} from 'jwt-decode';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-manage-user',
@@ -62,13 +52,14 @@ export class ManageUserComponent implements OnInit {
   selectedOrderDirection: string = 'asc';
 
   orderColumns: { label: string; value: string }[] = [
-    { label: 'Username', value: 'username' },
-    { label: 'Full Name', value: 'full_name' },
-    { label: 'Email Address', value: 'email_address' },
-    { label: 'Position', value: 'position' },
-    { label: 'Status', value: 'employee_status' },
-    { label: 'Division', value: 'division_name' },
+    {label: 'Username', value: 'username'},
+    {label: 'Full Name', value: 'full_name'},
+    {label: 'Email Address', value: 'email_address'},
+    {label: 'Position', value: 'position'},
+    {label: 'Status', value: 'employee_status'},
+    {label: 'Division', value: 'division_name'},
   ];
+  private searchTimeout: any;
 
   constructor(
     private http: HttpClient,
@@ -76,7 +67,12 @@ export class ManageUserComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig
-  ) {}
+  ) {
+  }
+
+  get rolesFormArray(): FormArray {
+    return this.editForm.get('roles') as FormArray;
+  }
 
   ngOnInit(): void {
     console.log('Initializing ManageUserComponent');
@@ -85,49 +81,6 @@ export class ManageUserComponent implements OnInit {
     this.initializeForm();
     this.fetchRoles();
     console.log('Component Initialized');
-  }
-
-  private decodeJWT(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      username: ['', Validators.required],
-      full_name: ['', Validators.required],
-      position: ['', Validators.required],
-      email_address: ['', [Validators.required, Validators.email]],
-      employee_status: ['', Validators.required],
-      join_date: ['', Validators.required],
-      enabled: [true],
-      division_id: ['', Validators.required],
-      roles: this.fb.array([]),
-    });
-    this.currentUserId = this.decodeJWT() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   toggleOrderDirection(): void {
@@ -165,7 +118,7 @@ export class ManageUserComponent implements OnInit {
     console.log('Param:', param);
 
     this.http
-      .get<any>(url, { params: param })
+      .get<any>(url, {params: param})
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
@@ -354,20 +307,20 @@ export class ManageUserComponent implements OnInit {
     const payload = {
       ...this.editForm.value,
       ...(this.mode === 'create'
-        ? { created_by: this.currentUserId }
-        : { updated_by: this.currentUserId }),
+        ? {created_by: this.currentUserId}
+        : {updated_by: this.currentUserId}),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/appuser/create',
-            payload
-          )
+          'https://hiremeplease.freeddns.org/appuser/create',
+          payload
+        )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/appuser/update',
-            payload
-          );
+          'https://hiremeplease.freeddns.org/appuser/update',
+          payload
+        );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -471,10 +424,6 @@ export class ManageUserComponent implements OnInit {
       });
   }
 
-  get rolesFormArray(): FormArray {
-    return this.editForm.get('roles') as FormArray;
-  }
-
   fetchUserRoles(userId: string): Promise<void> {
     console.log('Fetching user roles...');
     this.isProcessing = true; // Start processing
@@ -521,56 +470,6 @@ export class ManageUserComponent implements OnInit {
     });
   }
 
-  private updateUserRoles(
-    userId: string,
-    rolesToAssign: string[],
-    uncheckedRoles: string[]
-  ): void {
-    console.log('Updating roles...');
-    console.log('Roles to Assign:', rolesToAssign);
-    console.log('Unchecked Roles:', uncheckedRoles);
-
-    const addRoleRequests = rolesToAssign.map((roleId) =>
-      this.http
-        .post('https://hiremeplease.freeddns.org/appuserrole/create', {
-          role_id: roleId,
-          user_id: userId,
-        })
-        .toPromise()
-    );
-
-    const deleteRoleRequests = uncheckedRoles.map((roleId) =>
-      this.http
-        .get<any>(
-          `https://hiremeplease.freeddns.org/appuserrole/${userId}/${roleId}`
-        )
-        .toPromise()
-        .then((response) => {
-          const userRoleId = response?.content;
-          if (userRoleId) {
-            console.log(
-              `Deleting role ${roleId} with userRoleId ${userRoleId}`
-            );
-            return this.http
-              .delete(
-                `https://hiremeplease.freeddns.org/appuserrole/${userRoleId}`
-              )
-              .toPromise()
-              .then(() => undefined); // Explicitly return void
-          } else {
-            console.log(
-              `Role ${roleId} is not assigned to user ${userId}, skipping.`
-            );
-            return Promise.resolve(); // Explicitly return a resolved Promise<void>
-          }
-        })
-    );
-
-    Promise.all([...addRoleRequests, ...deleteRoleRequests])
-      .then(() => console.log('Role updates completed successfully.'))
-      .catch((err) => console.error('Error updating roles:', err));
-  }
-
   submitEmployee(): void {
     console.log('Submitting Employee. Mode:', this.mode);
 
@@ -609,54 +508,6 @@ export class ManageUserComponent implements OnInit {
       this.saveEmployee();
     });
   }
-
-  private validateUsername(username: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.http
-        .get<any>(
-          `https://hiremeplease.freeddns.org/appuser/username/${username}`
-        )
-        .subscribe({
-          next: (response: any) => {
-            console.log('Username validation response:', response);
-            resolve(response.content === null);
-          },
-          error: (err) => {
-            console.error('Unexpected error during username validation:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while validating the username.',
-            });
-            resolve(false);
-          },
-        });
-    });
-  }
-
-  private validateEmail(email: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.http
-        .get<any>(`https://hiremeplease.freeddns.org/appuser/email/${email}`)
-        .subscribe({
-          next: (response: any) => {
-            console.log('Email validation response:', response);
-            resolve(response.content === null);
-          },
-          error: (err) => {
-            console.error('Unexpected error during email validation:', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while validating the email.',
-            });
-            resolve(false);
-          },
-        });
-    });
-  }
-
-  private searchTimeout: any;
 
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
@@ -717,7 +568,147 @@ export class ManageUserComponent implements OnInit {
         }
       },
 
-      reject: () => {},
+      reject: () => {
+      },
+    });
+  }
+
+  private decodeJWT(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      username: ['', Validators.required],
+      full_name: ['', Validators.required],
+      position: ['', Validators.required],
+      email_address: ['', [Validators.required, Validators.email]],
+      employee_status: ['', Validators.required],
+      join_date: ['', Validators.required],
+      enabled: [true],
+      division_id: ['', Validators.required],
+      roles: this.fb.array([]),
+    });
+    this.currentUserId = this.decodeJWT() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
+  }
+
+  private updateUserRoles(
+    userId: string,
+    rolesToAssign: string[],
+    uncheckedRoles: string[]
+  ): void {
+    console.log('Updating roles...');
+    console.log('Roles to Assign:', rolesToAssign);
+    console.log('Unchecked Roles:', uncheckedRoles);
+
+    const addRoleRequests = rolesToAssign.map((roleId) =>
+      this.http
+        .post('https://hiremeplease.freeddns.org/appuserrole/create', {
+          role_id: roleId,
+          user_id: userId,
+        })
+        .toPromise()
+    );
+
+    const deleteRoleRequests = uncheckedRoles.map((roleId) =>
+      this.http
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuserrole/${userId}/${roleId}`
+        )
+        .toPromise()
+        .then((response) => {
+          const userRoleId = response?.content;
+          if (userRoleId) {
+            console.log(
+              `Deleting role ${roleId} with userRoleId ${userRoleId}`
+            );
+            return this.http
+              .delete(
+                `https://hiremeplease.freeddns.org/appuserrole/${userRoleId}`
+              )
+              .toPromise()
+              .then(() => undefined); // Explicitly return void
+          } else {
+            console.log(
+              `Role ${roleId} is not assigned to user ${userId}, skipping.`
+            );
+            return Promise.resolve(); // Explicitly return a resolved Promise<void>
+          }
+        })
+    );
+
+    Promise.all([...addRoleRequests, ...deleteRoleRequests])
+      .then(() => console.log('Role updates completed successfully.'))
+      .catch((err) => console.error('Error updating roles:', err));
+  }
+
+  private validateUsername(username: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.http
+        .get<any>(
+          `https://hiremeplease.freeddns.org/appuser/username/${username}`
+        )
+        .subscribe({
+          next: (response: any) => {
+            console.log('Username validation response:', response);
+            resolve(response.content === null);
+          },
+          error: (err) => {
+            console.error('Unexpected error during username validation:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while validating the username.',
+            });
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  private validateEmail(email: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.http
+        .get<any>(`https://hiremeplease.freeddns.org/appuser/email/${email}`)
+        .subscribe({
+          next: (response: any) => {
+            console.log('Email validation response:', response);
+            resolve(response.content === null);
+          },
+          error: (err) => {
+            console.error('Unexpected error during email validation:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'An error occurred while validating the email.',
+            });
+            resolve(false);
+          },
+        });
     });
   }
 }

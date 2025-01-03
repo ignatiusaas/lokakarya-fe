@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ManageTechnicalSkillComponent } from './manage-technical-skill.component';
+import {ManageTechnicalSkillComponent} from './manage-technical-skill.component';
 
 describe('ManageTechnicalSkillComponent', () => {
   let component: ManageTechnicalSkillComponent;
@@ -10,7 +10,7 @@ describe('ManageTechnicalSkillComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ManageTechnicalSkillComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ManageTechnicalSkillComponent);
     component = fixture.componentInstance;

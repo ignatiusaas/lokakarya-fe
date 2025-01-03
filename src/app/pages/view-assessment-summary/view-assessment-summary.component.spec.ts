@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ViewAssessmentSummaryComponent } from './view-assessment-summary.component';
+import {ViewAssessmentSummaryComponent} from './view-assessment-summary.component';
 
 describe('ViewAssessmentSummaryComponent', () => {
   let component: ViewAssessmentSummaryComponent;
@@ -10,7 +10,7 @@ describe('ViewAssessmentSummaryComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ViewAssessmentSummaryComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ViewAssessmentSummaryComponent);
     component = fixture.componentInstance;

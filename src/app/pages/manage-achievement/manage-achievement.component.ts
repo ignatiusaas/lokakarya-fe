@@ -1,22 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
-import { CommonModule } from '@angular/common';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { PrimeNGConfig } from 'primeng/api';
-import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import {Component, OnInit} from '@angular/core';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import {CommonModule} from '@angular/common';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
+import {Router} from '@angular/router';
+import {jwtDecode} from 'jwt-decode';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {finalize} from 'rxjs/operators';
+import {InputSwitchModule} from 'primeng/inputswitch';
 
 @Component({
   selector: 'app-manage-achievement',
@@ -57,9 +49,10 @@ export class ManageAchievementComponent implements OnInit {
   selectedOrderDirection: string = 'asc';
 
   orderColumns: any[] = [
-    { label: 'Group Name', value: 'group_name' },
-    { label: 'Weight', value: 'percentage' },
+    {label: 'Group Name', value: 'group_name'},
+    {label: 'Weight', value: 'percentage'},
   ];
+  private searchTimeout: any;
 
   constructor(
     private http: HttpClient,
@@ -68,61 +61,14 @@ export class ManageAchievementComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private router: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
     this.initializeForms();
     this.fetchData();
     console.log('Component Initialized');
-  }
-
-  private initializeForms() {
-    console.log('Initializing Forms...');
-    this.editForm = this.fb.group({
-      id: [''],
-      achievement: ['', Validators.required],
-      group_id: ['', Validators.required],
-      enabled: [true],
-    });
-
-    this.editGroupForm = this.fb.group({
-      id: [''],
-      group_name: ['', Validators.required],
-      percentage: [null, Validators.required],
-      enabled: [true],
-    });
-
-    this.currentUserId = this.extractCurrentUserId() || '';
-    console.log(
-      'Forms Initialized:',
-      this.editForm.value,
-      this.editGroupForm.value
-    );
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
   }
 
   fetchData(): void {
@@ -141,7 +87,7 @@ export class ManageAchievementComponent implements OnInit {
 
     this.loading = true;
     this.http
-      .get<any>(url, { params: param })
+      .get<any>(url, {params: param})
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
@@ -248,20 +194,20 @@ export class ManageAchievementComponent implements OnInit {
     const payload = {
       ...this.editGroupForm.value,
       ...(this.mode === 'create'
-        ? { created_by: this.currentUserId }
-        : { updated_by: this.currentUserId }),
+        ? {created_by: this.currentUserId}
+        : {updated_by: this.currentUserId}),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/groupachievement/create',
-            payload
-          )
+          'https://hiremeplease.freeddns.org/groupachievement/create',
+          payload
+        )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/groupachievement/update',
-            payload
-          );
+          'https://hiremeplease.freeddns.org/groupachievement/update',
+          payload
+        );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -406,20 +352,20 @@ export class ManageAchievementComponent implements OnInit {
     const payload = {
       ...this.editForm.value,
       ...(this.mode === 'create'
-        ? { created_by: this.currentUserId }
-        : { updated_by: this.currentUserId }),
+        ? {created_by: this.currentUserId}
+        : {updated_by: this.currentUserId}),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/achievement/create',
-            payload
-          )
+          'https://hiremeplease.freeddns.org/achievement/create',
+          payload
+        )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/achievement/update',
-            payload
-          );
+          'https://hiremeplease.freeddns.org/achievement/update',
+          payload
+        );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -521,8 +467,6 @@ export class ManageAchievementComponent implements OnInit {
     this.saveGroupAchievement();
   }
 
-  private searchTimeout: any;
-
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
 
@@ -587,6 +531,54 @@ export class ManageAchievementComponent implements OnInit {
         detail: 'Failed to check for duplicates.',
       });
       throw error;
+    }
+  }
+
+  private initializeForms() {
+    console.log('Initializing Forms...');
+    this.editForm = this.fb.group({
+      id: [''],
+      achievement: ['', Validators.required],
+      group_id: ['', Validators.required],
+      enabled: [true],
+    });
+
+    this.editGroupForm = this.fb.group({
+      id: [''],
+      group_name: ['', Validators.required],
+      percentage: [null, Validators.required],
+      enabled: [true],
+    });
+
+    this.currentUserId = this.extractCurrentUserId() || '';
+    console.log(
+      'Forms Initialized:',
+      this.editForm.value,
+      this.editGroupForm.value
+    );
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
     }
   }
 }

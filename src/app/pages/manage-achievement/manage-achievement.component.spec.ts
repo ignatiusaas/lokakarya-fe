@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ManageAchievementComponent } from './manage-achievement.component';
+import {ManageAchievementComponent} from './manage-achievement.component';
 
 describe('ManageAchievementComponent', () => {
   let component: ManageAchievementComponent;
@@ -10,7 +10,7 @@ describe('ManageAchievementComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ManageAchievementComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ManageAchievementComponent);
     component = fixture.componentInstance;

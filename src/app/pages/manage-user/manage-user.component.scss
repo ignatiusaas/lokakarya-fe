@@ -70,36 +70,43 @@
       font-size: 0.75rem;
       padding: 0.4rem;
     }
+
     .ui-datepicker-header {
       display: flex;
       justify-content: space-between;
       padding: 0.2rem 0.4rem;
       font-size: 0.8rem;
     }
+
     .ui-datepicker-title {
       font-size: 0.75rem;
       margin: 0;
     }
+
     .ui-datepicker-calendar {
       font-size: 0.7rem;
       gap: 0.1rem;
     }
+
     .ui-datepicker-calendar th,
     .ui-datepicker-calendar td {
       padding: 0.2rem;
       min-width: 1.5rem;
       min-height: 1.5rem;
     }
+
     .ui-datepicker-next,
     .ui-datepicker-prev {
       font-size: 0.7rem;
       padding: 0.2rem;
     }
+
     .ui-datepicker-today-button,
     .ui-datepicker-clear-button {
       font-size: 0.7rem;
       padding: 0.3rem 0.5rem;
     }
+
     .ui-datepicker-year,
     .ui-datepicker-month {
       font-size: 0.7rem;

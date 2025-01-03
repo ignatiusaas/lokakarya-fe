@@ -1,24 +1,24 @@
-import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/home/home.component';
-import { authGuard } from './guard/auth.guard';
-import { ManageUserComponent } from './pages/manage-user/manage-user.component';
-import { EmployeeSuggestionComponent } from './pages/employee-suggestion/employee-suggestion.component';
-import { ManageDevPlanComponent } from './pages/manage-dev-plan/manage-dev-plan.component';
-import { ManageTechnicalSkillComponent } from './pages/manage-technical-skill/manage-technical-skill.component';
-import { ManageAttitudeSkillComponent } from './pages/manage-attitude-skill/manage-attitude-skill.component';
-import { ManageAchievementComponent } from './pages/manage-achievement/manage-achievement.component';
-import { EmployeeDevPlanComponent } from './pages/employee-dev-plan/employee-dev-plan.component';
-import { ManageRoleAccessComponent } from './pages/manage-role-access/manage-role-access.component';
-import { EmployeeTechnicalSkillComponent } from './pages/employee-technical-skill/employee-technical-skill.component';
-import { EmployeeAttitudeSkillComponent } from './pages/employee-attitude-skill/employee-attitude-skill.component';
-import { EmployeeAchievementSkillComponent } from './pages/employee-achievement-skill/employee-achievement-skill.component';
-import { AssessmentSummaryComponent } from './pages/assessment-summary/assessment-summary.component';
-import { ManageDivisionComponent } from './pages/manage-division/manage-division.component';
-import { ViewAssessmentSummaryComponent } from './pages/view-assessment-summary/view-assessment-summary.component';
+import {Routes} from '@angular/router';
+import {LoginComponent} from './pages/login/login.component';
+import {HomeComponent} from './pages/home/home.component';
+import {authGuard} from './guard/auth.guard';
+import {ManageUserComponent} from './pages/manage-user/manage-user.component';
+import {EmployeeSuggestionComponent} from './pages/employee-suggestion/employee-suggestion.component';
+import {ManageDevPlanComponent} from './pages/manage-dev-plan/manage-dev-plan.component';
+import {ManageTechnicalSkillComponent} from './pages/manage-technical-skill/manage-technical-skill.component';
+import {ManageAttitudeSkillComponent} from './pages/manage-attitude-skill/manage-attitude-skill.component';
+import {ManageAchievementComponent} from './pages/manage-achievement/manage-achievement.component';
+import {EmployeeDevPlanComponent} from './pages/employee-dev-plan/employee-dev-plan.component';
+import {ManageRoleAccessComponent} from './pages/manage-role-access/manage-role-access.component';
+import {EmployeeTechnicalSkillComponent} from './pages/employee-technical-skill/employee-technical-skill.component';
+import {EmployeeAttitudeSkillComponent} from './pages/employee-attitude-skill/employee-attitude-skill.component';
+import {EmployeeAchievementSkillComponent} from './pages/employee-achievement-skill/employee-achievement-skill.component';
+import {AssessmentSummaryComponent} from './pages/assessment-summary/assessment-summary.component';
+import {ManageDivisionComponent} from './pages/manage-division/manage-division.component';
+import {ViewAssessmentSummaryComponent} from './pages/view-assessment-summary/view-assessment-summary.component';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  {path: 'login', component: LoginComponent},
   {
     path: 'home',
     component: HomeComponent,
@@ -95,5 +95,5 @@ export const routes: Routes = [
     component: ViewAssessmentSummaryComponent,
     canActivate: [authGuard],
   },
-  { path: '**', redirectTo: '/home' },
+  {path: '**', redirectTo: '/home'},
 ];

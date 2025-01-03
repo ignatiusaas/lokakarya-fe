@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { ActivatedRoute } from '@angular/router';
+import {Component} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +18,7 @@ export class LoginComponent {
   errorMessage: string = '';
   warningMessage: string = '';
   isLoading: boolean = false;
+  showPassword: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -29,10 +29,11 @@ export class LoginComponent {
       this.warningMessage = params['warning'] || null;
     });
   }
+
   togglePasswordMask() {
     this.showPassword = !this.showPassword;
   }
-  showPassword: boolean = false;
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       if (params['warning']) {
@@ -40,11 +41,12 @@ export class LoginComponent {
       }
     });
   }
+
   onSubmit() {
     localStorage.clear();
     this.isLoading = true;
     this.errorMessage = '';
-    const loginPayload = { username: this.username, password: this.password };
+    const loginPayload = {username: this.username, password: this.password};
 
     this.http
       .post('https://hiremeplease.freeddns.org/auth/sign-in', loginPayload, {

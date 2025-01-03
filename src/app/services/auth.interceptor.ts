@@ -1,7 +1,7 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {Router} from '@angular/router';
+import {catchError, throwError} from 'rxjs';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -33,10 +33,10 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
   const clonedRequest = token
     ? req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     : req;
 
   return next(clonedRequest).pipe(
@@ -44,7 +44,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         localStorage.clear();
         router.navigate(['/login'], {
-          queryParams: { warning: 'Unauthorized access. Please log in again.' },
+          queryParams: {warning: 'Unauthorized access. Please log in again.'},
         });
       }
       return throwError(() => error);

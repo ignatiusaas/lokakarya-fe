@@ -265,6 +265,7 @@ h1 {
       border-right: 6px solid transparent;
       border-top: 8px solid #e65100;
       transition: transform 0.3s ease;
+
       &.open {
         transform: rotate(180deg);
       }
@@ -273,6 +274,7 @@ h1 {
 
   .dropdown-content {
     padding: 0 1rem 1rem;
+
     .pending-list {
       list-style: none;
       margin: 0;

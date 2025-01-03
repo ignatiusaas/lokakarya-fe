@@ -10,66 +10,66 @@
           <span class="p-input-icon-left">
             <i class="pi pi-search"></i>
             <input
-              pInputText
-              type="text"
-              placeholder="Search..."
-              [(ngModel)]="globalFilterValue"
               (input)="onSearch()"
+              [(ngModel)]="globalFilterValue"
+              pInputText
+              placeholder="Search..."
+              type="text"
             />
           </span>
         </div>
         <button
-          pButton
-          label="Create Group Achievement"
-          icon="pi pi-plus"
-          class="create-button"
           (click)="openCreateGroupDialog()"
           [disabled]="isProcessing || isEditFormLoading"
+          class="create-button"
+          icon="pi pi-plus"
+          label="Create Group Achievement"
+          pButton
           style="background-color: #cd7313"
         ></button>
         <button
-          pButton
-          label="Create Achievement"
-          icon="pi pi-plus"
-          class="create-button"
           (click)="openCreateAchievementDialog()"
           [disabled]="isProcessing || isEditFormLoading"
+          class="create-button"
+          icon="pi pi-plus"
+          label="Create Achievement"
+          pButton
         ></button>
       </div>
     </div>
 
     <p-card>
       <p-table
-        [value]="groupedAchievements"
-        responsiveLayout="scroll"
+        [loading]="loading"
         [paginator]="true"
         [rows]="rowsPerPage"
-        [totalRecords]="totalRecords"
-        [loading]="loading"
         [sortMode]="'single'"
+        [totalRecords]="totalRecords"
+        [value]="groupedAchievements"
+        responsiveLayout="scroll"
       >
         <ng-template pTemplate="caption">
           <div class="table-filters">
             <div class="order-actions">
               <div class="order-dropdown">
                 <p-dropdown
-                  [options]="orderColumns"
+                  (onChange)="fetchData()"
                   [(ngModel)]="selectedOrderColumn"
-                  placeholder="Select Column"
+                  [options]="orderColumns"
                   optionLabel="label"
                   optionValue="value"
-                  (onChange)="fetchData()"
+                  placeholder="Select Column"
                 ></p-dropdown>
               </div>
               <button
-                pButton
+                (click)="toggleOrderDirection()"
+                class="p-button-secondary toggle-order-button"
                 icon="{{
                   selectedOrderDirection === 'asc'
                     ? 'pi pi-arrow-up'
                     : 'pi pi-arrow-down'
                 }}"
-                class="p-button-secondary toggle-order-button"
-                (click)="toggleOrderDirection()"
+                pButton
               ></button>
             </div>
           </div>
@@ -83,7 +83,7 @@
             <th>Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-group>
+        <ng-template let-group pTemplate="body">
           <tr
             *ngIf="group.skills.length === 0"
             [ngClass]="{ 'disabled-row': group.enabled === false }"
@@ -92,29 +92,29 @@
             <td>{{ group.percentage }}</td>
             <td>
               <button
-                pButton
+                (click)="editGroupAchievement(group.id)"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-pencil'
                 "
                 class="p-button-rounded p-button-primary"
-                (click)="editGroupAchievement(group.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
               <button
-                pButton
+                (click)="deleteGroupAchievement(group.id)"
+                [disabled]="isEditFormLoading || isProcessing"
                 [icon]="
                   isEditFormLoading || isProcessing
                     ? 'pi pi-spin pi-spinner'
                     : 'pi pi-trash'
                 "
                 class="p-button-rounded p-button-danger"
-                (click)="deleteGroupAchievement(group.id)"
-                [disabled]="isEditFormLoading || isProcessing"
+                pButton
               ></button>
             </td>
-            <td colspan="2" class="empty-message">No achievement available</td>
+            <td class="empty-message" colspan="2">No achievement available</td>
           </tr>
 
           <ng-container *ngFor="let skill of group.skills; let i = index">
@@ -127,26 +127,26 @@
               </td>
               <td *ngIf="i === 0" [attr.rowspan]="group.skills.length">
                 <button
-                  pButton
+                  (click)="editGroupAchievement(group.id)"
+                  [disabled]="isEditFormLoading || isProcessing"
                   [icon]="
                     isEditFormLoading || isProcessing
                       ? 'pi pi-spin pi-spinner'
                       : 'pi pi-pencil'
                   "
                   class="p-button-rounded p-button-primary"
-                  (click)="editGroupAchievement(group.id)"
-                  [disabled]="isEditFormLoading || isProcessing"
+                  pButton
                 ></button>
                 <button
-                  pButton
+                  (click)="deleteGroupAchievement(group.id)"
+                  [disabled]="isEditFormLoading || isProcessing"
                   [icon]="
                     isEditFormLoading || isProcessing
                       ? 'pi pi-spin pi-spinner'
                       : 'pi pi-trash'
                   "
                   class="p-button-rounded p-button-danger"
-                  (click)="deleteGroupAchievement(group.id)"
-                  [disabled]="isEditFormLoading || isProcessing"
+                  pButton
                 ></button>
               </td>
               <td [ngClass]="{ 'disabled-row': skill.enabled === false }">
@@ -154,26 +154,26 @@
               </td>
               <td>
                 <button
-                  pButton
+                  (click)="editAchievement(skill.id)"
+                  [disabled]="isEditFormLoading || isProcessing"
                   [icon]="
                     isEditFormLoading || isProcessing
                       ? 'pi pi-spin pi-spinner'
                       : 'pi pi-pencil'
                   "
                   class="p-button-rounded p-button-primary"
-                  (click)="editAchievement(skill.id)"
-                  [disabled]="isEditFormLoading || isProcessing"
+                  pButton
                 ></button>
                 <button
-                  pButton
+                  (click)="deleteAchievement(skill.id)"
+                  [disabled]="isEditFormLoading || isProcessing"
                   [icon]="
                     isEditFormLoading || isProcessing
                       ? 'pi pi-spin pi-spinner'
                       : 'pi pi-trash'
                   "
                   class="p-button-rounded p-button-danger"
-                  (click)="deleteAchievement(skill.id)"
-                  [disabled]="isEditFormLoading || isProcessing"
+                  pButton
                 ></button>
               </td>
             </tr>
@@ -183,55 +183,55 @@
     </p-card>
 
     <p-dialog
-      header="{{ mode === 'create' ? 'Create' : 'Edit' }}"
       [(visible)]="displayEditDialog"
-      [modal]="true"
       [closable]="true"
       [dismissableMask]="true"
-      [style]="{ width: '50vw' }"
+      [modal]="true"
       [resizable]="false"
+      [style]="{ width: '50vw' }"
+      header="{{ mode === 'create' ? 'Create' : 'Edit' }}"
     >
-      <form [formGroup]="editForm" (ngSubmit)="submitAchievement()">
+      <form (ngSubmit)="submitAchievement()" [formGroup]="editForm">
         <div class="p-fluid">
           <div class="p-field">
             <label for="achievement"
-              >Achievement
+            >Achievement
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <textarea
+                [disabled]="isProcessing"
+                formControlName="achievement"
                 id="achievement"
                 pInputTextarea
-                formControlName="achievement"
-                [disabled]="isProcessing"
               ></textarea>
             </div>
           </div>
 
           <div class="p-field">
             <label for="group_id"
-              >Group
+            >Group
               <span class="required">*</span>
             </label>
             <p-dropdown
-              id="group_id"
-              formControlName="group_id"
-              [options]="groupOptions"
-              [disabled]="isProcessing"
-              placeholder="Select a Group"
-              [filter]="true"
-              filterPlaceholder="Search for a group"
               [appendTo]="'body'"
+              [disabled]="isProcessing"
+              [filter]="true"
+              [options]="groupOptions"
+              filterPlaceholder="Search for a group"
+              formControlName="group_id"
+              id="group_id"
+              placeholder="Select a Group"
             ></p-dropdown>
           </div>
 
-          <div class="p-field" *ngIf="mode === 'edit'">
+          <div *ngIf="mode === 'edit'" class="p-field">
             <label for="enabled">Enabled Status</label>
             <div style="padding: 0.5rem 0">
               <p-inputSwitch
-                id="enabled"
-                formControlName="enabled"
                 [disabled]="isProcessing"
+                formControlName="enabled"
+                id="enabled"
               ></p-inputSwitch>
             </div>
           </div>
@@ -239,17 +239,16 @@
         <span class="required">*Required</span>
         <div class="dialog-footer">
           <button
+            (click)="displayEditDialog = false"
+            [disabled]="isProcessing"
+            class="p-button-text"
+            icon="pi pi-times"
+            label="Cancel"
             pButton
             type="button"
-            icon="pi pi-times"
-            class="p-button-text"
-            label="Cancel"
-            [disabled]="isProcessing"
-            (click)="displayEditDialog = false"
           ></button>
           <button
-            pButton
-            type="submit"
+            [disabled]="isProcessing"
             [label]="
               isProcessing
                 ? mode === 'create'
@@ -259,8 +258,9 @@
                 ? 'Create'
                 : 'Save'
             "
-            [disabled]="isProcessing"
             class="p-button-primary"
+            pButton
+            type="submit"
           >
             <ng-container *ngIf="isProcessing">
               <i class="pi pi-spin pi-spinner"></i>
@@ -271,34 +271,34 @@
     </p-dialog>
 
     <p-dialog
-      header="{{ mode === 'create' ? 'Create' : 'Edit' }}"
       [(visible)]="displayGroupEditDialog"
-      [modal]="true"
       [closable]="true"
       [dismissableMask]="true"
-      [style]="{ width: '50vw' }"
+      [modal]="true"
       [resizable]="false"
+      [style]="{ width: '50vw' }"
+      header="{{ mode === 'create' ? 'Create' : 'Edit' }}"
     >
-      <form [formGroup]="editGroupForm" (ngSubmit)="submitGroupAchievement()">
+      <form (ngSubmit)="submitGroupAchievement()" [formGroup]="editGroupForm">
         <div class="p-fluid">
           <div class="p-field">
             <label for="group_name"
-              >Group Name
+            >Group Name
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
               <input
+                [disabled]="isProcessing"
+                formControlName="group_name"
                 id="group_name"
                 pInputText
-                formControlName="group_name"
-                [disabled]="isProcessing"
               />
             </div>
           </div>
 
           <div class="p-field">
             <label for="percentage"
-              >Weight
+            >Weight
               <span class="required">*</span>
             </label>
             <div style="padding: 0.5rem 0">
@@ -308,24 +308,24 @@
                   *ngFor="let value of [1, 6, 2, 7, 3, 8, 4, 9, 5, 10]"
                 >
                   <p-radioButton
+                    [disabled]="isProcessing"
+                    [label]="value.toString()"
                     [name]="'percentage'"
                     [value]="value"
                     formControlName="percentage"
-                    [disabled]="isProcessing"
-                    [label]="value.toString()"
                   ></p-radioButton>
                 </ng-container>
               </div>
             </div>
           </div>
 
-          <div class="p-field" *ngIf="mode === 'edit'">
+          <div *ngIf="mode === 'edit'" class="p-field">
             <label for="enabled">Enabled Status</label>
             <div style="padding: 0.5rem 0">
               <p-inputSwitch
-                id="enabled"
-                formControlName="enabled"
                 [disabled]="isProcessing"
+                formControlName="enabled"
+                id="enabled"
               ></p-inputSwitch>
             </div>
           </div>
@@ -333,17 +333,16 @@
         <span class="required">*Required</span>
         <div class="dialog-footer">
           <button
+            (click)="displayEditDialog = false"
+            [disabled]="isProcessing"
+            class="p-button-text"
+            icon="pi pi-times"
+            label="Cancel"
             pButton
             type="button"
-            icon="pi pi-times"
-            class="p-button-text"
-            label="Cancel"
-            [disabled]="isProcessing"
-            (click)="displayEditDialog = false"
           ></button>
           <button
-            pButton
-            type="submit"
+            [disabled]="isProcessing"
             [label]="
               isProcessing
                 ? mode === 'create'
@@ -353,8 +352,9 @@
                 ? 'Create'
                 : 'Save'
             "
-            [disabled]="isProcessing"
             class="p-button-primary"
+            pButton
+            type="submit"
           >
             <ng-container *ngIf="isProcessing">
               <i class="pi pi-spin pi-spinner"></i>

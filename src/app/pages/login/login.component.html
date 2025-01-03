@@ -11,40 +11,40 @@
         <div class="p-field">
           <label for="username">Username/Email:</label>
           <input
-            pInputText
-            type="text"
-            id="username"
             [(ngModel)]="username"
-            name="username"
-            required
             [disabled]="isLoading"
+            id="username"
+            name="username"
+            pInputText
             placeholder="Enter your username"
+            required
+            type="text"
           />
         </div>
         <div class="p-field">
           <label for="password">Password:</label>
           <div class="p-inputgroup">
             <p-password
-              id="password"
               [(ngModel)]="password"
-              name="password"
-              required
               [disabled]="isLoading"
-              [toggleMask]="true"
-              [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
               [feedback]="false"
+              [inputStyle]="{ width: '100%', paddingRight: '2rem' }"
               [style]="{ width: '100%' }"
+              [toggleMask]="true"
+              id="password"
+              name="password"
               placeholder="Enter your password"
+              required
             ></p-password>
           </div>
         </div>
         <div class="p-field">
           <button
+            [disabled]="!username || !password || isLoading"
+            class="p-button-rounded p-button-primary p-button-block"
+            label="{{ isLoading ? 'Logging in...' : 'Login' }}"
             pButton
             type="submit"
-            [disabled]="!username || !password || isLoading"
-            label="{{ isLoading ? 'Logging in...' : 'Login' }}"
-            class="p-button-rounded p-button-primary p-button-block"
           ></button>
         </div>
       </form>

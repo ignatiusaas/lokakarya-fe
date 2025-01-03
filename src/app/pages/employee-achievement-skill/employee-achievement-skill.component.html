@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <app-navbar></app-navbar>
-<br />
+<br/>
 <div class="employee-achievement-skill-container">
   <div class="page-title">
     <h1>{{ selectedName }}'s {{ selectedYear }} Achievements</h1>
@@ -18,25 +18,25 @@
       >
         <label for="userSelect">Select User: </label>
         <p-dropdown
-          id="userSelect"
-          [options]="employees"
+          (onChange)="fetchEmpAchievementSkills()"
           [(ngModel)]="selectedUserId"
+          [options]="employees"
+          appendTo="body"
+          id="userSelect"
           optionLabel="full_name"
           optionValue="id"
-          (onChange)="fetchEmpAchievementSkills()"
-          appendTo="body"
         ></p-dropdown>
       </div>
       <div class="assessment-year-selection">
         <label for="assessmentYear">Assessment Year: </label>
         <p-calendar
-          id="assessmentYear"
-          [(ngModel)]="selectedAssessmentYear"
-          view="year"
-          dateFormat="yy"
           (onSelect)="fetchEmpAchievementSkills()"
+          [(ngModel)]="selectedAssessmentYear"
           [maxDate]="maxDate"
+          dateFormat="yy"
+          id="assessmentYear"
           placeholder="{{ selectedYear }}"
+          view="year"
         ></p-calendar>
       </div>
     </div>
@@ -46,100 +46,100 @@
       <div class="p-field">
         <table class="p-datatable edit-form-table">
           <thead>
-            <tr>
-              <th>Group</th>
-              <th>Achievement</th>
-              <th>Notes</th>
-              <th>Score</th>
-            </tr>
+          <tr>
+            <th>Group</th>
+            <th>Achievement</th>
+            <th>Notes</th>
+            <th>Score</th>
+          </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let group of groupedEmpAchievementSkills">
-              <ng-container
-                *ngIf="
+          <ng-container *ngFor="let group of groupedEmpAchievementSkills">
+            <ng-container
+              *ngIf="
                   group.achievements && group.achievements.length > 0;
                   else noEditachievements
                 "
-              >
-                <tr>
-                  <td [attr.rowspan]="group.achievements.length">
-                    {{ group.group_name }}
-                  </td>
-                  <td>{{ group.achievements[0]?.achievement_name }}</td>
-                  <td>
-                    <input
-                      [(ngModel)]="group.achievements[0].notes"
-                      name="Notes_{{ group.group_id }}_0"
-                      pInputText
-                      [disabled]="isProcessing"
-                    />
-                  </td>
-                  <td>
-                    <p-dropdown
-                      [(ngModel)]="group.achievements[0].score"
-                      name="Score_{{ group.group_id }}_0"
-                      [options]="scoreOptions"
-                      optionLabel="label"
-                      optionValue="value"
-                      placeholder="Select Score"
-                      [disabled]="isProcessing"
-                      appendTo="body"
-                    ></p-dropdown>
-                  </td>
-                </tr>
-                <tr
-                  *ngFor="
+            >
+              <tr>
+                <td [attr.rowspan]="group.achievements.length">
+                  {{ group.group_name }}
+                </td>
+                <td>{{ group.achievements[0]?.achievement_name }}</td>
+                <td>
+                  <input
+                    [(ngModel)]="group.achievements[0].notes"
+                    [disabled]="isProcessing"
+                    name="Notes_{{ group.group_id }}_0"
+                    pInputText
+                  />
+                </td>
+                <td>
+                  <p-dropdown
+                    [(ngModel)]="group.achievements[0].score"
+                    [disabled]="isProcessing"
+                    [options]="scoreOptions"
+                    appendTo="body"
+                    name="Score_{{ group.group_id }}_0"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select Score"
+                  ></p-dropdown>
+                </td>
+              </tr>
+              <tr
+                *ngFor="
                     let skill of group.achievements;
                     let i = index;
                     trackBy: trackByIndex
                   "
-                  [hidden]="i === 0"
-                >
-                  <td>{{ skill.achievement_name }}</td>
-                  <td>
-                    <input
-                      [(ngModel)]="skill.notes"
-                      name="Notes_{{ group.group_id }}_{{ i }}"
-                      pInputText
-                      [disabled]="
+                [hidden]="i === 0"
+              >
+                <td>{{ skill.achievement_name }}</td>
+                <td>
+                  <input
+                    [(ngModel)]="skill.notes"
+                    [disabled]="
                         isProcessing ||
                         !currentRoles.includes('HR') ||
                         selectedUserId === currentUserId ||
                         isLocked
                       "
-                    />
-                  </td>
-                  <td>
-                    <p-dropdown
-                      [(ngModel)]="skill.score"
-                      name="Score_{{ group.group_id }}_{{ i }}"
-                      [options]="scoreOptions"
-                      optionLabel="label"
-                      optionValue="value"
-                      placeholder="Select Score"
-                      [disabled]="
+                    name="Notes_{{ group.group_id }}_{{ i }}"
+                    pInputText
+                  />
+                </td>
+                <td>
+                  <p-dropdown
+                    [(ngModel)]="skill.score"
+                    [disabled]="
                         isProcessing ||
                         !currentRoles.includes('HR') ||
                         selectedUserId === currentUserId ||
                         isLocked
                       "
-                      appendTo="body"
-                    ></p-dropdown>
-                  </td>
-                </tr>
-              </ng-container>
-              <ng-template #noEditachievements>
-                <tr>
-                  <td>{{ group.group_name }}</td>
-                  <td
-                    colspan="3"
-                    style="text-align: center; font-style: italic"
-                  >
-                    No achievements available
-                  </td>
-                </tr>
-              </ng-template>
+                    [options]="scoreOptions"
+                    appendTo="body"
+                    name="Score_{{ group.group_id }}_{{ i }}"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select Score"
+                  ></p-dropdown>
+                </td>
+              </tr>
             </ng-container>
+            <ng-template #noEditachievements>
+              <tr>
+                <td>{{ group.group_name }}</td>
+                <td
+                  colspan="3"
+                  style="text-align: center; font-style: italic"
+                >
+                  No achievements available
+                </td>
+              </tr>
+            </ng-template>
+          </ng-container>
           </tbody>
         </table>
       </div>
@@ -151,11 +151,11 @@
           currentRoles.includes('HR') &&
           selectedUserId !== currentUserId
         "
+        [disabled]="isProcessing"
+        [label]="isProcessing ? 'Saving...' : 'Save'"
+        class="p-button-primary"
         pButton
         type="submit"
-        [label]="isProcessing ? 'Saving...' : 'Save'"
-        [disabled]="isProcessing"
-        class="p-button-primary"
       >
         <ng-container *ngIf="isProcessing">
           <i class="pi pi-spin pi-spinner"></i>

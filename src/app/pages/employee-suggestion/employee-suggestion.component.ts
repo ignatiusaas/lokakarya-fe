@@ -1,37 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonDirective } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
-import { CardModule } from 'primeng/card';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { InputTextModule } from 'primeng/inputtext';
-import { NgForOf, NgIf } from '@angular/common';
-import {
-  ConfirmationService,
-  MessageService,
-  PrimeNGConfig,
-  PrimeTemplate,
-} from 'primeng/api';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { TableModule } from 'primeng/table';
-import { ToastModule } from 'primeng/toast';
-import { PrimeNgModule } from '../../shared/primeng/primeng.module';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
-import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
-import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {ButtonDirective} from 'primeng/button';
+import {CalendarModule} from 'primeng/calendar';
+import {CardModule} from 'primeng/card';
+import {CheckboxModule} from 'primeng/checkbox';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {DialogModule} from 'primeng/dialog';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {InputTextModule} from 'primeng/inputtext';
+import {NgIf} from '@angular/common';
+import {ConfirmationService, MessageService, PrimeNGConfig, PrimeTemplate,} from 'primeng/api';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {TableModule} from 'primeng/table';
+import {ToastModule} from 'primeng/toast';
+import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import {HttpClient} from '@angular/common/http';
+import {jwtDecode} from 'jwt-decode';
+import {finalize} from 'rxjs/operators';
+import {NavbarComponent} from '../../shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-employee-suggestion',
@@ -47,7 +34,6 @@ import { NavbarComponent } from '../../shared/navbar/navbar.component';
     FormsModule,
     InputSwitchModule,
     InputTextModule,
-    NgForOf,
     NgIf,
     PrimeTemplate,
     RadioButtonModule,
@@ -91,7 +77,8 @@ export class EmployeeSuggestionComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     console.log('Initializing EmployeeSuggestionComponent');
@@ -99,67 +86,6 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     this.initializeForm();
     console.log('Component Initialized');
-  }
-
-  private extractCurrentUserId(): string | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
-        return decoded.userId;
-      } else {
-        console.error('userId not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private extractCurrentRoles(): any | null {
-    const token = localStorage.getItem('auth-token');
-
-    if (!token) {
-      console.error('No JWT found in session storage.');
-      return null;
-    }
-
-    try {
-      const decoded: any = jwtDecode(token);
-
-      if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
-        return decoded.roles;
-      } else {
-        console.error('roles not found in JWT.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private initializeForm() {
-    console.log('Initializing Edit Form...');
-    this.editForm = this.fb.group({
-      id: [''],
-      user_id: [''],
-      suggestion: ['', Validators.required],
-      assessment_year: ['', Validators.required],
-    });
-    this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   toggleOrderDirection(): void {
@@ -179,20 +105,20 @@ export class EmployeeSuggestionComponent implements OnInit {
     const url = 'https://hiremeplease.freeddns.org/empsuggestion/sorch';
 
     const param = {
-      ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
+      ...(this.globalFilterValue ? {keyword: this.globalFilterValue} : {}),
       column: this.selectedOrderColumn,
       order: this.selectedOrderDirection,
       page: this.currentPage,
       pageSize: this.rowsPerPage,
       ...(!this.currentRoles.includes('HR')
-        ? { userId: this.currentUserId }
+        ? {userId: this.currentUserId}
         : {}),
     };
 
     console.log('Sending Request to URL:', url, param);
 
     this.http
-      .get<any>(url, { params: param })
+      .get<any>(url, {params: param})
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
@@ -387,8 +313,8 @@ export class EmployeeSuggestionComponent implements OnInit {
       user_id: this.currentUserId,
       assessment_year: assessmentYear,
       ...(this.mode === 'create'
-        ? { created_by: this.currentUserId }
-        : { updated_by: this.currentUserId }),
+        ? {created_by: this.currentUserId}
+        : {updated_by: this.currentUserId}),
     };
 
     console.log(payload);
@@ -396,13 +322,13 @@ export class EmployeeSuggestionComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/empsuggestion/create',
-            payload
-          )
+          'https://hiremeplease.freeddns.org/empsuggestion/create',
+          payload
+        )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/empsuggestion/update',
-            payload
-          );
+          'https://hiremeplease.freeddns.org/empsuggestion/update',
+          payload
+        );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -463,5 +389,66 @@ export class EmployeeSuggestionComponent implements OnInit {
 
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
+  }
+
+  private extractCurrentUserId(): string | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.userId) {
+        console.log('Decoded userId:', decoded.userId);
+        return decoded.userId;
+      } else {
+        console.error('userId not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private extractCurrentRoles(): any | null {
+    const token = localStorage.getItem('auth-token');
+
+    if (!token) {
+      console.error('No JWT found in session storage.');
+      return null;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+
+      if (decoded && decoded.roles) {
+        console.log('Decoded roles:', decoded.roles);
+        return decoded.roles;
+      } else {
+        console.error('roles not found in JWT.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  private initializeForm() {
+    console.log('Initializing Edit Form...');
+    this.editForm = this.fb.group({
+      id: [''],
+      user_id: [''],
+      suggestion: ['', Validators.required],
+      assessment_year: ['', Validators.required],
+    });
+    this.currentUserId = this.extractCurrentUserId() || '';
+
+    console.log('Form Initialized:', this.editForm.value);
   }
 }

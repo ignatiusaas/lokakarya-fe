@@ -3,29 +3,29 @@
   <ul class="navbar-menu">
     <!-- Home Button -->
     <li
-      class="home-item"
+      (click)="navigateTo('home')"
       *ngIf="!isHomePage"
       [ngClass]="{ active: isActiveRoute('home') }"
-      (click)="navigateTo('home')"
+      class="home-item"
     >
       Home
     </li>
 
     <!-- Manage Dropdown -->
     <li
-      class="dropdown"
-      [ngClass]="{ 'dropdown-open': activeDropdown === 'manage' }"
       *ngIf="manageMenus.length > 0"
+      [ngClass]="{ 'dropdown-open': activeDropdown === 'manage' }"
+      class="dropdown"
     >
-      <span class="dropdown-button" (click)="toggleDropdown('manage')">
+      <span (click)="toggleDropdown('manage')" class="dropdown-button">
         Manage
         <span class="dropdown-icon">▼</span>
       </span>
       <ul class="dropdown-content">
         <li
+          (click)="navigateTo(menu)"
           *ngFor="let menu of manageMenus"
           [ngClass]="{ active: isActiveRoute(menu) }"
-          (click)="navigateTo(menu)"
         >
           {{ formatMenuName(menu) }}
         </li>
@@ -34,27 +34,28 @@
 
     <!-- Assessment Dropdown -->
     <li
-      class="dropdown"
       [ngClass]="{ 'dropdown-open': activeDropdown === 'assessment' }"
+      class="dropdown"
     >
-      <span class="dropdown-button" (click)="toggleDropdown('assessment')">
+      <span (click)="toggleDropdown('assessment')" class="dropdown-button">
         Assessment
         <span class="dropdown-icon">▼</span>
       </span>
       <ul class="dropdown-content">
         <li
+          (click)="navigateTo('view-assessment-summary')"
           *ngIf="
             roles.includes('HR') ||
             roles.includes('SVP') ||
             roles.includes('MGR')
           "
           [ngClass]="{ active: isActiveRoute('view-assessment-summary') }"
-          (click)="navigateTo('view-assessment-summary')"
         >
           Summary
         </li>
 
         <li
+          (click)="navigateTo('assessment-summary')"
           *ngIf="
             !(
               roles.includes('HR') ||
@@ -63,15 +64,14 @@
             )
           "
           [ngClass]="{ active: isActiveRoute('assessment-summary') }"
-          (click)="navigateTo('assessment-summary')"
         >
           Summary
         </li>
 
         <li
+          (click)="navigateTo(menu)"
           *ngFor="let menu of submitMenus"
           [ngClass]="{ active: isActiveRoute(menu) }"
-          (click)="navigateTo(menu)"
         >
           {{ formatMenuName(menu) }}
         </li>
@@ -89,7 +89,7 @@
     </li>
 
     <li class="logout-item">
-      <button class="logout-button" (click)="logout()" aria-label="Logout">
+      <button (click)="logout()" aria-label="Logout" class="logout-button">
         Logout
       </button>
     </li>
