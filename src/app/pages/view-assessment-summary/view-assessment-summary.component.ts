@@ -1,6 +1,6 @@
 import { DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
@@ -105,7 +105,8 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     private messageService: MessageService,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService,
-    private decimal: DecimalPipe
+    private decimal: DecimalPipe,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   get totalFinalScore(): number {
@@ -439,6 +440,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         this.checkAssessmentStatus(),
       ]);
       this.adjustPercentages();
+      this.cdRef.detectChanges();
       console.log('Assessment STatus:', this.selectedStatus);
     } catch (error) {
       console.error('Error fetching summaries:', error);
