@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,6 @@ export class LoginComponent {
   errorMessage: string = '';
   warningMessage: string = '';
   isLoading: boolean = false;
-  showPassword: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -28,10 +27,6 @@ export class LoginComponent {
     this.route.queryParams.subscribe((params) => {
       this.warningMessage = params['warning'] || null;
     });
-  }
-
-  togglePasswordMask() {
-    this.showPassword = !this.showPassword;
   }
 
   ngOnInit(): void {
@@ -46,7 +41,7 @@ export class LoginComponent {
     localStorage.clear();
     this.isLoading = true;
     this.errorMessage = '';
-    const loginPayload = {username: this.username, password: this.password};
+    const loginPayload = { username: this.username, password: this.password };
 
     this.http
       .post('https://hiremeplease.freeddns.org/auth/sign-in', loginPayload, {
