@@ -73,9 +73,8 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   selectedName: string = '';
   selectedAssessmentYear: Date = new Date();
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
-  groupedEmpTechnicalSkills: any[] = []; // For grouped data
+  groupedEmpTechnicalSkills: any[] = [];
   assessmentYear: Date | null = null;
-  isExist: boolean = false;
   isLocked: boolean = false;
 
   scoreOptions: { label: string; value: number }[] = [
@@ -295,11 +294,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
-            if (response.content.length > 0) {
-              this.isExist = true;
-            } else {
-              this.isExist = false;
-            }
             this.empTechnicalSkills = response.content || [];
             console.log('Fetched EmpTechnicalSkills:', this.empTechnicalSkills);
 
@@ -428,7 +422,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
               .toPromise()
           );
         }
-        this.isExist = true;
       }
     }
 
@@ -457,7 +450,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   submitEmployeeTechnicalSkill(): void {
     this.isProcessing = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone',
+      message: 'Are you sure? Once approved, changes cannot be undone',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

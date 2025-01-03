@@ -28,17 +28,6 @@
           [disabled]="isProcessing || isEditFormLoading"
         ></button>
       </div>
-      <div
-        class="checkbox-container"
-        *ngIf="currentRoles.includes('HR') && currentRoles.includes('USER')"
-      >
-        <p-checkbox
-          binary="true"
-          [(ngModel)]="showOnlyMine"
-          (onChange)="applyFiltersAndPagination()"
-          label="Show Only Mine"
-        ></p-checkbox>
-      </div>
     </div>
 
     <p-card>

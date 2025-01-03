@@ -74,7 +74,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
   groupedEmpDevPlans: any[] = []; // For grouped data
   assessmentYear: Date | null = null;
-  isExist: boolean = false;
   isLocked: boolean = false;
 
   devPlansMap: Map<string, string> = new Map();
@@ -272,11 +271,6 @@ export class EmployeeDevPlanComponent implements OnInit {
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (response) => {
-            if (response.content.length > 0) {
-              this.isExist = true;
-            } else {
-              this.isExist = false;
-            }
             this.empDevPlans = response.content || [];
             console.log('Fetched EmpDevPlans:', this.empDevPlans);
 
@@ -398,7 +392,6 @@ export class EmployeeDevPlanComponent implements OnInit {
               .toPromise()
           );
         }
-        this.isExist = true;
       }
     }
 
@@ -427,7 +420,7 @@ export class EmployeeDevPlanComponent implements OnInit {
   submitEmployeeDevPlan(): void {
     this.isProcessing = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone',
+      message: 'Are you sure? Once approved, changes cannot be undone',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

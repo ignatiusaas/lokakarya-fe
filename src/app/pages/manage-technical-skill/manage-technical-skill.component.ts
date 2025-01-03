@@ -311,8 +311,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
           detail: 'Technical skill saved successfully.',
         });
 
-        this.resetSortAndFilter();
-
         this.displayEditDialog = false;
         this.fetchTechSkills();
       },
@@ -325,18 +323,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
         });
       },
     });
-  }
-
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
   }
 
   submitTechnicalSkill(): void {

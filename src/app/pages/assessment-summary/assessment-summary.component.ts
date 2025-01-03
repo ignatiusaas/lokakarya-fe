@@ -82,7 +82,6 @@ export class AssessmentSummaryComponent implements OnInit {
   selectedPosition: string = '';
   isLoading: boolean = true;
   empUrl: string = '';
-  isExist: boolean = false;
   isLocked: boolean = false;
 
   constructor(
@@ -170,28 +169,6 @@ export class AssessmentSummaryComponent implements OnInit {
           });
         },
       });
-  }
-
-  checkAssessmentSummary(): void {
-    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        if (response.content !== null) {
-          this.isExist = true;
-        } else {
-          this.isExist = false;
-        }
-        console.log('Fetched Summary:', response?.content);
-      },
-      error: (error) => {
-        console.error('Error summary:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to fetch summary.',
-        });
-      },
-    });
   }
 
   private extractCurrentUserId(): string | null {
@@ -512,7 +489,6 @@ export class AssessmentSummaryComponent implements OnInit {
         this.fetchSuggestion(),
         this.checkAssessmentStatus(),
       ]);
-      this.checkAssessmentSummary();
       this.adjustPercentages();
     } catch (error) {
       console.error('Error fetching summaries:', error);
@@ -544,7 +520,7 @@ export class AssessmentSummaryComponent implements OnInit {
   submitAssessmentSummary(): void {
     this.isLoading = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone.',
+      message: 'Are you sure? Once approved, changes cannot be undone.',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

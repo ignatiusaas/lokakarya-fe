@@ -84,7 +84,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   selectedAssessmentYear: Date = new Date();
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
   empUrl: string = '';
-  isExist: boolean = false;
   isLocked: boolean = false;
 
   groupedEmpAttitudeSkills: any[] = []; // For grouped data
@@ -311,11 +310,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false))) // Hide spinner after loading
       .subscribe({
         next: (response) => {
-          if (response.content.length > 0) {
-            this.isExist = true;
-          } else {
-            this.isExist = false;
-          }
           this.empAttitudeSkills = response.content || [];
           console.log('Fetched EmpAttitudeSkills:', this.empAttitudeSkills);
 
@@ -340,48 +334,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           });
         },
       });
-  }
-
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    // Apply global filtering (search)
-    let filteredAttitudeSkills = this.globalFilterValue
-      ? this.allEmpAttitudeSkills.filter((empAttitudeSkill) =>
-          Object.values(empAttitudeSkill).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allEmpAttitudeSkills];
-
-    if (this.showOnlyMine) {
-      filteredAttitudeSkills = filteredAttitudeSkills.filter(
-        (skill) => skill.user_id === this.currentUserId
-      );
-    }
-
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredAttitudeSkills.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
-      });
-    }
-
-    // Apply pagination
-    this.empAttitudeSkills = filteredAttitudeSkills.slice(startIndex, endIndex);
-
-    // Update totalRecords for pagination
-    this.totalRecords = filteredAttitudeSkills.length;
   }
 
   editEmpAttitudeSkill(skillId: string): void {
@@ -483,7 +435,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
               .toPromise()
           );
         }
-        this.isExist = true;
       }
     }
 
@@ -581,20 +532,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     }
   }
 
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
-  }
-
   openEditDialog(): void {
     console.log('Opening Attitude Skill Edit Form');
     this.editForm.reset();
@@ -608,7 +545,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   submitEmployeeAttitudeSkill(): void {
     this.isProcessing = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone.',
+      message: 'Are you sure? Once approved, changes cannot be undone.',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -620,11 +557,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
         console.log('Form submission cancelled.');
       },
     });
-  }
-
-  onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
   }
 
   getScoreLabel(scoreValue: number | null | undefined): string {

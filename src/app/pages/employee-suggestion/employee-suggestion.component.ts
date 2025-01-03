@@ -234,48 +234,6 @@ export class EmployeeSuggestionComponent implements OnInit {
       });
   }
 
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    // Apply global filtering (search)
-    let filteredSuggestions = this.globalFilterValue
-      ? this.allEmpSuggestions.filter((empSuggestion) =>
-          Object.values(empSuggestion).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allEmpSuggestions];
-
-    if (this.showOnlyMine) {
-      filteredSuggestions = filteredSuggestions.filter(
-        (suggestion) => suggestion.user_id === this.currentUserId
-      );
-    }
-
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredSuggestions.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
-      });
-    }
-
-    // Apply pagination
-    this.empSuggestions = filteredSuggestions.slice(startIndex, endIndex);
-
-    // Update totalRecords for pagination
-    this.totalRecords = filteredSuggestions.length;
-  }
-
   openCreateDialog(): void {
     console.log('Opening Create Dialog');
     this.mode = 'create';
@@ -456,8 +414,6 @@ export class EmployeeSuggestionComponent implements OnInit {
           detail: 'Employee suggestion saved successfully.',
         });
 
-        this.resetSortAndFilter();
-
         this.displayEditDialog = false;
         this.fetchEmpSuggestions();
       },
@@ -499,20 +455,6 @@ export class EmployeeSuggestionComponent implements OnInit {
     }
   }
 
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
-  }
-
   submitEmployeeSuggestion(): void {
     console.log('Submitting Employee Suggestion. Mode:', this.mode);
     this.isProcessing = true;
@@ -521,6 +463,5 @@ export class EmployeeSuggestionComponent implements OnInit {
 
   onSearch(): void {
     console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
   }
 }

@@ -566,7 +566,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   approveAssessment(): void {
     this.isLoading = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone.',
+      message: 'Are you sure? Once approved, changes cannot be undone.',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -597,7 +597,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
           .put(url, payload)
           .pipe(finalize(() => (this.isLoading = false)))
           .subscribe({
-            next: (response) => {
+            next: () => {
               console.log('Assessment Summary submitted successfully.');
               this.messageService.add({
                 severity: 'success',

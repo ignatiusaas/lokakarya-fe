@@ -105,7 +105,7 @@
                         isProcessing ||
                         !currentRoles.includes('HR') ||
                         selectedUserId === currentUserId ||
-                        isExist
+                        isLocked
                       "
                     />
                   </td>
@@ -121,7 +121,7 @@
                         isProcessing ||
                         !currentRoles.includes('HR') ||
                         selectedUserId === currentUserId ||
-                        isExist
+                        isLocked
                       "
                       appendTo="body"
                     ></p-dropdown>
@@ -147,7 +147,7 @@
     <div class="dialog-footer">
       <button
         *ngIf="
-          !isExist &&
+          !isLocked &&
           currentRoles.includes('HR') &&
           selectedUserId !== currentUserId
         "

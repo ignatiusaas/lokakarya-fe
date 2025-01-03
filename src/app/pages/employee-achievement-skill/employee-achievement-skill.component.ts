@@ -84,7 +84,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   selectedAssessmentYear: Date = new Date();
   selectedYear: number = this.selectedAssessmentYear.getFullYear();
   empUrl: string = '';
-  isExist: boolean = false;
   isLocked: boolean = false;
 
   groupedEmpAchievementSkills: any[] = [];
@@ -318,13 +317,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          if (response.content.length > 0) {
-            this.isExist = true;
-          } else {
-            this.isExist = false;
-          }
           console.log('Fetched EmpAchievementSkills:', response.content);
-          console.log('isExist:', this.isExist);
           this.empAchievementSkills = response.content || [];
           this.groupAllAchievements();
 
@@ -349,51 +342,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           });
         },
       });
-  }
-
-  applyFiltersAndPagination(event?: any): void {
-    const startIndex = event?.first || 0;
-    const endIndex = startIndex + this.rowsPerPage;
-
-    // Apply global filtering (search)
-    let filteredAchievementSkills = this.globalFilterValue
-      ? this.allEmpAchievementSkills.filter((empAchievementSkill) =>
-          Object.values(empAchievementSkill).some((value) =>
-            String(value)
-              .toLowerCase()
-              .includes(this.globalFilterValue.toLowerCase())
-          )
-        )
-      : [...this.allEmpAchievementSkills];
-
-    if (this.showOnlyMine) {
-      filteredAchievementSkills = filteredAchievementSkills.filter(
-        (skill) => skill.user_id === this.currentUserId
-      );
-    }
-
-    if (event?.sortField) {
-      const sortOrder = event.sortOrder || 1;
-      filteredAchievementSkills.sort((a, b) => {
-        const valueA = a[event.sortField];
-        const valueB = b[event.sortField];
-
-        if (valueA == null || valueB == null) return 0;
-
-        return (
-          valueA.toString().localeCompare(valueB.toString()) * sortOrder || 0
-        );
-      });
-    }
-
-    // Apply pagination
-    this.empAchievementSkills = filteredAchievementSkills.slice(
-      startIndex,
-      endIndex
-    );
-
-    // Update totalRecords for pagination
-    this.totalRecords = filteredAchievementSkills.length;
   }
 
   editEmpAchievementSkill(skillId: string): void {
@@ -503,7 +451,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
               )
               .toPromise()
           );
-          this.isExist = true;
         }
       }
     }
@@ -599,20 +546,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     }
   }
 
-  resetSortAndFilter(): void {
-    console.log('Resetting sort and filter...');
-
-    this.globalFilterValue = '';
-
-    const dt = document.querySelector('p-table') as any;
-    if (dt) {
-      dt.sortField = null;
-      dt.sortOrder = null;
-    }
-
-    this.applyFiltersAndPagination({ first: 0 });
-  }
-
   openEditDialog(): void {
     console.log('Opening Achievement Skill Edit Form');
     this.editForm.reset();
@@ -626,7 +559,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   submitEmployeeAchievementSkill(): void {
     this.isProcessing = true;
     this.confirmationService.confirm({
-      message: 'Are you sure? Once submitted, changes cannot be undone.',
+      message: 'Are you sure? Once approved, changes cannot be undone.',
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
@@ -638,11 +571,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
         this.isProcessing = false;
       },
     });
-  }
-
-  onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-    this.applyFiltersAndPagination({ first: 0 });
   }
 
   getScoreLabel(scoreValue: number | null | undefined): string {
