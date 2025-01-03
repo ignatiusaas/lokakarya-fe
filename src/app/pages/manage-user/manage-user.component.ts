@@ -586,7 +586,7 @@ export class ManageUserComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 

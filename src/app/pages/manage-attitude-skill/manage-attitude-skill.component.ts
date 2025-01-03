@@ -1,13 +1,23 @@
-import {Component, OnInit} from '@angular/core';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
-import {CommonModule} from '@angular/common';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {HttpClient} from '@angular/common/http';
-import {ConfirmationService, MessageService, PrimeNGConfig} from 'primeng/api';
-import {jwtDecode} from 'jwt-decode';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {finalize} from 'rxjs/operators';
-import {InputSwitchModule} from 'primeng/inputswitch';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+} from 'primeng/api';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { finalize } from 'rxjs/operators';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-manage-attitude-skill',
@@ -49,8 +59,8 @@ export class ManageAttitudeSkillComponent implements OnInit {
   selectedOrderDirection: string = 'asc';
 
   orderColumns: any[] = [
-    {label: 'Group Name', value: 'group_name'},
-    {label: 'Weight', value: 'percentage'},
+    { label: 'Group Name', value: 'group_name' },
+    { label: 'Weight', value: 'percentage' },
   ];
   private searchTimeout: any;
 
@@ -60,8 +70,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -86,7 +95,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
 
     this.loading = true;
     this.http
-      .get<any>(url, {params: param})
+      .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
@@ -194,20 +203,20 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const payload = {
       ...this.editGroupForm.value,
       ...(this.mode === 'create'
-        ? {created_by: this.currentUserId}
-        : {updated_by: this.currentUserId}),
+        ? { created_by: this.currentUserId }
+        : { updated_by: this.currentUserId }),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-          'https://hiremeplease.freeddns.org/groupattitudeskill/create',
-          payload
-        )
+            'https://hiremeplease.freeddns.org/groupattitudeskill/create',
+            payload
+          )
         : this.http.put(
-          'https://hiremeplease.freeddns.org/groupattitudeskill/update',
-          payload
-        );
+            'https://hiremeplease.freeddns.org/groupattitudeskill/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -352,20 +361,20 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const payload = {
       ...this.editForm.value,
       ...(this.mode === 'create'
-        ? {created_by: this.currentUserId}
-        : {updated_by: this.currentUserId}),
+        ? { created_by: this.currentUserId }
+        : { updated_by: this.currentUserId }),
     };
 
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-          'https://hiremeplease.freeddns.org/attitudeskill/create',
-          payload
-        )
+            'https://hiremeplease.freeddns.org/attitudeskill/create',
+            payload
+          )
         : this.http.put(
-          'https://hiremeplease.freeddns.org/attitudeskill/update',
-          payload
-        );
+            'https://hiremeplease.freeddns.org/attitudeskill/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -565,7 +574,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 

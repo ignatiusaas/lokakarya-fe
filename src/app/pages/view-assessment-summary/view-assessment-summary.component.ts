@@ -1,26 +1,31 @@
-import {Component, OnInit} from '@angular/core';
-import {ButtonDirective} from 'primeng/button';
-import {CalendarModule} from 'primeng/calendar';
-import {CardModule} from 'primeng/card';
-import {CheckboxModule} from 'primeng/checkbox';
-import {DialogModule} from 'primeng/dialog';
-import {DropdownModule} from 'primeng/dropdown';
-import {FormsModule, ReactiveFormsModule,} from '@angular/forms';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {InputTextModule} from 'primeng/inputtext';
-import {DecimalPipe, NgForOf, NgIf} from '@angular/common';
-import {ConfirmationService, MessageService, PrimeNGConfig, PrimeTemplate} from 'primeng/api';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {ToastModule} from 'primeng/toast';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {HttpClient} from '@angular/common/http';
-import {jwtDecode} from 'jwt-decode';
-import {finalize} from 'rxjs/operators';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import { DecimalPipe, NgForOf, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+  PrimeTemplate,
+} from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { ToastModule } from 'primeng/toast';
+import { finalize } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-import {saveAs} from 'file-saver';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-view-assessment-summary',
@@ -88,10 +93,10 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   selectedAssessmentSummaryId: string = '';
 
   orderColumns: { label: string; value: string }[] = [
-    {label: 'Full Name', value: 'au.full_name'},
-    {label: 'Division Name', value: 'division_name'},
-    {label: 'Score', value: 'score'},
-    {label: 'Approval Status', value: 'status'},
+    { label: 'Full Name', value: 'au.full_name' },
+    { label: 'Division Name', value: 'division_name' },
+    { label: 'Score', value: 'score' },
+    { label: 'Approval Status', value: 'status' },
   ];
   private searchTimeout: any;
 
@@ -101,8 +106,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService,
     private decimal: DecimalPipe
-  ) {
-  }
+  ) {}
 
   get totalFinalScore(): number {
     this.totalAchievementScore = this.achievements.reduce(
@@ -136,7 +140,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       .get<any>('https://hiremeplease.freeddns.org/division/all')
       .subscribe({
         next: (response) => {
-          const all = {id: null, division_name: 'All'};
+          const all = { id: null, division_name: 'All' };
           const res = response.content || [];
           this.divisions = res.slice();
           this.divisions.unshift(all);
@@ -310,21 +314,21 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     const url = 'https://hiremeplease.freeddns.org/assessmentsummary/sorch';
 
     const param = {
-      ...(this.globalFilterValue ? {keyword: this.globalFilterValue} : {}),
+      ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
       column: this.selectedOrderColumn,
       order: this.selectedOrderDirection,
       page: this.currentPage,
       pageSize: this.rowsPerPage,
       assessmentYear: this.selectedYear,
       ...(this.selectedDivisionIdFilter
-        ? {divisionId: this.selectedDivisionIdFilter}
+        ? { divisionId: this.selectedDivisionIdFilter }
         : {}),
     };
 
     console.log('Sending Request to URL:', url, param);
 
     this.http
-      .get<any>(url, {params: param})
+      .get<any>(url, { params: param })
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (response) => {
@@ -574,12 +578,12 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       body: achievementsData,
       foot: [
         [
-          {content: 'Total:', colSpan: 2, styles: {halign: 'right'}},
+          { content: 'Total:', colSpan: 2, styles: { halign: 'right' } },
           `${this.totalAchievementPercentage.toFixed(2)}%`,
           this.totalAchievementScore.toFixed(2),
         ],
       ],
-      margin: {left: 40, right: 40},
+      margin: { left: 40, right: 40 },
     });
 
     // A little spacing
@@ -600,12 +604,12 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       body: attitudeData,
       foot: [
         [
-          {content: 'Total:', colSpan: 2, styles: {halign: 'right'}},
+          { content: 'Total:', colSpan: 2, styles: { halign: 'right' } },
           `${this.totalAttitudePercentage.toFixed(2)}%`,
           this.totalAttitudeScore.toFixed(2),
         ],
       ],
-      margin: {left: 40, right: 40},
+      margin: { left: 40, right: 40 },
     });
 
     finalY = (doc as any).lastAutoTable.finalY + 20;
@@ -618,13 +622,13 @@ export class ViewAssessmentSummaryComponent implements OnInit {
           {
             content: 'Total:',
             colSpan: 1,
-            styles: {halign: 'right', fontStyle: 'bold'},
+            styles: { halign: 'right', fontStyle: 'bold' },
           },
           `${this.totalPercentage.toFixed(2)}%`,
           this.totalFinalScore.toFixed(2),
         ],
       ],
-      margin: {left: 40, right: 40},
+      margin: { left: 40, right: 40 },
       theme: 'plain',
     });
 
@@ -635,7 +639,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       autoTable(doc, {
         startY: finalY,
         body: [[`Suggestion: ${this.suggestion}`]],
-        margin: {left: 40, right: 40},
+        margin: { left: 40, right: 40 },
         theme: 'plain',
       });
     }
@@ -696,7 +700,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       type: 'array',
     });
 
-    const file = new Blob([excelBuffer], {type: 'application/octet-stream'});
+    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(
       file,
       `AssessmentSummary_${this.selectedName}_${this.selectedYear}.xlsx`
@@ -707,7 +711,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 
@@ -731,7 +735,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return [];
     }
 
@@ -755,7 +759,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 

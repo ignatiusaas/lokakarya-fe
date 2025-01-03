@@ -1,22 +1,32 @@
-import {Component, OnInit} from '@angular/core';
-import {ButtonDirective} from 'primeng/button';
-import {CalendarModule} from 'primeng/calendar';
-import {CardModule} from 'primeng/card';
-import {CheckboxModule} from 'primeng/checkbox';
-import {DialogModule} from 'primeng/dialog';
-import {DropdownModule} from 'primeng/dropdown';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {InputTextModule} from 'primeng/inputtext';
-import {NgForOf, NgIf} from '@angular/common';
-import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {ToastModule} from 'primeng/toast';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {HttpClient} from '@angular/common/http';
-import {jwtDecode} from 'jwt-decode';
-import {finalize} from 'rxjs/operators';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import { NgForOf, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+} from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { ToastModule } from 'primeng/toast';
+import { finalize } from 'rxjs/operators';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-employee-technical-skill',
@@ -65,11 +75,11 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   isLocked: boolean = false;
 
   scoreOptions: { label: string; value: number }[] = [
-    {label: 'Starting', value: 10},
-    {label: 'Beginner', value: 20},
-    {label: 'Intermediate', value: 30},
-    {label: 'Advanced', value: 40},
-    {label: 'Professional', value: 50},
+    { label: 'Starting', value: 10 },
+    { label: 'Beginner', value: 20 },
+    { label: 'Intermediate', value: 30 },
+    { label: 'Advanced', value: 40 },
+    { label: 'Professional', value: 50 },
   ];
 
   technicalSkillsMap: Map<string, string> = new Map();
@@ -80,8 +90,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     console.log('Initializing EmployeeTechnicalSkillComponent');
@@ -398,7 +407,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 
@@ -422,7 +431,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return [];
     }
 

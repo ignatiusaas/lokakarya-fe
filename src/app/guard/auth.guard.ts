@@ -1,6 +1,6 @@
-import {ActivatedRouteSnapshot, CanActivateFn, Router} from '@angular/router';
-import {inject} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 
 export const authGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = async (
   const http = inject(HttpClient);
 
   if (typeof window === 'undefined' || !window.localStorage) {
-    console.error('Session storage is not available.');
+    console.error('Local storage is not available.');
     return false;
   }
 

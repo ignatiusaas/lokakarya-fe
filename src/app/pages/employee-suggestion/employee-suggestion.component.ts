@@ -1,24 +1,35 @@
-import {Component, OnInit} from '@angular/core';
-import {ButtonDirective} from 'primeng/button';
-import {CalendarModule} from 'primeng/calendar';
-import {CardModule} from 'primeng/card';
-import {CheckboxModule} from 'primeng/checkbox';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {DialogModule} from 'primeng/dialog';
-import {DropdownModule} from 'primeng/dropdown';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {InputTextModule} from 'primeng/inputtext';
-import {NgIf} from '@angular/common';
-import {ConfirmationService, MessageService, PrimeNGConfig, PrimeTemplate,} from 'primeng/api';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {TableModule} from 'primeng/table';
-import {ToastModule} from 'primeng/toast';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {HttpClient} from '@angular/common/http';
-import {jwtDecode} from 'jwt-decode';
-import {finalize} from 'rxjs/operators';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import { NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+  PrimeTemplate,
+} from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { finalize } from 'rxjs/operators';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-employee-suggestion',
@@ -77,8 +88,7 @@ export class EmployeeSuggestionComponent implements OnInit {
     private messageService: MessageService,
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     console.log('Initializing EmployeeSuggestionComponent');
@@ -105,20 +115,20 @@ export class EmployeeSuggestionComponent implements OnInit {
     const url = 'https://hiremeplease.freeddns.org/empsuggestion/sorch';
 
     const param = {
-      ...(this.globalFilterValue ? {keyword: this.globalFilterValue} : {}),
+      ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
       column: this.selectedOrderColumn,
       order: this.selectedOrderDirection,
       page: this.currentPage,
       pageSize: this.rowsPerPage,
       ...(!this.currentRoles.includes('HR')
-        ? {userId: this.currentUserId}
+        ? { userId: this.currentUserId }
         : {}),
     };
 
     console.log('Sending Request to URL:', url, param);
 
     this.http
-      .get<any>(url, {params: param})
+      .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
@@ -313,8 +323,8 @@ export class EmployeeSuggestionComponent implements OnInit {
       user_id: this.currentUserId,
       assessment_year: assessmentYear,
       ...(this.mode === 'create'
-        ? {created_by: this.currentUserId}
-        : {updated_by: this.currentUserId}),
+        ? { created_by: this.currentUserId }
+        : { updated_by: this.currentUserId }),
     };
 
     console.log(payload);
@@ -322,13 +332,13 @@ export class EmployeeSuggestionComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-          'https://hiremeplease.freeddns.org/empsuggestion/create',
-          payload
-        )
+            'https://hiremeplease.freeddns.org/empsuggestion/create',
+            payload
+          )
         : this.http.put(
-          'https://hiremeplease.freeddns.org/empsuggestion/update',
-          payload
-        );
+            'https://hiremeplease.freeddns.org/empsuggestion/update',
+            payload
+          );
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -395,7 +405,7 @@ export class EmployeeSuggestionComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 
@@ -419,7 +429,7 @@ export class EmployeeSuggestionComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 

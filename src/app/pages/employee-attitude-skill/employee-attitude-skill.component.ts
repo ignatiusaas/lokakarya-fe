@@ -1,24 +1,34 @@
-import {Component, OnInit} from '@angular/core';
-import {ButtonDirective} from 'primeng/button';
-import {CalendarModule} from 'primeng/calendar';
-import {CardModule} from 'primeng/card';
-import {CheckboxModule} from 'primeng/checkbox';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {DialogModule} from 'primeng/dialog';
-import {DropdownModule} from 'primeng/dropdown';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {InputTextModule} from 'primeng/inputtext';
-import {NgForOf, NgIf} from '@angular/common';
-import {ConfirmationService, MessageService, PrimeNGConfig,} from 'primeng/api';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {TableModule} from 'primeng/table';
-import {ToastModule} from 'primeng/toast';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {HttpClient} from '@angular/common/http';
-import {jwtDecode} from 'jwt-decode';
-import {finalize} from 'rxjs/operators';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
+import { NgForOf, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeNGConfig,
+} from 'primeng/api';
+import { ButtonDirective } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+import { finalize } from 'rxjs/operators';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-employee-attitude-skill',
@@ -86,11 +96,11 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   assessmentYear: Date | null = null;
 
   scoreOptions: { label: string; value: number }[] = [
-    {label: 'Bad', value: 10},
-    {label: 'Average', value: 20},
-    {label: 'Good', value: 30},
-    {label: 'Great', value: 40},
-    {label: 'Excellent', value: 50},
+    { label: 'Bad', value: 10 },
+    { label: 'Average', value: 20 },
+    { label: 'Good', value: 30 },
+    { label: 'Great', value: 40 },
+    { label: 'Excellent', value: 50 },
   ];
 
   attitudeSkillsMap: Map<string, string> = new Map();
@@ -104,8 +114,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     private fb: FormBuilder,
     private primengConfig: PrimeNGConfig,
     private confirmationService: ConfirmationService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     console.log('Initializing EmployeeAttitudeSkillComponent');
@@ -577,8 +586,8 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   addSkillEntry(entry: any): void {
-    entry.skillEntrys.push({id: this.generateUniqueId(), value: ''});
-    entry.entryScores.push({id: this.generateUniqueId(), value: null});
+    entry.skillEntrys.push({ id: this.generateUniqueId(), value: '' });
+    entry.entryScores.push({ id: this.generateUniqueId(), value: null });
   }
 
   generateUniqueId(): string {
@@ -608,7 +617,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 
@@ -632,7 +641,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 
@@ -656,7 +665,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return null;
     }
 

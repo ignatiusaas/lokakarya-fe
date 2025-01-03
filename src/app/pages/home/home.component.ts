@@ -1,13 +1,19 @@
-import {ConfirmationService, MessageService} from 'primeng/api';
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {Router} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {EMPTY, finalize, switchMap} from 'rxjs';
-import {jwtDecode} from 'jwt-decode';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { EMPTY, finalize, switchMap } from 'rxjs';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-home',
@@ -52,8 +58,7 @@ export class HomeComponent {
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     public messageService: MessageService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadUserData();
@@ -94,7 +99,7 @@ export class HomeComponent {
           this.errorMessage = 'Failed to load user data.';
           console.error(err);
           this.router.navigate(['/login'], {
-            queryParams: {warning: 'Session expired. Please log in again.'},
+            queryParams: { warning: 'Session expired. Please log in again.' },
           });
         },
         complete: () => {
@@ -288,7 +293,7 @@ export class HomeComponent {
     const token = localStorage.getItem('auth-token');
 
     if (!token) {
-      console.error('No JWT found in session storage.');
+      console.error('No JWT found in local storage.');
       return [];
     }
 
