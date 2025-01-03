@@ -63,7 +63,7 @@
               <button
                 *ngIf="
                   empSuggestion.user_id === currentUserId &&
-                  empSuggestion.status === 1
+                  empSuggestion.status !== 2
                 "
                 pButton
                 [icon]="
@@ -78,7 +78,7 @@
               <button
                 *ngIf="
                   empSuggestion.user_id === currentUserId &&
-                  empSuggestion.status === 1
+                  empSuggestion.status !== 2
                 "
                 pButton
                 [icon]="

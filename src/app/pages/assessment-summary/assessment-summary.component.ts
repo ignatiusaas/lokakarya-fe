@@ -263,10 +263,10 @@ export class AssessmentSummaryComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.http.get<any>(url).subscribe({
         next: (response) => {
-          this.selectedStatus = response.content?.status;
+          this.selectedStatus = response.content?.status || 1;
           this.isLocked = response.content?.status === 2;
           console.log('Assessment status:', response.content?.status);
-          resolve(response.content?.status || null);
+          resolve(response.content?.status || 1);
         },
         error: (error) => {
           console.error('Error checking assessment status:', error);
@@ -586,7 +586,7 @@ export class AssessmentSummaryComponent implements OnInit {
               user_id: this.selectedUserId,
               year: this.selectedYear,
               score: this.totalFinalScore,
-              status: this.selectedStatus,
+              status: 1,
               created_by: this.currentUserId,
             };
 

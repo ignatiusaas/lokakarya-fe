@@ -203,3 +203,15 @@
     }
   }
 }
+
+::ng-deep .p-confirm-dialog-reject {
+  background-color: #f44336 !important;
+  color: white !important;
+  border: none !important;
+}
+
+::ng-deep .p-confirm-dialog-accept {
+  background-color: #4caf50 !important;
+  color: white !important;
+  border: none !important;
+}
