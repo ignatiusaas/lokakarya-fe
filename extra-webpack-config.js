@@ -1,21 +1,12 @@
-const webpack = require('webpack');
-const dotenv = require('dotenv');
-const fs = require('fs');
+const webpack = require("webpack");
+const { config } = require("dotenv");
 
-module.exports = (config, options) => {
-  // Membaca file .env
-  const env = dotenv.parse(fs.readFileSync('.env'));
+config(); // Load .env
 
-  // Inject variabel ke process.env menggunakan Webpack DefinePlugin
-  const envKeys = Object.keys(env).reduce((prev, next) => {
-    prev[`process.env.${next}`] = JSON.stringify(env[next]);
-    return prev;
-  }, {});
-
-  config.plugins = [
-    ...(config.plugins || []),
-    new webpack.DefinePlugin(envKeys),
-  ];
-
-  return config;
+module.exports = {
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(process.env),
+    }),
+  ],
 };

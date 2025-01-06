@@ -16,6 +16,7 @@ import {
 } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -83,7 +84,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     console.log('Fetching Groups and Attitude Skills...');
     this.loading = true;
 
-    const url = 'https://hiremeplease.freeddns.org/attitudeskill/sorch';
+    const url = environment.apiUrl + '/attitudeskill/sorch';
 
     const param = {
       keyword: this.globalFilterValue,
@@ -210,11 +211,11 @@ export class ManageAttitudeSkillComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/groupattitudeskill/create',
+            environment.apiUrl + '/groupattitudeskill/create',
             payload
           )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/groupattitudeskill/update',
+            environment.apiUrl + '/groupattitudeskill/update',
             payload
           );
 
@@ -246,7 +247,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for group
 
     const groupRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/groupattitudeskill/${groupId}`
+      `${environment.apiUrl}/groupattitudeskill/${groupId}`
     );
 
     this.displayGroupEditDialog = false;
@@ -285,9 +286,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
       message: 'Are you sure you want to delete this group attitude skill?',
       accept: () => {
         this.http
-          .delete(
-            `https://hiremeplease.freeddns.org/groupattitudeskill/${groupId}`
-          )
+          .delete(`${environment.apiUrl}/groupattitudeskill/${groupId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -367,14 +366,8 @@ export class ManageAttitudeSkillComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/attitudeskill/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/attitudeskill/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/attitudeskill/create', payload)
+        : this.http.put(environment.apiUrl + '/attitudeskill/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -403,7 +396,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for attitude skill
 
     const skillRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/attitudeskill/${skillId}`
+      `${environment.apiUrl}/attitudeskill/${skillId}`
     );
 
     this.displayEditDialog = false;
@@ -442,7 +435,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
       message: 'Are you sure you want to delete this attitude skill?',
       accept: () => {
         this.http
-          .delete(`https://hiremeplease.freeddns.org/attitudeskill/${skillId}`)
+          .delete(`${environment.apiUrl}/attitudeskill/${skillId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -499,7 +492,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/attitudeskill/name/${name}`
+          `${environment.apiUrl}/attitudeskill/name/${name}`
         )
         .toPromise();
 
@@ -523,7 +516,7 @@ export class ManageAttitudeSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/groupattitudeskill/name/${name}`
+          `${environment.apiUrl}/groupattitudeskill/name/${name}`
         )
         .toPromise();
 

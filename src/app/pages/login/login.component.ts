@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
@@ -44,7 +45,7 @@ export class LoginComponent {
     const loginPayload = { username: this.username, password: this.password };
 
     this.http
-      .post('https://hiremeplease.freeddns.org/auth/sign-in', loginPayload, {
+      .post(environment.apiUrl + '/auth/sign-in', loginPayload, {
         responseType: 'text',
       })
       .subscribe({

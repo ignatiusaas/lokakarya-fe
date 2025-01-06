@@ -17,6 +17,7 @@ import {
 } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -84,7 +85,7 @@ export class ManageAchievementComponent implements OnInit {
     console.log('Fetching Groups and Achievements...');
     this.loading = true;
 
-    const url = 'https://hiremeplease.freeddns.org/achievement/sorch';
+    const url = environment.apiUrl + '/achievement/sorch';
 
     const param = {
       keyword: this.globalFilterValue,
@@ -210,11 +211,11 @@ export class ManageAchievementComponent implements OnInit {
     const request$ =
       this.mode === 'create'
         ? this.http.post(
-            'https://hiremeplease.freeddns.org/groupachievement/create',
+            environment.apiUrl + '/groupachievement/create',
             payload
           )
         : this.http.put(
-            'https://hiremeplease.freeddns.org/groupachievement/update',
+            environment.apiUrl + '/groupachievement/update',
             payload
           );
 
@@ -246,7 +247,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for group
 
     const groupRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/groupachievement/${groupId}`
+      `${environment.apiUrl}/groupachievement/${groupId}`
     );
 
     this.displayGroupEditDialog = false;
@@ -285,9 +286,7 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this group achievement?',
       accept: () => {
         this.http
-          .delete(
-            `https://hiremeplease.freeddns.org/groupachievement/${groupId}`
-          )
+          .delete(`${environment.apiUrl}/groupachievement/${groupId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -367,14 +366,8 @@ export class ManageAchievementComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/achievement/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/achievement/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/achievement/create', payload)
+        : this.http.put(environment.apiUrl + '/achievement/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: () => {
@@ -403,7 +396,7 @@ export class ManageAchievementComponent implements OnInit {
     this.mode = 'edit'; // Set mode to edit for achievement
 
     const skillRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/achievement/${skillId}`
+      `${environment.apiUrl}/achievement/${skillId}`
     );
 
     this.displayEditDialog = false;
@@ -442,7 +435,7 @@ export class ManageAchievementComponent implements OnInit {
       message: 'Are you sure you want to delete this achievement?',
       accept: () => {
         this.http
-          .delete(`https://hiremeplease.freeddns.org/achievement/${skillId}`)
+          .delete(`${environment.apiUrl}/achievement/${skillId}`)
           .subscribe({
             next: () => {
               this.messageService.add({
@@ -499,7 +492,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/achievement/name/${achievement}`
+          `${environment.apiUrl}/achievement/name/${achievement}`
         )
         .toPromise();
 
@@ -523,7 +516,7 @@ export class ManageAchievementComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/groupachievement/name/${name}`
+          `${environment.apiUrl}/groupachievement/name/${name}`
         )
         .toPromise();
 

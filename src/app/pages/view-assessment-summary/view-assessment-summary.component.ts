@@ -24,6 +24,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -137,29 +138,27 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   }
 
   fetchDivisions(): void {
-    this.http
-      .get<any>('https://hiremeplease.freeddns.org/division/all')
-      .subscribe({
-        next: (response) => {
-          const all = { id: null, division_name: 'All' };
-          const res = response.content || [];
-          this.divisions = res.slice();
-          this.divisions.unshift(all);
-          console.log('Fetched Divisions:', this.divisions);
-        },
-        error: (error) => {
-          console.error('Error fetching divisions:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch divisions.',
-          });
-        },
-      });
+    this.http.get<any>(environment.apiUrl + '/division/all').subscribe({
+      next: (response) => {
+        const all = { id: null, division_name: 'All' };
+        const res = response.content || [];
+        this.divisions = res.slice();
+        this.divisions.unshift(all);
+        console.log('Fetched Divisions:', this.divisions);
+      },
+      error: (error) => {
+        console.error('Error fetching divisions:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch divisions.',
+        });
+      },
+    });
   }
 
   fetchSelectedUserDetails(): Promise<void> {
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(userUrl).subscribe({
@@ -200,7 +199,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `${environment.apiUrl}/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -239,7 +238,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `${environment.apiUrl}/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -277,7 +276,8 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       );
 
       const summaryUrl =
-        'https://hiremeplease.freeddns.org/empsuggestion/' +
+        environment.apiUrl +
+        '/empsuggestion/' +
         this.selectedUserId +
         '/' +
         this.selectedYear;
@@ -312,7 +312,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
     this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-    const url = 'https://hiremeplease.freeddns.org/assessmentsummary/sorch';
+    const url = environment.apiUrl + '/assessmentsummary/sorch';
 
     const param = {
       ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
@@ -473,7 +473,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   }
 
   checkAssessmentStatus(): Promise<any> {
-    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const url = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(url).subscribe({
@@ -499,8 +499,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       accept: () => {
         console.log('Submitting Assessment Summary...');
 
-        const url =
-          'https://hiremeplease.freeddns.org/assessmentsummary/update';
+        const url = environment.apiUrl + '/assessmentsummary/update';
 
         const finalScore = this.decimal.transform(
           this.totalFinalScore,

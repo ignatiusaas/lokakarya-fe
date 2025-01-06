@@ -27,6 +27,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -151,7 +152,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -173,11 +174,10 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
   fetchEmployees(): void {
     if (this.currentRoles.includes('HR')) {
-      this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
+      this.empUrl = environment.apiUrl + '/appuser/all';
     } else {
       this.empUrl =
-        'https://hiremeplease.freeddns.org/appuser/div/' +
-        this.currentDivisionId;
+        environment.apiUrl + '/appuser/div/' + this.currentDivisionId;
     }
     console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
@@ -222,7 +222,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     this.loading = true;
 
-    const skillUrl = `https://hiremeplease.freeddns.org/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
+    const skillUrl = `${environment.apiUrl}/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
     this.http
       .get<any>(skillUrl)
       .pipe(finalize(() => (this.loading = false)))
@@ -232,7 +232,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           this.empAchievementSkills = response.content || [];
           this.groupAllAchievements();
 
-          const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+          const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
           this.http.get<any>(summaryUrl).subscribe({
             next: (summaryResponse) => {
               this.isLocked = summaryResponse?.content?.status === 2;
@@ -261,9 +261,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     this.isProcessing = true;
 
     this.http
-      .get<any>(
-        `https://hiremeplease.freeddns.org/empachievementskill/${skillId}`
-      )
+      .get<any>(`${environment.apiUrl}/empachievementskill/${skillId}`)
       .pipe(
         finalize(() => {
           this.isProcessing = false;
@@ -346,20 +344,14 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           payload['updated_by'] = this.currentUserId;
           requests.push(
             this.http
-              .put(
-                'https://hiremeplease.freeddns.org/empachievementskill/update',
-                payload
-              )
+              .put(environment.apiUrl + '/empachievementskill/update', payload)
               .toPromise()
           );
         } else {
           payload['created_by'] = this.currentUserId;
           requests.push(
             this.http
-              .post(
-                'https://hiremeplease.freeddns.org/empachievementskill/create',
-                payload
-              )
+              .post(environment.apiUrl + '/empachievementskill/create', payload)
               .toPromise()
           );
         }
@@ -431,10 +423,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     try {
       await this.http
-        .put(
-          'https://hiremeplease.freeddns.org/empachievementskill/update',
-          payload
-        )
+        .put(environment.apiUrl + '/empachievementskill/update', payload)
         .toPromise();
 
       console.log(`Skill "${entry.achievement}" updated successfully.`);
@@ -497,27 +486,25 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   // Fetch achievements
   fetchAchievementSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/achievement/all')
-        .subscribe({
-          next: (response) => {
-            this.achievementSkills = (response.content || []).filter(
-              (skill: any) => skill.enabled === true
-            );
-            console.log('Fetched AchievementSkills:', this.achievementSkills);
+      this.http.get<any>(environment.apiUrl + '/achievement/all').subscribe({
+        next: (response) => {
+          this.achievementSkills = (response.content || []).filter(
+            (skill: any) => skill.enabled === true
+          );
+          console.log('Fetched AchievementSkills:', this.achievementSkills);
 
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error fetching achievements:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch achievements.',
-            });
-            reject(error);
-          },
-        });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error fetching achievements:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch achievements.',
+          });
+          reject(error);
+        },
+      });
     });
   }
 
@@ -525,7 +512,7 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   fetchGroupAchievements(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('https://hiremeplease.freeddns.org/groupachievement/all')
+        .get<any>(environment.apiUrl + '/groupachievement/all')
         .subscribe({
           next: (response) => {
             this.groupAchievements = response.content || [];

@@ -20,6 +20,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -121,11 +122,10 @@ export class AssessmentSummaryComponent implements OnInit {
   async fetchEmployees(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.selectedDivisionId === '') {
-        this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
+        this.empUrl = environment.apiUrl + '/appuser/all';
       } else {
         this.empUrl =
-          'https://hiremeplease.freeddns.org/appuser/div/' +
-          this.selectedDivisionId;
+          environment.apiUrl + '/appuser/div/' + this.selectedDivisionId;
       }
 
       this.http.get<any>(this.empUrl).subscribe({
@@ -148,22 +148,20 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   fetchDivisions(): void {
-    this.http
-      .get<any>('https://hiremeplease.freeddns.org/division/all')
-      .subscribe({
-        next: (response) => {
-          this.divisions = response.content || [];
-          console.log('Fetched Divisions:', this.divisions);
-        },
-        error: (error) => {
-          console.error('Error fetching divisions:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch divisions.',
-          });
-        },
-      });
+    this.http.get<any>(environment.apiUrl + '/division/all').subscribe({
+      next: (response) => {
+        this.divisions = response.content || [];
+        console.log('Fetched Divisions:', this.divisions);
+      },
+      error: (error) => {
+        console.error('Error fetching divisions:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch divisions.',
+        });
+      },
+    });
   }
 
   fetchSelectedUserDetails(): Promise<void> {
@@ -172,7 +170,7 @@ export class AssessmentSummaryComponent implements OnInit {
       this.selectedUserId = this.currentUserId;
     }
 
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(userUrl).subscribe({
@@ -206,7 +204,7 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   checkAssessmentStatus(): Promise<any> {
-    const url = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const url = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
 
     return new Promise((resolve, reject) => {
       this.http.get<any>(url).subscribe({
@@ -237,7 +235,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `${environment.apiUrl}/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -281,7 +279,7 @@ export class AssessmentSummaryComponent implements OnInit {
         `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
       );
 
-      const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
+      const summaryUrl = `${environment.apiUrl}/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Sending Request to URL:', summaryUrl);
 
@@ -324,7 +322,8 @@ export class AssessmentSummaryComponent implements OnInit {
       );
 
       const summaryUrl =
-        'https://hiremeplease.freeddns.org/empsuggestion/' +
+        environment.apiUrl +
+        '/empsuggestion/' +
         this.selectedUserId +
         '/' +
         this.selectedYear;
@@ -469,9 +468,8 @@ export class AssessmentSummaryComponent implements OnInit {
   }
 
   createAssessmentSummary(): void {
-    const checkUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
-    const createUrl =
-      'https://hiremeplease.freeddns.org/assessmentsummary/create';
+    const checkUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+    const createUrl = environment.apiUrl + '/assessmentsummary/create';
 
     console.log(
       'Checking for existing Assessment Summary using URL:',
@@ -485,7 +483,7 @@ export class AssessmentSummaryComponent implements OnInit {
           const fetchedSummary = existingSummary.content;
           console.log('Fetched Summary:', fetchedSummary);
           if (existingSummary && fetchedSummary?.id) {
-            const updateUrl = `https://hiremeplease.freeddns.org/assessmentsummary/update`;
+            const updateUrl = `${environment.apiUrl}/assessmentsummary/update`;
 
             const updateBody: any = {
               id: fetchedSummary.id,

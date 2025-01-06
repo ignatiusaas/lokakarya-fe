@@ -28,6 +28,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -112,7 +113,7 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     this.checkedSuggestions = [];
 
-    const url = 'https://hiremeplease.freeddns.org/empsuggestion/sorch';
+    const url = environment.apiUrl + '/empsuggestion/sorch';
 
     const param = {
       ...(this.globalFilterValue ? { keyword: this.globalFilterValue } : {}),
@@ -141,7 +142,7 @@ export class EmployeeSuggestionComponent implements OnInit {
           this.allEmpSuggestions.forEach((empSuggestion) => {
             const userId = empSuggestion.user_id;
             const assessmentYear = empSuggestion.assessment_year;
-            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${userId}/${assessmentYear}`;
+            const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${userId}/${assessmentYear}`;
 
             this.http.get<any>(summaryUrl).subscribe({
               next: (summaryResponse) => {
@@ -198,9 +199,7 @@ export class EmployeeSuggestionComponent implements OnInit {
         // User confirmed deletion
         this.isProcessing = true;
         this.http
-          .delete(
-            `https://hiremeplease.freeddns.org/empsuggestion/${suggestionId}`
-          )
+          .delete(`${environment.apiUrl}/empsuggestion/${suggestionId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -238,7 +237,7 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     // Fetch the employee suggestion details
     const empSuggestionRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/empsuggestion/${suggestionId}`
+      `${environment.apiUrl}/empsuggestion/${suggestionId}`
     );
 
     this.displayEditDialog = false; // Ensure the dialog is closed before loading data
@@ -331,14 +330,8 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/empsuggestion/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/empsuggestion/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/empsuggestion/create', payload)
+        : this.http.put(environment.apiUrl + '/empsuggestion/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -371,7 +364,7 @@ export class EmployeeSuggestionComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/empsuggestion/${userId}/${assessmentYear}`
+          `${environment.apiUrl}/empsuggestion/${userId}/${assessmentYear}`
         )
         .toPromise();
 

@@ -25,6 +25,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -115,7 +116,7 @@ export class EmployeeDevPlanComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -136,54 +137,50 @@ export class EmployeeDevPlanComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    this.http
-      .get<any>('https://hiremeplease.freeddns.org/appuser/all')
-      .subscribe({
-        next: (response) => {
-          this.employees = response.content || [];
-          console.log('Fetched Employees:', this.employees);
-        },
-        error: (error) => {
-          console.error('Error fetching employees:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch employees.',
-          });
-        },
-      });
+    this.http.get<any>(environment.apiUrl + '/appuser/all').subscribe({
+      next: (response) => {
+        this.employees = response.content || [];
+        console.log('Fetched Employees:', this.employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch employees.',
+        });
+      },
+    });
   }
 
   fetchDevPlans(): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('Fetching DevPlans...');
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/devplan/all')
-        .subscribe({
-          next: (response) => {
-            this.devPlans = (response.content || []).filter(
-              (plan: any) => plan.enabled === true
-            );
-            console.log('Fetched DevPlans:', this.devPlans);
+      this.http.get<any>(environment.apiUrl + '/devplan/all').subscribe({
+        next: (response) => {
+          this.devPlans = (response.content || []).filter(
+            (plan: any) => plan.enabled === true
+          );
+          console.log('Fetched DevPlans:', this.devPlans);
 
-            // Create a map for quick lookup
-            this.devPlansMap.clear();
-            this.devPlans.forEach((plan: any) => {
-              this.devPlansMap.set(plan.id, plan.plan);
-            });
+          // Create a map for quick lookup
+          this.devPlansMap.clear();
+          this.devPlans.forEach((plan: any) => {
+            this.devPlansMap.set(plan.id, plan.plan);
+          });
 
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error fetching dev plans:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch dev plans.',
-            });
-            reject(error);
-          },
-        });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error fetching dev plans:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch dev plans.',
+          });
+          reject(error);
+        },
+      });
     });
   }
 
@@ -198,7 +195,7 @@ export class EmployeeDevPlanComponent implements OnInit {
 
       this.loading = true;
 
-      const planUrl = `https://hiremeplease.freeddns.org/empdevplan/get/${this.selectedUserId}/${this.selectedYear}`;
+      const planUrl = `${environment.apiUrl}/empdevplan/get/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Fetching EmpDevPlans from URL:', planUrl);
 
@@ -212,7 +209,7 @@ export class EmployeeDevPlanComponent implements OnInit {
 
             this.groupAllDevPlans();
 
-            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+            const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
             this.http.get<any>(summaryUrl).subscribe({
               next: (summaryResponse) => {
                 this.isLocked = summaryResponse?.content?.status === 2;
@@ -275,10 +272,7 @@ export class EmployeeDevPlanComponent implements OnInit {
           payload['updated_by'] = this.currentUserId;
           requests.push(
             this.http
-              .put(
-                'https://hiremeplease.freeddns.org/empdevplan/update',
-                payload
-              )
+              .put(environment.apiUrl + '/empdevplan/update', payload)
               .toPromise()
           );
         } else {
@@ -286,10 +280,7 @@ export class EmployeeDevPlanComponent implements OnInit {
           payload['created_by'] = this.currentUserId;
           requests.push(
             this.http
-              .post(
-                'https://hiremeplease.freeddns.org/empdevplan/create',
-                payload
-              )
+              .post(environment.apiUrl + '/empdevplan/create', payload)
               .toPromise()
           );
         }

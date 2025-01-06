@@ -1,17 +1,17 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {forkJoin, Observable, of, throwError} from 'rxjs';
-import {catchError, map, tap} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MenuManagerService {
-  private baseUrl = 'https://hiremeplease.freeddns.org/auth/role';
+  private baseUrl = environment.apiUrl + '/auth/role';
   private menuCache = new Map<string, any>();
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   // Fetch menu for a single role
   getMenuByRole(roleName: string): Observable<any> {

@@ -1,12 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {PrimeNgModule} from '../../shared/primeng/primeng.module';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ConfirmationService, MessageService} from 'primeng/api';
-import {NavbarComponent} from '../../shared/navbar/navbar.component';
-import {CheckboxModule} from 'primeng/checkbox';
-import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { environment } from '../../../environments/environment';
+import { NavbarComponent } from '../../shared/navbar/navbar.component';
+import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
 @Component({
   selector: 'app-manage-role-access',
@@ -39,8 +40,7 @@ export class ManageRoleAccessComponent implements OnInit {
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -70,13 +70,13 @@ export class ManageRoleAccessComponent implements OnInit {
     this.isLoading = true;
 
     const rolesRequest = this.http.get<any>(
-      'https://hiremeplease.freeddns.org/approle/all'
+      environment.apiUrl + '/approle/all'
     );
     const menusRequest = this.http.get<any>(
-      'https://hiremeplease.freeddns.org/appmenu/all'
+      environment.apiUrl + '/appmenu/all'
     );
     const associationsRequest = this.http.get<any>(
-      'https://hiremeplease.freeddns.org/approlemenu/all'
+      environment.apiUrl + '/approlemenu/all'
     );
 
     Promise.all([
@@ -196,18 +196,16 @@ export class ManageRoleAccessComponent implements OnInit {
 
         const saveRequests = newAssociations.map((key) => {
           const [roleId, menuId] = key.split('~');
-          const payload = {role_id: roleId, menu_id: menuId};
+          const payload = { role_id: roleId, menu_id: menuId };
           console.log('Payload:', payload);
           return this.http.post(
-            'https://hiremeplease.freeddns.org/approlemenu/create',
+            environment.apiUrl + '/approlemenu/create',
             payload
           );
         });
 
         const deleteRequests = deleteAssociations.map((assoc) =>
-          this.http.delete(
-            `https://hiremeplease.freeddns.org/approlemenu/${assoc.id}`
-          )
+          this.http.delete(`${environment.apiUrl}/approlemenu/${assoc.id}`)
         );
 
         Promise.all([

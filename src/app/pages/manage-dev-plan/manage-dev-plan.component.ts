@@ -16,6 +16,7 @@ import {
 } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -88,7 +89,7 @@ export class ManageDevPlanComponent implements OnInit {
       order: this.selectedOrderDirection,
     };
 
-    const url = `https://hiremeplease.freeddns.org/devplan/sorch`;
+    const url = `${environment.apiUrl}/devplan/sorch`;
 
     this.loading = true;
     this.http
@@ -137,7 +138,7 @@ export class ManageDevPlanComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`https://hiremeplease.freeddns.org/devplan/${planId}`)
+          .delete(`${environment.apiUrl}/devplan/${planId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -174,7 +175,7 @@ export class ManageDevPlanComponent implements OnInit {
     this.mode = 'edit';
 
     const planRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/devplan/${planId}`
+      `${environment.apiUrl}/devplan/${planId}`
     );
 
     this.displayEditDialog = false;
@@ -254,14 +255,8 @@ export class ManageDevPlanComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/devplan/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/devplan/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/devplan/create', payload)
+        : this.http.put(environment.apiUrl + '/devplan/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -315,9 +310,7 @@ export class ManageDevPlanComponent implements OnInit {
   async confirmDuplicate(name: string): Promise<boolean> {
     try {
       const response = await this.http
-        .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/devplan/name/${name}`
-        )
+        .get<{ content: boolean }>(`${environment.apiUrl}/devplan/name/${name}`)
         .toPromise();
 
       if (response && response.content !== null) {

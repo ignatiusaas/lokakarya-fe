@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export const authGuard: CanActivateFn = async (
   route: ActivatedRouteSnapshot,
@@ -53,7 +54,7 @@ export const authGuard: CanActivateFn = async (
     // 🛑 Wait for role menu requests to finish before proceeding
     const roleRequests = userRoles.map((role) =>
       http
-        .get<any>(`https://hiremeplease.freeddns.org/approlemenu/role/${role}`)
+        .get<any>(`${environment.apiUrl}/approlemenu/role/${role}`)
         .toPromise()
     );
 

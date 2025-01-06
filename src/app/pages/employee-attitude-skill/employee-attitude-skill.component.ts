@@ -27,6 +27,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -152,7 +153,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -174,11 +175,10 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
   fetchEmployees(): void {
     if (this.currentRoles.includes('HR')) {
-      this.empUrl = 'https://hiremeplease.freeddns.org/appuser/all';
+      this.empUrl = environment.apiUrl + '/appuser/all';
     } else {
       this.empUrl =
-        'https://hiremeplease.freeddns.org/appuser/div/' +
-        this.currentDivisionId;
+        environment.apiUrl + '/appuser/div/' + this.currentDivisionId;
     }
     console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
@@ -214,7 +214,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
     this.loading = true; // Show the spinner
 
-    const skillUrl = `https://hiremeplease.freeddns.org/empattitudeskill/get/${this.selectedUserId}/${this.selectedYear}`;
+    const skillUrl = `${environment.apiUrl}/empattitudeskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
     this.http
       .get<any>(skillUrl)
@@ -225,7 +225,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           console.log('Fetched EmpAttitudeSkills:', this.empAttitudeSkills);
 
           this.groupAllAttitudeSkills();
-          const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+          const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
           this.http.get<any>(summaryUrl).subscribe({
             next: (summaryResponse) => {
               this.isLocked = summaryResponse?.content?.status === 2;
@@ -253,7 +253,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     this.isProcessing = true;
 
     this.http
-      .get<any>(`https://hiremeplease.freeddns.org/empattitudeskill/${skillId}`)
+      .get<any>(`${environment.apiUrl}/empattitudeskill/${skillId}`)
       .pipe(
         finalize(() => {
           this.isProcessing = false;
@@ -329,20 +329,14 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           payload['updated_by'] = this.currentUserId;
           requests.push(
             this.http
-              .put(
-                'https://hiremeplease.freeddns.org/empattitudeskill/update',
-                payload
-              )
+              .put(environment.apiUrl + '/empattitudeskill/update', payload)
               .toPromise()
           );
         } else {
           payload['created_by'] = this.currentUserId;
           requests.push(
             this.http
-              .post(
-                'https://hiremeplease.freeddns.org/empattitudeskill/create',
-                payload
-              )
+              .post(environment.apiUrl + '/empattitudeskill/create', payload)
               .toPromise()
           );
         }
@@ -414,10 +408,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
     try {
       await this.http
-        .put(
-          'https://hiremeplease.freeddns.org/empattitudeskill/update',
-          payload
-        )
+        .put(environment.apiUrl + '/empattitudeskill/update', payload)
         .toPromise();
 
       console.log(`Skill "${entry.attitude_skill_name}" updated successfully.`);
@@ -483,27 +474,25 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   // Fetch attitude skills
   fetchAttitudeSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/attitudeskill/all')
-        .subscribe({
-          next: (response) => {
-            this.attitudeSkills = (response.content || []).filter(
-              (skill: any) => skill.enabled === true
-            );
-            console.log('Fetched AttitudeSkills:', this.attitudeSkills);
+      this.http.get<any>(environment.apiUrl + '/attitudeskill/all').subscribe({
+        next: (response) => {
+          this.attitudeSkills = (response.content || []).filter(
+            (skill: any) => skill.enabled === true
+          );
+          console.log('Fetched AttitudeSkills:', this.attitudeSkills);
 
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error fetching attitude skills:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch attitude skills.',
-            });
-            reject(error);
-          },
-        });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error fetching attitude skills:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch attitude skills.',
+          });
+          reject(error);
+        },
+      });
     });
   }
 
@@ -511,7 +500,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   fetchGroupAttitudeSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.http
-        .get<any>('https://hiremeplease.freeddns.org/groupattitudeskill/all')
+        .get<any>(environment.apiUrl + '/groupattitudeskill/all')
         .subscribe({
           next: (response) => {
             this.groupAttitudeSkills = response.content || [];

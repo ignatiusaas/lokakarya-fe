@@ -16,6 +16,7 @@ import {
 } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -88,7 +89,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
       order: this.selectedOrderDirection,
     };
 
-    const url = `https://hiremeplease.freeddns.org/technicalskill/sorch`;
+    const url = `${environment.apiUrl}/technicalskill/sorch`;
 
     console.log('Parameters:', param);
 
@@ -139,9 +140,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(
-            `https://hiremeplease.freeddns.org/technicalskill/${techSkillId}`
-          )
+          .delete(`${environment.apiUrl}/technicalskill/${techSkillId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
@@ -178,7 +177,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.mode = 'edit';
 
     const techSkillRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/technicalskill/${techSkillId}`
+      `${environment.apiUrl}/technicalskill/${techSkillId}`
     );
 
     this.displayEditDialog = false;
@@ -260,14 +259,8 @@ export class ManageTechnicalSkillComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/technicalskill/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/technicalskill/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/technicalskill/create', payload)
+        : this.http.put(environment.apiUrl + '/technicalskill/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -322,7 +315,7 @@ export class ManageTechnicalSkillComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/technicalskill/name/${name}`
+          `${environment.apiUrl}/technicalskill/name/${name}`
         )
         .toPromise();
 

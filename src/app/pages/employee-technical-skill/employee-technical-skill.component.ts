@@ -25,6 +25,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -131,7 +132,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       console.warn('No user selected.');
       this.selectedUserId = this.currentUserId;
     }
-    const userUrl = `https://hiremeplease.freeddns.org/appuser/get/${this.selectedUserId}`;
+    const userUrl = `${environment.apiUrl}/appuser/get/${this.selectedUserId}`;
 
     this.http.get<any>(userUrl).subscribe({
       next: (response) => {
@@ -152,54 +153,50 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   fetchEmployees(): void {
-    this.http
-      .get<any>('https://hiremeplease.freeddns.org/appuser/all')
-      .subscribe({
-        next: (response) => {
-          this.employees = response.content || [];
-          console.log('Fetched Employees:', this.employees);
-        },
-        error: (error) => {
-          console.error('Error fetching employees:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to fetch employees.',
-          });
-        },
-      });
+    this.http.get<any>(environment.apiUrl + '/appuser/all').subscribe({
+      next: (response) => {
+        this.employees = response.content || [];
+        console.log('Fetched Employees:', this.employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to fetch employees.',
+        });
+      },
+    });
   }
 
   fetchTechnicalSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
       console.log('Fetching TechnicalSkills...');
-      this.http
-        .get<any>('https://hiremeplease.freeddns.org/technicalskill/all')
-        .subscribe({
-          next: (response) => {
-            this.technicalSkills = (response.content || []).filter(
-              (skill: any) => skill.enabled === true
-            );
-            console.log('Fetched TechnicalSkills:', this.technicalSkills);
+      this.http.get<any>(environment.apiUrl + '/technicalskill/all').subscribe({
+        next: (response) => {
+          this.technicalSkills = (response.content || []).filter(
+            (skill: any) => skill.enabled === true
+          );
+          console.log('Fetched TechnicalSkills:', this.technicalSkills);
 
-            // Create a map for quick lookup
-            this.technicalSkillsMap.clear();
-            this.technicalSkills.forEach((skill: any) => {
-              this.technicalSkillsMap.set(skill.id, skill.technical_skill);
-            });
+          // Create a map for quick lookup
+          this.technicalSkillsMap.clear();
+          this.technicalSkills.forEach((skill: any) => {
+            this.technicalSkillsMap.set(skill.id, skill.technical_skill);
+          });
 
-            resolve();
-          },
-          error: (error) => {
-            console.error('Error fetching technical skills:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to fetch technical skills.',
-            });
-            reject(error);
-          },
-        });
+          resolve();
+        },
+        error: (error) => {
+          console.error('Error fetching technical skills:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to fetch technical skills.',
+          });
+          reject(error);
+        },
+      });
     });
   }
 
@@ -219,7 +216,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
       this.loading = true;
 
-      const skillUrl = `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
+      const skillUrl = `${environment.apiUrl}/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
 
       console.log('Fetching EmpTechnicalSkills from URL:', skillUrl);
 
@@ -234,7 +231,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
             // Group the technical skills after fetching data
             this.groupAllTechnicalSkills();
 
-            const summaryUrl = `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
+            const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
             this.http.get<any>(summaryUrl).subscribe({
               next: (summaryResponse) => {
                 this.isLocked = summaryResponse?.content?.status === 2;
@@ -308,10 +305,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           payload['updated_by'] = this.currentUserId;
           requests.push(
             this.http
-              .put(
-                'https://hiremeplease.freeddns.org/emptechnicalskill/update',
-                payload
-              )
+              .put(environment.apiUrl + '/emptechnicalskill/update', payload)
               .toPromise()
           );
         } else {
@@ -319,10 +313,7 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           payload['created_by'] = this.currentUserId;
           requests.push(
             this.http
-              .post(
-                'https://hiremeplease.freeddns.org/emptechnicalskill/create',
-                payload
-              )
+              .post(environment.apiUrl + '/emptechnicalskill/create', payload)
               .toPromise()
           );
         }

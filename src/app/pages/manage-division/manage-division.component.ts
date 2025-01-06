@@ -16,6 +16,7 @@ import {
 } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -87,7 +88,7 @@ export class ManageDivisionComponent implements OnInit {
       order: this.selectedOrderDirection,
     };
 
-    const url = 'https://hiremeplease.freeddns.org/division/sorch';
+    const url = environment.apiUrl + '/division/sorch';
 
     console.log('Page Index:', pageIndex);
     console.log('Page Size:', pageSize);
@@ -140,7 +141,7 @@ export class ManageDivisionComponent implements OnInit {
       accept: () => {
         this.isProcessing = true;
         this.http
-          .delete(`https://hiremeplease.freeddns.org/division/${divisionId}`)
+          .delete(`${environment.apiUrl}/division/${divisionId}`)
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: (response: any) => {
@@ -186,7 +187,7 @@ export class ManageDivisionComponent implements OnInit {
     this.mode = 'edit';
 
     const divisionRequest = this.http.get<any>(
-      `https://hiremeplease.freeddns.org/division/${divisionId}`
+      `${environment.apiUrl}/division/${divisionId}`
     );
 
     this.displayEditDialog = false;
@@ -267,14 +268,8 @@ export class ManageDivisionComponent implements OnInit {
 
     const request$ =
       this.mode === 'create'
-        ? this.http.post(
-            'https://hiremeplease.freeddns.org/division/create',
-            payload
-          )
-        : this.http.put(
-            'https://hiremeplease.freeddns.org/division/update',
-            payload
-          );
+        ? this.http.post(environment.apiUrl + '/division/create', payload)
+        : this.http.put(environment.apiUrl + '/division/update', payload);
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
@@ -329,7 +324,7 @@ export class ManageDivisionComponent implements OnInit {
     try {
       const response = await this.http
         .get<{ content: boolean }>(
-          `https://hiremeplease.freeddns.org/division/name/${name}`
+          `${environment.apiUrl}/division/name/${name}`
         )
         .toPromise();
 

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { EMPTY, finalize, switchMap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { PrimeNgModule } from '../../shared/primeng/primeng.module';
 
@@ -90,7 +91,7 @@ export class HomeComponent {
     this.userId = payload.userId;
 
     this.http
-      .get(`https://hiremeplease.freeddns.org/appuser/get/${this.userId}`)
+      .get(`${environment.apiUrl}/appuser/get/${this.userId}`)
       .subscribe({
         next: (response: any) => {
           this.userDetails = response.content;
@@ -141,13 +142,9 @@ export class HomeComponent {
         };
 
         this.http
-          .post(
-            'https://hiremeplease.freeddns.org/auth/sign-in',
-            loginPayload,
-            {
-              responseType: 'text',
-            }
-          )
+          .post(environment.apiUrl + '/auth/sign-in', loginPayload, {
+            responseType: 'text',
+          })
           .pipe(
             switchMap(() => {
               if (newPassword == currentPassword) {
@@ -165,7 +162,7 @@ export class HomeComponent {
                 new_password: newPassword,
               };
               return this.http.put(
-                'https://hiremeplease.freeddns.org/auth/changepassword',
+                environment.apiUrl + '/auth/changepassword',
                 changePassPayload
               );
             }),
@@ -232,12 +229,12 @@ export class HomeComponent {
     console.log('Current Year:', this.currentYear);
     console.log('User ID:', this.userId);
     const urls = [
-      `https://hiremeplease.freeddns.org/empattitudeskill/get/${this.userId}/${this.currentYear}`,
-      `https://hiremeplease.freeddns.org/empachievementskill/get/${this.userId}/${this.currentYear}`,
-      `https://hiremeplease.freeddns.org/empsuggestion/${this.userId}/${this.currentYear}`,
-      `https://hiremeplease.freeddns.org/empdevplan/get/${this.userId}/${this.currentYear}`,
-      `https://hiremeplease.freeddns.org/emptechnicalskill/get/${this.userId}/${this.currentYear}`,
-      `https://hiremeplease.freeddns.org/assessmentsummary/get/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/empattitudeskill/get/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/empachievementskill/get/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/empsuggestion/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/empdevplan/get/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/emptechnicalskill/get/${this.userId}/${this.currentYear}`,
+      `${environment.apiUrl}/assessmentsummary/get/${this.userId}/${this.currentYear}`,
     ];
 
     try {
