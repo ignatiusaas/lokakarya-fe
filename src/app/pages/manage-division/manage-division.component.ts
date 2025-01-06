@@ -67,12 +67,9 @@ export class ManageDivisionComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    console.log('Component Initialized');
   }
 
   fetchDivisions(event?: any): void {
-    console.log('Fetching Divisions...');
-
     const pageIndex = event?.first ? event.first / event.rows : 0;
     const pageSize = event?.rows || this.rowsPerPage;
 
@@ -90,18 +87,12 @@ export class ManageDivisionComponent implements OnInit {
 
     const url = environment.apiUrl + '/division/sorch';
 
-    console.log('Page Index:', pageIndex);
-    console.log('Page Size:', pageSize);
-    console.log('URL:', url);
-    console.log('Param:', param);
-
     this.loading = true;
     this.http
       .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Divisions Fetched:', response);
           this.divisions = response.content || [];
           this.totalRecords = response.total_data;
         },
@@ -117,7 +108,6 @@ export class ManageDivisionComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    console.log('Opening Create Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -129,8 +119,6 @@ export class ManageDivisionComponent implements OnInit {
   }
 
   deleteDivision(divisionId: string): void {
-    console.log('Deleting Division with ID:', divisionId);
-
     if (this.isProcessing) {
       console.warn('Delete action skipped - already processing');
       return;
@@ -145,7 +133,6 @@ export class ManageDivisionComponent implements OnInit {
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: (response: any) => {
-              console.log('Response: ', response);
               if (response?.content === divisionId + ' deleted: false') {
                 this.messageService.add({
                   severity: 'error',
@@ -154,7 +141,6 @@ export class ManageDivisionComponent implements OnInit {
                 });
                 return;
               }
-              console.log('Division Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -174,14 +160,12 @@ export class ManageDivisionComponent implements OnInit {
       },
       reject: () => {
         // User canceled deletion
-        console.log('Delete action canceled');
         this.isProcessing = false;
       },
     });
   }
 
   editDivision(divisionId: string): void {
-    console.log('Editing Division with ID:', divisionId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit';
@@ -196,12 +180,9 @@ export class ManageDivisionComponent implements OnInit {
       .pipe(finalize(() => (this.isProcessing = false)))
       .subscribe({
         next: (divisionResponse) => {
-          console.log('Division Fetched:', divisionResponse);
           const division = divisionResponse.content;
 
           this.currentUserId = this.extractCurrentUserId() || '';
-          console.log('Current User ID:', this.currentUserId);
-
           this.editForm.patchValue({
             ...division,
             updated_by: this.currentUserId,
@@ -223,8 +204,6 @@ export class ManageDivisionComponent implements OnInit {
   }
 
   async saveDivision(): Promise<void> {
-    console.log('Saving Division. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error('Form Validation Failed:', this.editForm.errors);
       this.isProcessing = false;
@@ -240,7 +219,6 @@ export class ManageDivisionComponent implements OnInit {
       try {
         const selectedName = this.editForm.value.division_name;
         const isDuplicate = await this.confirmDuplicate(selectedName);
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -264,8 +242,6 @@ export class ManageDivisionComponent implements OnInit {
         : { updated_by: this.currentUserId }),
     };
 
-    console.log(payload);
-
     const request$ =
       this.mode === 'create'
         ? this.http.post(environment.apiUrl + '/division/create', payload)
@@ -273,8 +249,6 @@ export class ManageDivisionComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
-        console.log('Division Saved Successfully:', response);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -296,18 +270,14 @@ export class ManageDivisionComponent implements OnInit {
   }
 
   submitDivision(): void {
-    console.log('Submitting Division. Mode:', this.mode);
     this.isProcessing = true;
     this.saveDivision();
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchDivisions();
     }, 500);
   }
@@ -315,8 +285,6 @@ export class ManageDivisionComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchDivisions();
   }
 
@@ -356,7 +324,6 @@ export class ManageDivisionComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -369,13 +336,10 @@ export class ManageDivisionComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       division_name: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 }

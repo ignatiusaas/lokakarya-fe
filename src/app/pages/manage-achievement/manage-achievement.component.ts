@@ -78,11 +78,9 @@ export class ManageAchievementComponent implements OnInit {
     this.primengConfig.ripple = true;
     this.initializeForms();
     this.fetchData();
-    console.log('Component Initialized');
   }
 
   fetchData(): void {
-    console.log('Fetching Groups and Achievements...');
     this.loading = true;
 
     const url = environment.apiUrl + '/achievement/sorch';
@@ -101,7 +99,6 @@ export class ManageAchievementComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Attitude Skills Fetched:', response);
           this.allAchievements = response.content || [];
           this.totalRecords = response.total_data;
 
@@ -127,7 +124,6 @@ export class ManageAchievementComponent implements OnInit {
             },
             []
           );
-          console.log('Grouped Achievements:', this.groupedAchievements);
         },
         error: (error) => {
           console.error('Error Fetching Attitude Skills:', error);
@@ -141,7 +137,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   openCreateAchievementDialog(): void {
-    console.log('Opening Create Achievement Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -154,7 +149,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   openCreateGroupDialog(): void {
-    console.log('Opening Create Group Dialog');
     this.mode = 'create';
     this.editGroupForm.reset({
       id: '',
@@ -168,8 +162,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   async saveGroupAchievement(): Promise<void> {
-    console.log('Saving Group Achievement. Mode:', this.mode);
-
     if (!this.editGroupForm.valid) {
       console.error('Group Form Validation Failed:', this.editGroupForm.errors);
       this.messageService.add({
@@ -184,7 +176,6 @@ export class ManageAchievementComponent implements OnInit {
       try {
         const selectedName = this.editGroupForm.value.group_name;
         const isDuplicate = await this.confirmDuplicateGroup(selectedName);
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -241,7 +232,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   editGroupAchievement(groupId: string): void {
-    console.log('Editing Group Achievement with ID:', groupId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit'; // Set mode to edit for group
@@ -254,7 +244,6 @@ export class ManageAchievementComponent implements OnInit {
 
     groupRequest.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (groupResponse) => {
-        console.log('Group Achievement Fetched:', groupResponse);
         const group = groupResponse.content;
 
         this.editGroupForm.patchValue({
@@ -280,8 +269,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   deleteGroupAchievement(groupId: string): void {
-    console.log('Deleting Group Achievement with ID:', groupId);
-
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this group achievement?',
       accept: () => {
@@ -310,7 +297,6 @@ export class ManageAchievementComponent implements OnInit {
 
   // Achievement Methods
   openAchievementEditDialog(skill: any): void {
-    console.log('Editing Achievement:', skill);
     this.mode = 'edit';
     this.editForm.patchValue({
       ...skill,
@@ -319,8 +305,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   async saveAchievement(): Promise<void> {
-    console.log('Saving Achievement. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error(
         'Achievement Form Validation Failed:',
@@ -340,7 +324,6 @@ export class ManageAchievementComponent implements OnInit {
         const isDuplicate = await this.confirmDuplicateAchievement(
           selectedName
         );
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -390,7 +373,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   editAchievement(skillId: string): void {
-    console.log('Editing Achievement with ID:', skillId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit'; // Set mode to edit for achievement
@@ -403,7 +385,6 @@ export class ManageAchievementComponent implements OnInit {
 
     skillRequest.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (skillResponse) => {
-        console.log('Achievement Fetched:', skillResponse);
         const skill = skillResponse.content;
 
         this.editForm.patchValue({
@@ -429,8 +410,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   deleteAchievement(skillId: string): void {
-    console.log('Deleting Achievement with ID:', skillId);
-
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this achievement?',
       accept: () => {
@@ -458,24 +437,19 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   submitAchievement(): void {
-    console.log('Submitting Achievement. Mode:', this.mode);
     this.isProcessing = true;
     this.saveAchievement();
   }
 
   submitGroupAchievement(): void {
-    console.log('Submitting Group Achievement. Mode:', this.mode);
     this.isProcessing = true;
     this.saveGroupAchievement();
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchData();
     }, 500);
   }
@@ -483,8 +457,6 @@ export class ManageAchievementComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchData();
   }
 
@@ -537,7 +509,6 @@ export class ManageAchievementComponent implements OnInit {
   }
 
   private initializeForms() {
-    console.log('Initializing Forms...');
     this.editForm = this.fb.group({
       id: [''],
       achievement: ['', Validators.required],
@@ -553,11 +524,6 @@ export class ManageAchievementComponent implements OnInit {
     });
 
     this.currentUserId = this.extractCurrentUserId() || '';
-    console.log(
-      'Forms Initialized:',
-      this.editForm.value,
-      this.editGroupForm.value
-    );
   }
 
   private extractCurrentUserId(): string | null {
@@ -572,7 +538,6 @@ export class ManageAchievementComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');

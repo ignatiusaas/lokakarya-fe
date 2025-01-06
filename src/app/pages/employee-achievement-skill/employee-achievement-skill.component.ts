@@ -118,7 +118,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Initializing EmployeeAchievementSkillComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
@@ -144,7 +143,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       this.selectedUserId = this.currentUserId;
     }
     this.selectedAssessmentYear = new Date();
-    console.log('Component Initialized');
   }
 
   fetchSelectedUserName(): void {
@@ -159,7 +157,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
         const user = response.content;
         if (user && user.full_name) {
           this.selectedName = user.full_name;
-          console.log('Fetched User Full Name:', this.selectedName);
         } else {
           console.warn('User full name not found in response.');
           this.selectedName = '';
@@ -179,7 +176,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       this.empUrl =
         environment.apiUrl + '/appuser/div/' + this.currentDivisionId;
     }
-    console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
       next: (response) => {
         this.employees = [];
@@ -189,7 +185,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
             this.employees.push(employee);
           }
         });
-        console.log('Fetched Employees:', this.employees);
       },
 
       error: (error) => {
@@ -216,10 +211,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
     this.fetchSelectedUserName();
     this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-    console.log(
-      `Fetching ${this.selectedYear} EmpAchievementSkills for User ID: ${this.selectedUserId}`
-    );
-
     this.loading = true;
 
     const skillUrl = `${environment.apiUrl}/empachievementskill/get/${this.selectedUserId}/${this.selectedYear}`;
@@ -228,7 +219,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Fetched EmpAchievementSkills:', response.content);
           this.empAchievementSkills = response.content || [];
           this.groupAllAchievements();
 
@@ -236,7 +226,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           this.http.get<any>(summaryUrl).subscribe({
             next: (summaryResponse) => {
               this.isLocked = summaryResponse?.content?.status === 2;
-              console.log('Assessment summary locked status:', this.isLocked);
             },
             error: (err) => {
               console.error('Error fetching assessment summary:', err);
@@ -256,7 +245,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   editEmpAchievementSkill(skillId: string): void {
-    console.log('Editing Employee AchievementSkill with ID:', skillId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
 
@@ -271,11 +259,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       .subscribe({
         next: (response) => {
           const empAchievementSkill = response.content;
-          console.log(
-            'Fetched Employee AchievementSkill:',
-            empAchievementSkill
-          );
-
           this.achievementSkillEntries = [
             {
               achievement_id: empAchievementSkill.achievement_id,
@@ -316,8 +299,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   async saveEmployeeAchievementSkill(): Promise<void> {
-    console.log('Saving Employee Achievement Skills.');
-
     this.isProcessing = true;
 
     const requests: Promise<any>[] = [];
@@ -360,7 +341,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
 
     try {
       await Promise.all(requests);
-      console.log(`Employee Achievement Skills saved successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -381,8 +361,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   async updateEmployeeAchievementSkill(): Promise<void> {
-    console.log('Updating Employee AchievementSkill.');
-
     const entry = this.achievementSkillEntries[0];
     const skillEntry = entry.skillEntrys[0];
     const scoreEntry = entry.entryScores[0];
@@ -419,14 +397,11 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       updated_by: this.currentUserId,
     };
 
-    console.log('Submitting Update Payload:', payload);
-
     try {
       await this.http
         .put(environment.apiUrl + '/empachievementskill/update', payload)
         .toPromise();
 
-      console.log(`Skill "${entry.achievement}" updated successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -447,7 +422,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   openEditDialog(): void {
-    console.log('Opening Achievement Skill Edit Form');
     this.editForm.reset();
     this.displayEditDialog = true;
     this.isProcessing = false;
@@ -463,11 +437,9 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Submitting Employee Achievement Skills.');
         this.saveEmployeeAchievementSkill();
       },
       reject: () => {
-        console.log('Form submission cancelled.');
         this.isProcessing = false;
       },
     });
@@ -491,8 +463,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
           this.achievementSkills = (response.content || []).filter(
             (skill: any) => skill.enabled === true
           );
-          console.log('Fetched AchievementSkills:', this.achievementSkills);
-
           resolve();
         },
         error: (error) => {
@@ -516,8 +486,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.groupAchievements = response.content || [];
-            console.log('Fetched Group Achievements:', this.groupAchievements);
-
             resolve();
           },
           error: (error) => {
@@ -625,7 +593,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -649,7 +616,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.divisionId) {
-        console.log('Decoded userId:', decoded.divisionId);
         return decoded.divisionId;
       } else {
         console.error('divisionId not found in JWT.');
@@ -673,7 +639,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -686,7 +651,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       user_id: [''],
@@ -696,8 +660,6 @@ export class EmployeeAchievementSkillComponent implements OnInit {
       assessment_year: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   private groupAllAchievements(): void {

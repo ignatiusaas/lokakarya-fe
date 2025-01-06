@@ -118,7 +118,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Initializing EmployeeAttitudeSkillComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
@@ -145,7 +144,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       this.selectedUserId = this.currentUserId;
     }
     this.selectedAssessmentYear = new Date();
-    console.log('Component Initialized');
   }
 
   fetchSelectedUserName(): void {
@@ -160,7 +158,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
         const user = response.content;
         if (user && user.full_name) {
           this.selectedName = user.full_name;
-          console.log('Fetched User Full Name:', this.selectedName);
         } else {
           console.warn('User full name not found in response.');
           this.selectedName = '';
@@ -180,7 +177,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       this.empUrl =
         environment.apiUrl + '/appuser/div/' + this.currentDivisionId;
     }
-    console.log('Fetching employees from URL:', this.empUrl);
     this.http.get<any>(this.empUrl).subscribe({
       next: (response) => {
         this.employees = [];
@@ -190,7 +186,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
             this.employees.push(employee);
           }
         });
-        console.log('Fetched Employees:', this.employees);
       },
 
       error: (error) => {
@@ -208,10 +203,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
     this.fetchSelectedUserName();
     this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-    console.log(
-      `Fetching ${this.selectedYear} EmpAttitudeSkills for User ID: ${this.selectedUserId}`
-    );
-
     this.loading = true; // Show the spinner
 
     const skillUrl = `${environment.apiUrl}/empattitudeskill/get/${this.selectedUserId}/${this.selectedYear}`;
@@ -222,14 +213,11 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.empAttitudeSkills = response.content || [];
-          console.log('Fetched EmpAttitudeSkills:', this.empAttitudeSkills);
-
           this.groupAllAttitudeSkills();
           const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
           this.http.get<any>(summaryUrl).subscribe({
             next: (summaryResponse) => {
               this.isLocked = summaryResponse?.content?.status === 2;
-              console.log('Assessment summary locked status:', this.isLocked);
             },
             error: (err) => {
               console.error('Error fetching assessment summary:', err);
@@ -248,7 +236,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   editEmpAttitudeSkill(skillId: string): void {
-    console.log('Editing Employee AttitudeSkill with ID:', skillId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
 
@@ -263,8 +250,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       .subscribe({
         next: (response) => {
           const empAttitudeSkill = response.content;
-          console.log('Fetched Employee AttitudeSkill:', empAttitudeSkill);
-
           this.attitudeSkillEntries = [
             {
               attitude_skill_id: empAttitudeSkill.attitude_skill_id,
@@ -305,8 +290,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   async saveEmployeeAttitudeSkill(): Promise<void> {
-    console.log('Saving Employee Attitude Skills.');
-
     this.isProcessing = true;
 
     const requests: Promise<any>[] = [];
@@ -345,7 +328,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
 
     try {
       await Promise.all(requests);
-      console.log(`Employee Attitude Skills saved successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -366,8 +348,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   async updateEmployeeAttitudeSkill(): Promise<void> {
-    console.log('Updating Employee AttitudeSkill.');
-
     const entry = this.attitudeSkillEntries[0];
     const skillEntry = entry.skillEntrys[0];
     const scoreEntry = entry.entryScores[0];
@@ -404,14 +384,11 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       updated_by: this.currentUserId,
     };
 
-    console.log('Submitting Update Payload:', payload);
-
     try {
       await this.http
         .put(environment.apiUrl + '/empattitudeskill/update', payload)
         .toPromise();
 
-      console.log(`Skill "${entry.attitude_skill_name}" updated successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -435,7 +412,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   openEditDialog(): void {
-    console.log('Opening Attitude Skill Edit Form');
     this.editForm.reset();
     this.displayEditDialog = true;
     this.isProcessing = false;
@@ -451,12 +427,10 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Submitting Employee Attitude Skills.');
         this.saveEmployeeAttitudeSkill();
       },
       reject: () => {
         this.isProcessing = false;
-        console.log('Form submission cancelled.');
       },
     });
   }
@@ -479,8 +453,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
           this.attitudeSkills = (response.content || []).filter(
             (skill: any) => skill.enabled === true
           );
-          console.log('Fetched AttitudeSkills:', this.attitudeSkills);
-
           resolve();
         },
         error: (error) => {
@@ -504,11 +476,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.groupAttitudeSkills = response.content || [];
-            console.log(
-              'Fetched Group AttitudeSkills:',
-              this.groupAttitudeSkills
-            );
-
             resolve();
           },
           error: (error) => {
@@ -614,7 +581,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.divisionId) {
-        console.log('Decoded userId:', decoded.divisionId);
         return decoded.divisionId;
       } else {
         console.error('divisionId not found in JWT.');
@@ -638,7 +604,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -662,7 +627,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -675,7 +639,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       user_id: [''],
@@ -685,8 +648,6 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       assessment_year: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   private groupAllAttitudeSkills(): void {
@@ -736,10 +697,7 @@ export class EmployeeAttitudeSkillComponent implements OnInit {
       }
     });
 
-    console.log('Grouped AttitudeSkills:', grouped);
-
     // Convert grouped data into an array for display
     this.groupedEmpAttitudeSkills = Array.from(grouped.values());
-    console.log('Grouped: ', this.groupedEmpAttitudeSkills);
   }
 }

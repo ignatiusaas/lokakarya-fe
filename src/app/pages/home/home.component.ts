@@ -124,8 +124,6 @@ export class HomeComponent {
       return;
     }
 
-    console.log('Attempting to change password...');
-
     this.confirmationService.confirm({
       message: 'Are you sure you want to change your password?',
       header: 'Confirm Change Password',
@@ -209,25 +207,19 @@ export class HomeComponent {
           });
       },
       reject: () => {
-        console.log('Password change canceled by user.');
         this.changePassLoading = false;
       },
     });
   }
 
   checkPasswordMatch(): boolean {
-    console.log('Checking password match...');
     this.passwordMatches =
       this.changePasswordForm.value.newPassword ===
       this.changePasswordForm.value.confirmPassword;
-    console.log('Password Match:', this.passwordMatches);
     return this.passwordMatches;
   }
 
   async checkSubmission(): Promise<void> {
-    console.log('Checking submission...');
-    console.log('Current Year:', this.currentYear);
-    console.log('User ID:', this.userId);
     const urls = [
       `${environment.apiUrl}/empattitudeskill/get/${this.userId}/${this.currentYear}`,
       `${environment.apiUrl}/empachievementskill/get/${this.userId}/${this.currentYear}`,
@@ -256,13 +248,6 @@ export class HomeComponent {
       this.isTechSkillFilled = TechSkillResponse?.content.length > 0;
       this.isAssFilled = AssResponse?.content !== null;
 
-      console.log('isAttSkillFilled:', this.isAttSkillFilled);
-      console.log('isAchFilled:', this.isAchFilled);
-      console.log('isSuggestionFilled:', this.isSuggestionFilled);
-      console.log('isDevPlanFilled:', this.isDevPlanFilled);
-      console.log('isTechSkillFilled:', this.isTechSkillFilled);
-      console.log('isAssFilled:', this.isAssFilled);
-
       this.showIncomplete =
         !this.isAttSkillFilled ||
         !this.isAchFilled ||
@@ -270,15 +255,12 @@ export class HomeComponent {
         !this.isDevPlanFilled ||
         !this.isTechSkillFilled ||
         !this.isAssFilled;
-
-      console.log('showIncomplete:', this.showIncomplete);
     } catch (error) {
       console.error('Error while checking submission:', error);
     }
   }
 
   private initializeForm() {
-    console.log('Initializing Change Password Form...');
     this.changePasswordForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', Validators.required],
@@ -298,7 +280,6 @@ export class HomeComponent {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');

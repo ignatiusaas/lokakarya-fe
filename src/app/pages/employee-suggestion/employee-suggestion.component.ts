@@ -92,23 +92,18 @@ export class EmployeeSuggestionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Initializing EmployeeSuggestionComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    console.log('Component Initialized');
   }
 
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchEmpSuggestions();
   }
 
   fetchEmpSuggestions(event?: any): void {
-    console.log('Fetching Employee Suggestions...');
     this.loading = true;
 
     this.checkedSuggestions = [];
@@ -126,8 +121,6 @@ export class EmployeeSuggestionComponent implements OnInit {
         : {}),
     };
 
-    console.log('Sending Request to URL:', url, param);
-
     this.http
       .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
@@ -135,9 +128,6 @@ export class EmployeeSuggestionComponent implements OnInit {
         next: (response) => {
           this.allEmpSuggestions = response.content || [];
           this.totalRecords = response.total_data;
-
-          console.log('Fetched Employee Suggestions:', this.allEmpSuggestions);
-          console.log('Checked:', this.checkedSuggestions);
 
           this.allEmpSuggestions.forEach((empSuggestion) => {
             const userId = empSuggestion.user_id;
@@ -157,8 +147,6 @@ export class EmployeeSuggestionComponent implements OnInit {
               },
             });
           });
-
-          console.log('Fetched Employee Suggestions:', this.checkedSuggestions);
         },
         error: (error) => {
           console.error('Error Fetching Employee Suggestions:', error);
@@ -172,7 +160,6 @@ export class EmployeeSuggestionComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    console.log('Opening Create Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -186,8 +173,6 @@ export class EmployeeSuggestionComponent implements OnInit {
   }
 
   deleteEmpSuggestion(suggestionId: string): void {
-    console.log('Deleting Employee Suggestion with ID:', suggestionId);
-
     if (this.isProcessing) {
       console.warn('Delete action skipped - already processing');
       return;
@@ -203,7 +188,6 @@ export class EmployeeSuggestionComponent implements OnInit {
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
-              console.log('Employee Suggestion Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -223,14 +207,12 @@ export class EmployeeSuggestionComponent implements OnInit {
       },
       reject: () => {
         // User canceled deletion
-        console.log('Delete action canceled');
         this.isProcessing = false;
       },
     });
   }
 
   editEmpSuggestion(suggestionId: string): void {
-    console.log('Editing Employee Suggestion with ID:', suggestionId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'update';
@@ -246,15 +228,9 @@ export class EmployeeSuggestionComponent implements OnInit {
       .pipe(finalize(() => (this.isProcessing = false))) // Reset processing state
       .subscribe({
         next: (employeeSuggestionResponse) => {
-          console.log(
-            'Employee Suggestion Fetched:',
-            employeeSuggestionResponse
-          );
           const empSuggestion = employeeSuggestionResponse.content;
 
           this.currentUserId = this.extractCurrentUserId() || '';
-          console.log('Current User ID:', this.currentUserId);
-
           // Patch the form with fetched suggestion data
           this.editForm.patchValue({
             ...empSuggestion,
@@ -278,8 +254,6 @@ export class EmployeeSuggestionComponent implements OnInit {
   }
 
   async saveEmployeeSuggestion(): Promise<void> {
-    console.log('Saving Employee Suggestion. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error('Form Validation Failed:', this.editForm.errors);
       this.isProcessing = false;
@@ -299,9 +273,7 @@ export class EmployeeSuggestionComponent implements OnInit {
         this.currentUserId,
         assessmentYear
       );
-      console.log('Duplicate Check Result:', isDuplicate);
       if (isDuplicate) {
-        console.log(this.currentUserId, assessmentYear);
         this.isProcessing = false;
         this.messageService.add({
           severity: 'error',
@@ -326,8 +298,6 @@ export class EmployeeSuggestionComponent implements OnInit {
         : { updated_by: this.currentUserId }),
     };
 
-    console.log(payload);
-
     const request$ =
       this.mode === 'create'
         ? this.http.post(environment.apiUrl + '/empsuggestion/create', payload)
@@ -335,8 +305,6 @@ export class EmployeeSuggestionComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
-        console.log('Employee Suggestion Saved Successfully:', response);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -385,14 +353,11 @@ export class EmployeeSuggestionComponent implements OnInit {
   }
 
   submitEmployeeSuggestion(): void {
-    console.log('Submitting Employee Suggestion. Mode:', this.mode);
     this.isProcessing = true;
     this.saveEmployeeSuggestion();
   }
 
-  onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-  }
+  onSearch(): void {}
 
   private extractCurrentUserId(): string | null {
     const token = localStorage.getItem('auth-token');
@@ -406,7 +371,6 @@ export class EmployeeSuggestionComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -430,7 +394,6 @@ export class EmployeeSuggestionComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -443,7 +406,6 @@ export class EmployeeSuggestionComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       user_id: [''],
@@ -451,7 +413,5 @@ export class EmployeeSuggestionComponent implements OnInit {
       assessment_year: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 }

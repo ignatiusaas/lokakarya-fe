@@ -94,7 +94,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Initializing EmployeeTechnicalSkillComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
@@ -115,12 +114,9 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       .catch((error) => {
         console.error('Error fetching initial data:', error);
       });
-
-    console.log('Component Initialized');
   }
 
   onDialogClose(): void {
-    console.log('Dialog closed without saving. Refetching data...');
     this.displayEditDialog = false;
     this.fetchEmpTechnicalSkills().then(() => {
       this.groupAllTechnicalSkills();
@@ -139,7 +135,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
         const user = response.content;
         if (user && user.full_name) {
           this.selectedName = user.full_name;
-          console.log('Fetched User Full Name:', this.selectedName);
         } else {
           console.warn('User full name not found in response.');
           this.selectedName = '';
@@ -156,7 +151,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
     this.http.get<any>(environment.apiUrl + '/appuser/all').subscribe({
       next: (response) => {
         this.employees = response.content || [];
-        console.log('Fetched Employees:', this.employees);
       },
       error: (error) => {
         console.error('Error fetching employees:', error);
@@ -171,14 +165,11 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
   fetchTechnicalSkills(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log('Fetching TechnicalSkills...');
       this.http.get<any>(environment.apiUrl + '/technicalskill/all').subscribe({
         next: (response) => {
           this.technicalSkills = (response.content || []).filter(
             (skill: any) => skill.enabled === true
           );
-          console.log('Fetched TechnicalSkills:', this.technicalSkills);
-
           // Create a map for quick lookup
           this.technicalSkillsMap.clear();
           this.technicalSkills.forEach((skill: any) => {
@@ -210,15 +201,9 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       this.fetchSelectedUserName();
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-      console.log(
-        `Fetching ${this.selectedYear} EmpTechnicalSkills for User ID: ${this.selectedUserId}`
-      );
-
       this.loading = true;
 
       const skillUrl = `${environment.apiUrl}/emptechnicalskill/get/${this.selectedUserId}/${this.selectedYear}`;
-
-      console.log('Fetching EmpTechnicalSkills from URL:', skillUrl);
 
       this.http
         .get<any>(skillUrl)
@@ -226,8 +211,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.empTechnicalSkills = response.content || [];
-            console.log('Fetched EmpTechnicalSkills:', this.empTechnicalSkills);
-
             // Group the technical skills after fetching data
             this.groupAllTechnicalSkills();
 
@@ -235,7 +218,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
             this.http.get<any>(summaryUrl).subscribe({
               next: (summaryResponse) => {
                 this.isLocked = summaryResponse?.content?.status === 2;
-                console.log('Assessment summary locked status:', this.isLocked);
               },
               error: (err) => {
                 console.error('Error fetching assessment summary:', err);
@@ -258,7 +240,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   openEditDialog(): void {
-    console.log('Opening Technical Skill Edit Form');
     this.displayEditDialog = true;
     this.isProcessing = false;
     this.assessmentYear = this.selectedAssessmentYear;
@@ -278,7 +259,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   async saveEmployeeTechnicalSkill(): Promise<void> {
-    console.log('Saving Employee Technical Skills.');
     this.isProcessing = true;
 
     const requests: Promise<any>[] = [];
@@ -297,8 +277,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
           skill: entry.skillEntry,
           score: entry.entryScore,
         };
-
-        console.log('Payload:', payload);
 
         if (entry.id && !entry.id.startsWith('new_')) {
           payload['id'] = entry.id;
@@ -322,7 +300,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
 
     try {
       await Promise.all(requests);
-      console.log(`Employee Technical Skills saved successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -349,11 +326,9 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Submitting Employee Technical Skills.');
         this.saveEmployeeTechnicalSkill();
       },
       reject: () => {
-        console.log('Submission canceled.');
         this.isProcessing = false;
       },
     });
@@ -406,7 +381,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -430,7 +404,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -443,7 +416,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       user_id: [''],
@@ -453,8 +425,6 @@ export class EmployeeTechnicalSkillComponent implements OnInit {
       assessment_year: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   private groupAllTechnicalSkills(includeAll: boolean = false): void {

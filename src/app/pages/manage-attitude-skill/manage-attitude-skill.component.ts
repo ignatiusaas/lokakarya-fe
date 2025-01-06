@@ -77,11 +77,9 @@ export class ManageAttitudeSkillComponent implements OnInit {
     this.primengConfig.ripple = true;
     this.initializeForms();
     this.fetchData();
-    console.log('Component Initialized');
   }
 
   fetchData(): void {
-    console.log('Fetching Groups and Attitude Skills...');
     this.loading = true;
 
     const url = environment.apiUrl + '/attitudeskill/sorch';
@@ -100,7 +98,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Attitude Skills Fetched:', response);
           this.allAttSkills = response.content || [];
           this.totalRecords = response.total_data;
 
@@ -127,7 +124,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
             },
             []
           );
-          console.log('Grouped Attitude Skills:', this.groupedAttitudeSkills);
         },
         error: (error) => {
           console.error('Error Fetching Attitude Skills:', error);
@@ -141,7 +137,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   openCreateAttitudeSkillDialog(): void {
-    console.log('Opening Create Attitude Skill Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -154,7 +149,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   openCreateGroupDialog(): void {
-    console.log('Opening Create Group Dialog');
     this.mode = 'create';
     this.editGroupForm.reset({
       id: '',
@@ -168,8 +162,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   async saveGroupAttSkill(): Promise<void> {
-    console.log('Saving Group Attitude Skill. Mode:', this.mode);
-
     if (!this.editGroupForm.valid) {
       console.error('Group Form Validation Failed:', this.editGroupForm.errors);
       this.messageService.add({
@@ -184,7 +176,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
       try {
         const selectedName = this.editGroupForm.value.group_name;
         const isDuplicate = await this.confirmDuplicateGroup(selectedName);
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -241,7 +232,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   editGroupAttSkill(groupId: string): void {
-    console.log('Editing Group Attitude Skill with ID:', groupId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit'; // Set mode to edit for group
@@ -254,7 +244,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
 
     groupRequest.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (groupResponse) => {
-        console.log('Group Attitude Skill Fetched:', groupResponse);
         const group = groupResponse.content;
 
         this.editGroupForm.patchValue({
@@ -280,8 +269,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   deleteGroupAttSkill(groupId: string): void {
-    console.log('Deleting Group Attitude Skill with ID:', groupId);
-
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this group attitude skill?',
       accept: () => {
@@ -310,7 +297,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
 
   // Attitude Skill Methods
   openAttSkillEditDialog(skill: any): void {
-    console.log('Editing Attitude Skill:', skill);
     this.mode = 'edit';
     this.editForm.patchValue({
       ...skill,
@@ -319,8 +305,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   async saveAttitudeSkill(): Promise<void> {
-    console.log('Saving Attitude Skill. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error(
         'Attitude Skill Form Validation Failed:',
@@ -340,7 +324,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
         const isDuplicate = await this.confirmDuplicateAttitudeSkill(
           selectedName
         );
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -390,7 +373,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   editAttSkill(skillId: string): void {
-    console.log('Editing Attitude Skill with ID:', skillId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit'; // Set mode to edit for attitude skill
@@ -403,7 +385,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
 
     skillRequest.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (skillResponse) => {
-        console.log('Attitude Skill Fetched:', skillResponse);
         const skill = skillResponse.content;
 
         this.editForm.patchValue({
@@ -429,8 +410,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   deleteAttSkill(skillId: string): void {
-    console.log('Deleting Attitude Skill with ID:', skillId);
-
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this attitude skill?',
       accept: () => {
@@ -458,24 +437,19 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   submitAttitudeSkill(): void {
-    console.log('Submitting Attitude Skill. Mode:', this.mode);
     this.isProcessing = true;
     this.saveAttitudeSkill();
   }
 
   submitGroupAttitudeSkill(): void {
-    console.log('Submitting Group Attitude Skill. Mode:', this.mode);
     this.isProcessing = true;
     this.saveGroupAttSkill();
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchData();
     }, 500);
   }
@@ -483,8 +457,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchData();
   }
 
@@ -537,7 +509,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
   }
 
   private initializeForms() {
-    console.log('Initializing Forms...');
     this.editForm = this.fb.group({
       id: [''],
       attitude_skill: ['', Validators.required],
@@ -556,11 +527,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
     });
 
     this.currentUserId = this.extractCurrentUserId() || '';
-    console.log(
-      'Forms Initialized:',
-      this.editForm.value,
-      this.editGroupForm.value
-    );
   }
 
   private extractCurrentUserId(): string | null {
@@ -575,7 +541,6 @@ export class ManageAttitudeSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');

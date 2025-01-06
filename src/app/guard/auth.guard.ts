@@ -43,11 +43,6 @@ export const authGuard: CanActivateFn = async (
   }
 
   const currentRoutePath = route.routeConfig?.path || '';
-  console.log(
-    `Checking access for route: ${currentRoutePath} with roles:`,
-    userRoles
-  );
-
   const availableMenus = new Set<string>();
 
   try {
@@ -82,10 +77,7 @@ export const authGuard: CanActivateFn = async (
       }
     });
 
-    console.log('Available menus for user:', Array.from(availableMenus));
-
     if (availableMenus.has(currentRoutePath)) {
-      console.log(`✅ Access granted to route: ${currentRoutePath}`);
       return true;
     } else {
       console.warn(`❌ Access denied to route: ${currentRoutePath}`);

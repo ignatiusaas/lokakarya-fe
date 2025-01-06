@@ -144,7 +144,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         const res = response.content || [];
         this.divisions = res.slice();
         this.divisions.unshift(all);
-        console.log('Fetched Divisions:', this.divisions);
       },
       error: (error) => {
         console.error('Error fetching divisions:', error);
@@ -166,16 +165,9 @@ export class ViewAssessmentSummaryComponent implements OnInit {
           const user = response.content;
           if (user && user.full_name) {
             this.selectedName = user.full_name;
-            console.log('Fetched User Full Name:', this.selectedName);
-
             this.selectedDivision = user.division_name;
-            console.log('Fetched User Division:', this.selectedDivision);
-
             this.selectedDivisionId = user.division_id;
-            console.log('Fetched User DivisionId:', this.selectedDivisionId);
-
             this.selectedPosition = user.position;
-            console.log('Fetched User Position:', this.selectedPosition);
           } else {
             console.warn('User full name not found in response.');
             this.selectedName = '';
@@ -195,25 +187,17 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-      console.log(
-        `Fetching Achievement Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
-      );
-
       const summaryUrl = `${environment.apiUrl}/assessmentsummary/achievementsummary/${this.selectedUserId}/${this.selectedYear}`;
-
-      console.log('Sending Request to URL:', summaryUrl);
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
           this.achievements = [];
           const allAchievements = response.content || [];
-          console.log('All Achievements:', allAchievements);
           allAchievements.forEach((achievement: any) => {
             if (achievement.enabled === true) {
               this.achievements.push(achievement);
             }
           });
-          console.log('Fetched Achievement Summary:', this.achievements);
           resolve();
         },
 
@@ -234,13 +218,7 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-      console.log(
-        `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
-      );
-
       const summaryUrl = `${environment.apiUrl}/assessmentsummary/attitudeskillsummary/${this.selectedUserId}/${this.selectedYear}`;
-
-      console.log('Sending Request to URL:', summaryUrl);
 
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
@@ -251,7 +229,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
               this.attitudeSkills.push(attitudeSkill);
             }
           });
-          console.log('Fetched Attitude Skill Summary:', this.attitudeSkills);
           resolve();
         },
         error: (error) => {
@@ -271,10 +248,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-      console.log(
-        `Fetching Attitude Skill Summary for ${this.selectedYear} for User ID: ${this.selectedUserId}`
-      );
-
       const summaryUrl =
         environment.apiUrl +
         '/empsuggestion/' +
@@ -282,12 +255,9 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         '/' +
         this.selectedYear;
 
-      console.log('Sending Suggestion Request to URL:', summaryUrl);
-
       this.http.get<any>(summaryUrl).subscribe({
         next: (response) => {
           this.suggestion = response?.content?.suggestion || '';
-          console.log('Fetched Suggestions:', this.suggestion);
           resolve();
         },
         error: (error) => {
@@ -304,12 +274,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   }
 
   fetchAssessmentSummaries(event?: any): void {
-    console.log('Selected divisionId:', this.selectedDivisionId);
-    console.log(
-      'Fetching assessment summaries from division: ',
-      this.selectedDivision
-    );
-
     this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
     const url = environment.apiUrl + '/assessmentsummary/sorch';
@@ -326,8 +290,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         : {}),
     };
 
-    console.log('Sending Request to URL:', url, param);
-
     this.http
       .get<any>(url, { params: param })
       .pipe(finalize(() => (this.isLoading = false)))
@@ -335,8 +297,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
         next: (response) => {
           this.allSummaries = response.content || [];
           this.totalRecords = response.total_data;
-          console.log('Fetched Assessment Summaries:', this.allSummaries);
-          console.log('Response:', response);
         },
         error: (error) => {
           console.error('Error Fetching Assessment Summaries:', error);
@@ -374,10 +334,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     const combinedTotalPercentage =
       totalAchievementPercentage + totalAttitudePercentage;
 
-    console.log('Total Achievement Percentage:', totalAchievementPercentage);
-    console.log('Total Attitude Percentage:', totalAttitudePercentage);
-    console.log('Combined Total Percentage:', combinedTotalPercentage);
-
     if (combinedTotalPercentage === 0) {
       console.warn(
         'Combined total percentage is 0. Cannot adjust percentages.'
@@ -386,8 +342,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
     }
 
     const scalingFactor = 100 / combinedTotalPercentage;
-
-    console.log('Scaling Factor:', scalingFactor);
 
     this.achievements = this.achievements.map((achievement) => ({
       ...achievement,
@@ -413,20 +367,12 @@ export class ViewAssessmentSummaryComponent implements OnInit {
 
     this.totalPercentage =
       this.totalAchievementPercentage + this.totalAttitudePercentage;
-
-    console.log(
-      'New Total Achievement Percentage:',
-      this.totalAchievementPercentage
-    );
-    console.log('New Total Attitude Percentage:', this.totalAttitudePercentage);
-    console.log('New Combined Total Percentage:', this.totalPercentage);
   }
 
   async fetchViewAssessmentSummary(
     userId: string,
     summaryId: string
   ): Promise<void> {
-    console.log('Fetching summaries for user: ', userId);
     this.displayAssessmentSummaryDialog = true;
     this.resetViewAssessmentSummary();
     try {
@@ -441,7 +387,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       ]);
       this.adjustPercentages();
       this.cdRef.detectChanges();
-      console.log('Assessment STatus:', this.selectedStatus);
     } catch (error) {
       console.error('Error fetching summaries:', error);
 
@@ -454,12 +399,9 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchAssessmentSummaries();
     }, 500);
   }
@@ -467,8 +409,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchAssessmentSummaries();
   }
 
@@ -479,7 +419,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       this.http.get<any>(url).subscribe({
         next: (response) => {
           this.selectedStatus = response.content?.status;
-          console.log('Assessment status:', response.content?.status);
           resolve(response.content?.status || null);
         },
         error: (error) => {
@@ -497,8 +436,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Submitting Assessment Summary...');
-
         const url = environment.apiUrl + '/assessmentsummary/update';
 
         const finalScore = this.decimal.transform(
@@ -517,14 +454,11 @@ export class ViewAssessmentSummaryComponent implements OnInit {
           approved_at: new Date().toISOString(),
         };
 
-        console.log('Payload:', payload);
-
         this.http
           .put(url, payload)
           .pipe(finalize(() => (this.isLoading = false)))
           .subscribe({
             next: () => {
-              console.log('Assessment Summary submitted successfully.');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -547,7 +481,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
           });
       },
       reject: () => {
-        console.log('Submission canceled.');
         this.isLoading = false;
       },
     });
@@ -720,7 +653,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -744,7 +676,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -768,7 +699,6 @@ export class ViewAssessmentSummaryComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.divisionId) {
-        console.log('Decoded divisionId:', decoded.divisionId);
         return decoded.divisionId;
       } else {
         console.error('divisionId not found in JWT.');

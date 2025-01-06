@@ -49,7 +49,6 @@ export class ManageRoleAccessComponent implements OnInit {
   isChecked(roleId: string, menuId: string): boolean {
     const key = `${roleId}~${menuId}`;
     const isChecked = this.selectedAssociations.has(key);
-    console.log(`Checkbox State for ${key}:`, isChecked);
     return isChecked;
   }
 
@@ -62,8 +61,6 @@ export class ManageRoleAccessComponent implements OnInit {
         this.checkboxStates[key] = this.selectedAssociations.has(key);
       });
     });
-
-    console.log('Checkbox States:', this.checkboxStates);
   }
 
   fetchData(): void {
@@ -157,17 +154,14 @@ export class ManageRoleAccessComponent implements OnInit {
     } else {
       this.selectedAssociations.delete(key);
     }
-    console.log('Updated Associations:', this.selectedAssociations);
   }
 
   resetAssociations(): void {
     this.selectedAssociations.clear();
-    console.log('Reset Associations:', this.selectedAssociations);
     this.roleMenuAssociations.forEach((assoc) =>
       this.selectedAssociations.add(`${assoc.role_id}~${assoc.menu_id}`)
     );
     this.initializeCheckboxStates();
-    console.log('Updated Associations:', this.selectedAssociations);
   }
 
   saveAssociations(): void {
@@ -191,13 +185,9 @@ export class ManageRoleAccessComponent implements OnInit {
           (assoc) => !this.checkboxStates[`${assoc.role_id}~${assoc.menu_id}`]
         );
 
-        console.log('New Associations:', newAssociations);
-        console.log('Delete Associations:', deleteAssociations);
-
         const saveRequests = newAssociations.map((key) => {
           const [roleId, menuId] = key.split('~');
           const payload = { role_id: roleId, menu_id: menuId };
-          console.log('Payload:', payload);
           return this.http.post(
             environment.apiUrl + '/approlemenu/create',
             payload

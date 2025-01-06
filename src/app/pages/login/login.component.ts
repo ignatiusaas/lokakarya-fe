@@ -50,12 +50,9 @@ export class LoginComponent {
       })
       .subscribe({
         next: (token: string) => {
-          console.log('JWT token received:', token);
           localStorage.setItem('auth-token', token);
 
           const payload = JSON.parse(atob(token.split('.')[1]));
-          console.log('Decoded JWT payload:', payload);
-
           this.router.navigate(['/home']);
         },
         error: (err) => {

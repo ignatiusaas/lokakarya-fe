@@ -86,26 +86,19 @@ export class ManageUserComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Initializing ManageUserComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
     this.fetchRoles();
-    console.log('Component Initialized');
   }
 
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchEmployees();
   }
 
   fetchEmployees(event?: any): void {
-    console.log('Fetching Employees...');
-    console.log('Global Filter Value:', this.globalFilterValue);
-
     const pageIndex = event?.first ? event.first / event.rows : 0;
     const pageSize = event?.rows || this.rowsPerPage;
 
@@ -123,11 +116,6 @@ export class ManageUserComponent implements OnInit {
 
     const url = `${environment.apiUrl}/appuser/sorch`;
 
-    console.log('Page Index:', pageIndex);
-    console.log('Page Size:', pageSize);
-    console.log('URL:', url);
-    console.log('Param:', param);
-
     this.http
       .get<any>(url, { params: param })
       .pipe(finalize(() => (this.isProcessing = false)))
@@ -135,8 +123,6 @@ export class ManageUserComponent implements OnInit {
         next: (response) => {
           this.employees = response.content || [];
           this.totalRecords = response.total_data;
-          console.log('Employees Fetched:', this.employees);
-          console.log('Total Records:', this.totalRecords);
         },
         error: (error) => {
           console.error('Error Fetching Employees:', error);
@@ -150,7 +136,6 @@ export class ManageUserComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    console.log('Opening Create Dialog');
     this.mode = 'create';
     this.isProcessing = true;
     this.editForm.reset({
@@ -166,15 +151,12 @@ export class ManageUserComponent implements OnInit {
     });
 
     this.fetchDivisions(() => {
-      console.log('Divisions Fetched for Create');
       this.displayEditDialog = true;
       this.isProcessing = false;
     });
   }
 
   deleteEmployee(employeeId: string): void {
-    console.log('Deleting Employee with ID:', employeeId);
-
     // Prevent multiple delete operations if already processing
     if (this.isProcessing) {
       console.warn('Delete action skipped - already processing');
@@ -191,7 +173,6 @@ export class ManageUserComponent implements OnInit {
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
-              console.log('Employee Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -211,14 +192,12 @@ export class ManageUserComponent implements OnInit {
       },
       reject: () => {
         // User canceled deletion
-        console.log('Delete action canceled');
         this.isProcessing = false; // Ensure `isProcessing` is false if canceled
       },
     });
   }
 
   editEmployee(employeeId: string): void {
-    console.log('Editing Employee with ID:', employeeId);
     this.isEditFormLoading = true; // Start loading form
     this.isProcessing = true; // Start processing
     this.mode = 'edit';
@@ -237,11 +216,6 @@ export class ManageUserComponent implements OnInit {
       .pipe(finalize(() => (this.isProcessing = false))) // Stop processing after all operations
       .subscribe({
         next: ([employeeResponse, divisionsResponse]) => {
-          console.log('Employee and Divisions Fetched:', {
-            employee: employeeResponse,
-            divisions: divisionsResponse,
-          });
-
           this.divisions = divisionsResponse.content;
           const employee = employeeResponse.content;
 
@@ -249,8 +223,6 @@ export class ManageUserComponent implements OnInit {
           this.selectedUserId = employee.id;
           this.selectedEmail = employee.email_address;
           this.userName = employee.username;
-          console.log('Current User ID:', this.currentUserId);
-
           this.editForm.patchValue({
             ...employee,
             join_date: new Date(employee.join_date),
@@ -258,7 +230,6 @@ export class ManageUserComponent implements OnInit {
           });
 
           this.fetchUserRoles(employeeId).then(() => {
-            console.log('User roles loaded successfully.');
             this.displayEditDialog = true; // Open the dialog after roles are loaded
             this.isEditFormLoading = false; // Form is now fully loaded
           });
@@ -276,11 +247,9 @@ export class ManageUserComponent implements OnInit {
   }
 
   fetchDivisions(callback: () => void): void {
-    console.log('Fetching Divisions...');
     this.http.get<any>(environment.apiUrl + '/division/all').subscribe({
       next: (response) => {
         this.divisions = response.content;
-        console.log('Divisions Fetched:', this.divisions);
         callback();
       },
       error: (error) => {
@@ -299,8 +268,6 @@ export class ManageUserComponent implements OnInit {
   }
 
   async saveEmployee(): Promise<void> {
-    console.log('Saving Employee. Mode:', this.mode);
-
     this.selectedUserId = '';
     if (!this.editForm.valid) {
       console.error('Form Validation Failed:', this.editForm.errors);
@@ -327,9 +294,7 @@ export class ManageUserComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
-        console.log('Save Employee Response:', response);
         let userId: string = '';
-        console.log(response.content);
         if (this.mode === 'create') {
           userId = response?.content?.id;
           this.userName = response?.content?.username;
@@ -346,14 +311,10 @@ export class ManageUserComponent implements OnInit {
           });
           return;
         }
-        console.log('User ID:');
-
         // Fetch the previously assigned roles from `this.selectedRoles`
         const previouslyAssignedRoles = Object.keys(this.selectedRoles).filter(
           (roleId) => this.selectedRoles[roleId] === true
         );
-
-        console.log('Previously Assigned Roles:', previouslyAssignedRoles);
 
         // Determine current selected roles
         const currentRoles = this.rolesFormArray.value
@@ -369,12 +330,7 @@ export class ManageUserComponent implements OnInit {
           (roleId: string) => !currentRoles.includes(roleId)
         );
 
-        console.log('Roles to Assign:', rolesToAssign);
-        console.log('Unchecked Roles:', uncheckedRoles);
-
         this.updateUserRoles(userId, rolesToAssign, uncheckedRoles);
-
-        console.log('Employee Saved Successfully:', response);
 
         this.messageService.add({
           severity: 'success',
@@ -409,8 +365,6 @@ export class ManageUserComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.roles = response.content;
-          console.log('Roles fetched:', this.roles);
-
           this.rolesFormArray.clear();
           this.roles.forEach(() =>
             this.rolesFormArray.push(this.fb.control(false))
@@ -428,7 +382,6 @@ export class ManageUserComponent implements OnInit {
   }
 
   fetchUserRoles(userId: string): Promise<void> {
-    console.log('Fetching user roles...');
     this.isProcessing = true; // Start processing
 
     return new Promise((resolve, reject) => {
@@ -437,7 +390,6 @@ export class ManageUserComponent implements OnInit {
         .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
         .subscribe({
           next: (response) => {
-            console.log('User Roles Fetched:', response);
             const userRoles = response.content.map((role: any) => role.role_id);
 
             // Update `this.selectedRoles`
@@ -454,8 +406,6 @@ export class ManageUserComponent implements OnInit {
               )
             );
 
-            console.log('Roles patched for User:', this.rolesFormArray.value);
-            console.log('Selected Roles:', this.selectedRoles);
             resolve(); // Notify success
           },
           error: (err) => {
@@ -472,15 +422,10 @@ export class ManageUserComponent implements OnInit {
   }
 
   submitEmployee(): void {
-    console.log('Submitting Employee. Mode:', this.mode);
-
     this.isProcessing = true;
 
     const username = this.editForm.get('username')?.value;
     const email = this.editForm.get('email_address')?.value;
-    console.log('Username:', username);
-    console.log('Email:', email);
-
     Promise.all([
       this.validateUsername(username),
       this.validateEmail(email),
@@ -511,12 +456,9 @@ export class ManageUserComponent implements OnInit {
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchEmployees();
     }, 500);
   }
@@ -548,15 +490,11 @@ export class ManageUserComponent implements OnInit {
           user_id: this.selectedUserId,
         };
 
-        console.log(this.selectedUserId);
-        console.log(payload);
-
         try {
           const response = await this.http
             .put<any>(environment.apiUrl + '/auth/resetpassword', payload)
             .toPromise();
 
-          console.log('Password reset response:', response);
           this.generatedPassword = response?.content;
 
           this.displayEditDialog = false;
@@ -582,7 +520,6 @@ export class ManageUserComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -595,7 +532,6 @@ export class ManageUserComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       username: ['', Validators.required],
@@ -609,8 +545,6 @@ export class ManageUserComponent implements OnInit {
       roles: this.fb.array([]),
     });
     this.currentUserId = this.decodeJWT() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   private updateUserRoles(
@@ -618,10 +552,6 @@ export class ManageUserComponent implements OnInit {
     rolesToAssign: string[],
     uncheckedRoles: string[]
   ): void {
-    console.log('Updating roles...');
-    console.log('Roles to Assign:', rolesToAssign);
-    console.log('Unchecked Roles:', uncheckedRoles);
-
     const addRoleRequests = rolesToAssign.map((roleId) =>
       this.http
         .post(environment.apiUrl + '/appuserrole/create', {
@@ -638,34 +568,24 @@ export class ManageUserComponent implements OnInit {
         .then((response) => {
           const userRoleId = response?.content;
           if (userRoleId) {
-            console.log(
-              `Deleting role ${roleId} with userRoleId ${userRoleId}`
-            );
             return this.http
               .delete(`${environment.apiUrl}/appuserrole/${userRoleId}`)
               .toPromise()
               .then(() => undefined); // Explicitly return void
           } else {
-            console.log(
-              `Role ${roleId} is not assigned to user ${userId}, skipping.`
-            );
             return Promise.resolve(); // Explicitly return a resolved Promise<void>
           }
         })
     );
 
-    Promise.all([...addRoleRequests, ...deleteRoleRequests])
-      .then(() => console.log('Role updates completed successfully.'))
-      .catch((err) => console.error('Error updating roles:', err));
+    Promise.all([...addRoleRequests, ...deleteRoleRequests]);
   }
-
   private validateUsername(username: string): Promise<boolean> {
     return new Promise((resolve) => {
       this.http
         .get<any>(`${environment.apiUrl}/appuser/username/${username}`)
         .subscribe({
           next: (response: any) => {
-            console.log('Username validation response:', response);
             resolve(response.content === null);
           },
           error: (err) => {
@@ -687,7 +607,6 @@ export class ManageUserComponent implements OnInit {
         .get<any>(`${environment.apiUrl}/appuser/email/${email}`)
         .subscribe({
           next: (response: any) => {
-            console.log('Email validation response:', response);
             resolve(response.content === null);
           },
           error: (err) => {

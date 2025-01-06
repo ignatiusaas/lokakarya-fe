@@ -67,13 +67,9 @@ export class ManageDevPlanComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    console.log('Component Initialized');
   }
 
   fetchPlans(event?: any): void {
-    console.log('Fetching Development Plans...');
-    console.log('Global Filter Value:', this.globalFilterValue);
-
     const pageIndex = event?.first ? event.first / event.rows : 0;
     const pageSize = event?.rows || this.rowsPerPage;
 
@@ -97,7 +93,6 @@ export class ManageDevPlanComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Development Plans Fetched:', response);
           this.plans = response.content || [];
           this.totalRecords = response.total_data;
         },
@@ -113,7 +108,6 @@ export class ManageDevPlanComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    console.log('Opening Create Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -126,8 +120,6 @@ export class ManageDevPlanComponent implements OnInit {
   }
 
   deletePlan(planId: string): void {
-    console.log('Deleting Development Plan with ID:', planId);
-
     if (this.isProcessing) {
       console.warn('Delete action skipped - already processing');
       return;
@@ -142,7 +134,6 @@ export class ManageDevPlanComponent implements OnInit {
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
-              console.log('Development Plan Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -162,14 +153,12 @@ export class ManageDevPlanComponent implements OnInit {
       },
       reject: () => {
         // User canceled deletion
-        console.log('Delete action canceled');
         this.isProcessing = false;
       },
     });
   }
 
   editPlan(planId: string): void {
-    console.log('Editing Development Plan with ID:', planId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit';
@@ -182,12 +171,9 @@ export class ManageDevPlanComponent implements OnInit {
 
     planRequest.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (developmentPlanResponse) => {
-        console.log('Development Plan Fetched:', developmentPlanResponse);
         const plan = developmentPlanResponse.content;
 
         this.currentUserId = this.extractCurrentUserId() || '';
-        console.log('Current User ID:', this.currentUserId);
-
         this.editForm.patchValue({
           ...plan,
           enabled: plan.enabled,
@@ -210,8 +196,6 @@ export class ManageDevPlanComponent implements OnInit {
   }
 
   async savePlan(): Promise<void> {
-    console.log('Saving Development Plan. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error('Form Validation Failed:', this.editForm.errors);
       this.isProcessing = false;
@@ -227,7 +211,6 @@ export class ManageDevPlanComponent implements OnInit {
       try {
         const selectedName = this.editForm.value.plan;
         const isDuplicate = await this.confirmDuplicate(selectedName);
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -251,8 +234,6 @@ export class ManageDevPlanComponent implements OnInit {
         : { updated_by: this.currentUserId }),
     };
 
-    console.log(payload);
-
     const request$ =
       this.mode === 'create'
         ? this.http.post(environment.apiUrl + '/devplan/create', payload)
@@ -260,8 +241,6 @@ export class ManageDevPlanComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
-        console.log('Development Plan Saved Successfully:', response);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -283,18 +262,14 @@ export class ManageDevPlanComponent implements OnInit {
   }
 
   submitPlan(): void {
-    console.log('Submitting Development Plan. Mode:', this.mode);
     this.isProcessing = true;
     this.savePlan();
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchPlans();
     }, 500);
   }
@@ -302,8 +277,6 @@ export class ManageDevPlanComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchPlans();
   }
 
@@ -341,7 +314,6 @@ export class ManageDevPlanComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -354,14 +326,11 @@ export class ManageDevPlanComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       plan: ['', Validators.required],
       enabled: [true],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 }

@@ -86,7 +86,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('Initializing EmployeeDevPlanComponent');
     this.primengConfig.ripple = true;
 
     this.initializeForm();
@@ -107,8 +106,6 @@ export class EmployeeDevPlanComponent implements OnInit {
       .catch((error) => {
         console.error('Error fetching initial data:', error);
       });
-
-    console.log('Component Initialized');
   }
 
   fetchSelectedUserName(): void {
@@ -123,7 +120,6 @@ export class EmployeeDevPlanComponent implements OnInit {
         const user = response.content;
         if (user && user.full_name) {
           this.selectedName = user.full_name;
-          console.log('Fetched User Full Name:', this.selectedName);
         } else {
           console.warn('User full name not found in response.');
           this.selectedName = '';
@@ -140,7 +136,6 @@ export class EmployeeDevPlanComponent implements OnInit {
     this.http.get<any>(environment.apiUrl + '/appuser/all').subscribe({
       next: (response) => {
         this.employees = response.content || [];
-        console.log('Fetched Employees:', this.employees);
       },
       error: (error) => {
         console.error('Error fetching employees:', error);
@@ -155,14 +150,11 @@ export class EmployeeDevPlanComponent implements OnInit {
 
   fetchDevPlans(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log('Fetching DevPlans...');
       this.http.get<any>(environment.apiUrl + '/devplan/all').subscribe({
         next: (response) => {
           this.devPlans = (response.content || []).filter(
             (plan: any) => plan.enabled === true
           );
-          console.log('Fetched DevPlans:', this.devPlans);
-
           // Create a map for quick lookup
           this.devPlansMap.clear();
           this.devPlans.forEach((plan: any) => {
@@ -189,15 +181,9 @@ export class EmployeeDevPlanComponent implements OnInit {
       this.fetchSelectedUserName();
       this.selectedYear = this.selectedAssessmentYear.getFullYear();
 
-      console.log(
-        `Fetching ${this.selectedYear} EmpDevPlans for User ID: ${this.selectedUserId}`
-      );
-
       this.loading = true;
 
       const planUrl = `${environment.apiUrl}/empdevplan/get/${this.selectedUserId}/${this.selectedYear}`;
-
-      console.log('Fetching EmpDevPlans from URL:', planUrl);
 
       this.http
         .get<any>(planUrl)
@@ -205,15 +191,12 @@ export class EmployeeDevPlanComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.empDevPlans = response.content || [];
-            console.log('Fetched EmpDevPlans:', this.empDevPlans);
-
             this.groupAllDevPlans();
 
             const summaryUrl = `${environment.apiUrl}/assessmentsummary/get/${this.selectedUserId}/${this.selectedYear}`;
             this.http.get<any>(summaryUrl).subscribe({
               next: (summaryResponse) => {
                 this.isLocked = summaryResponse?.content?.status === 2;
-                console.log('Assessment summary locked status:', this.isLocked);
               },
               error: (err) => {
                 console.error('Error fetching assessment summary:', err);
@@ -236,7 +219,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   }
 
   openEditDialog(): void {
-    console.log('Opening Dev Plan Edit Form');
     this.displayEditDialog = true;
     this.isProcessing = false;
     this.assessmentYear = this.selectedAssessmentYear;
@@ -245,7 +227,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   }
 
   async saveEmployeeDevPlan(): Promise<void> {
-    console.log('Saving Employee Dev Plans.');
     this.isProcessing = true;
 
     const requests: Promise<any>[] = [];
@@ -263,9 +244,6 @@ export class EmployeeDevPlanComponent implements OnInit {
           assessment_year: this.selectedYear,
           too_bright: entry.description,
         };
-
-        console.log('Mode: ', entry.id);
-        console.log('Payload: ', payload);
 
         if (entry.id && !entry.id.startsWith('new_')) {
           payload['id'] = entry.id;
@@ -289,7 +267,6 @@ export class EmployeeDevPlanComponent implements OnInit {
 
     try {
       await Promise.all(requests);
-      console.log(`Employee Dev Plans saved successfully.`);
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
@@ -316,12 +293,10 @@ export class EmployeeDevPlanComponent implements OnInit {
       header: 'Confirm Submission',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log('Submitting Employee Dev Plans.');
         this.saveEmployeeDevPlan();
       },
       reject: () => {
         this.isProcessing = false;
-        console.log('Employee Dev Plans not submitted.');
       },
     });
   }
@@ -362,7 +337,6 @@ export class EmployeeDevPlanComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -386,7 +360,6 @@ export class EmployeeDevPlanComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.roles) {
-        console.log('Decoded roles:', decoded.roles);
         return decoded.roles;
       } else {
         console.error('roles not found in JWT.');
@@ -399,7 +372,6 @@ export class EmployeeDevPlanComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       user_id: [''],
@@ -408,8 +380,6 @@ export class EmployeeDevPlanComponent implements OnInit {
       assessment_year: ['', Validators.required],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 
   private groupAllDevPlans(includeAll: boolean = false): void {
@@ -422,8 +392,6 @@ export class EmployeeDevPlanComponent implements OnInit {
         descriptions: [],
       });
     });
-
-    console.log('DevPlan: ', this.devPlans);
 
     // Merge employee data
     this.empDevPlans.forEach((empPlan) => {
@@ -440,9 +408,6 @@ export class EmployeeDevPlanComponent implements OnInit {
         );
       }
     });
-
-    console.log('EmpDevPlan: ', this.empDevPlans);
-    console.log('Grouped: ', grouped);
 
     this.groupedEmpDevPlans = Array.from(grouped.values());
   }

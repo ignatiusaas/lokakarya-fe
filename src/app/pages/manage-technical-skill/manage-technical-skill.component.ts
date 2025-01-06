@@ -67,13 +67,9 @@ export class ManageTechnicalSkillComponent implements OnInit {
     this.primengConfig.ripple = true;
 
     this.initializeForm();
-    console.log('Component Initialized');
   }
 
   fetchTechSkills(event?: any): void {
-    console.log('Fetching Technical Skills...');
-    console.log('Global Filter Value:', this.globalFilterValue);
-
     const pageIndex = event?.first ? event.first / event.rows : 0;
     const pageSize = event?.rows || this.rowsPerPage;
 
@@ -91,15 +87,12 @@ export class ManageTechnicalSkillComponent implements OnInit {
 
     const url = `${environment.apiUrl}/technicalskill/sorch`;
 
-    console.log('Parameters:', param);
-
     this.loading = true;
     this.http
       .get<any>(url, { params: param })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (response) => {
-          console.log('Technical Skills Fetched:', response);
           this.techSkills = response.content || [];
           this.totalRecords = response.total_data;
         },
@@ -115,7 +108,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    console.log('Opening Create Dialog');
     this.mode = 'create';
     this.editForm.reset({
       id: '',
@@ -128,8 +120,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
   }
 
   deleteTechSkill(techSkillId: string): void {
-    console.log('Deleting Technical Skill with ID:', techSkillId);
-
     if (this.isProcessing) {
       console.warn('Delete action skipped - already processing');
       return;
@@ -144,7 +134,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
           .pipe(finalize(() => (this.isProcessing = false))) // Stop processing
           .subscribe({
             next: () => {
-              console.log('Technical Skill Deleted Successfully');
               this.messageService.add({
                 severity: 'success',
                 summary: 'Success',
@@ -164,14 +153,12 @@ export class ManageTechnicalSkillComponent implements OnInit {
       },
       reject: () => {
         // User canceled deletion
-        console.log('Delete action canceled');
         this.isProcessing = false;
       },
     });
   }
 
   editTechSkill(techSkillId: string): void {
-    console.log('Editing Technical Skill with ID:', techSkillId);
     this.isEditFormLoading = true;
     this.isProcessing = true;
     this.mode = 'edit';
@@ -186,12 +173,9 @@ export class ManageTechnicalSkillComponent implements OnInit {
       .pipe(finalize(() => (this.isProcessing = false)))
       .subscribe({
         next: (technicalSkillIResponse) => {
-          console.log('Technical Skill Fetched:', technicalSkillIResponse);
           const techSkill = technicalSkillIResponse.content;
 
           this.currentUserId = this.extractCurrentUserId() || '';
-          console.log('Current User ID:', this.currentUserId);
-
           this.editForm.patchValue({
             ...techSkill,
             enabled: techSkill.enabled,
@@ -214,8 +198,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
   }
 
   async saveTechnicalSkill(): Promise<void> {
-    console.log('Saving Technical Skill. Mode:', this.mode);
-
     if (!this.editForm.valid) {
       console.error('Form Validation Failed:', this.editForm.errors);
       this.isProcessing = false;
@@ -231,7 +213,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
       try {
         const selectedName = this.editForm.value.technical_skill;
         const isDuplicate = await this.confirmDuplicate(selectedName);
-        console.log('Duplicate Check Result:', isDuplicate);
         if (isDuplicate) {
           this.isProcessing = false;
           this.messageService.add({
@@ -255,8 +236,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
         : { updated_by: this.currentUserId }),
     };
 
-    console.log(payload);
-
     const request$ =
       this.mode === 'create'
         ? this.http.post(environment.apiUrl + '/technicalskill/create', payload)
@@ -264,8 +243,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
 
     request$.pipe(finalize(() => (this.isProcessing = false))).subscribe({
       next: (response: any) => {
-        console.log('Technical Skill Saved Successfully:', response);
-
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -287,18 +264,14 @@ export class ManageTechnicalSkillComponent implements OnInit {
   }
 
   submitTechnicalSkill(): void {
-    console.log('Submitting Technical Skill. Mode:', this.mode);
     this.isProcessing = true;
     this.saveTechnicalSkill();
   }
 
   onSearch(): void {
-    console.log('Applying global search:', this.globalFilterValue);
-
     clearTimeout(this.searchTimeout);
 
     this.searchTimeout = setTimeout(() => {
-      console.log('Searching with:', this.globalFilterValue);
       this.fetchTechSkills();
     }, 500);
   }
@@ -306,8 +279,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
   toggleOrderDirection(): void {
     this.selectedOrderDirection =
       this.selectedOrderDirection === 'asc' ? 'desc' : 'asc';
-    console.log('Order direction toggled:', this.selectedOrderDirection);
-
     this.fetchTechSkills();
   }
 
@@ -347,7 +318,6 @@ export class ManageTechnicalSkillComponent implements OnInit {
       const decoded: any = jwtDecode(token);
 
       if (decoded && decoded.userId) {
-        console.log('Decoded userId:', decoded.userId);
         return decoded.userId;
       } else {
         console.error('userId not found in JWT.');
@@ -360,14 +330,11 @@ export class ManageTechnicalSkillComponent implements OnInit {
   }
 
   private initializeForm() {
-    console.log('Initializing Edit Form...');
     this.editForm = this.fb.group({
       id: [''],
       technical_skill: ['', Validators.required],
       enabled: [true],
     });
     this.currentUserId = this.extractCurrentUserId() || '';
-
-    console.log('Form Initialized:', this.editForm.value);
   }
 }

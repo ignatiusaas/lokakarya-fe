@@ -1,11 +1,17 @@
-import {Component, EventEmitter, HostListener, OnInit, Output,} from '@angular/core';
-import {Router} from '@angular/router';
-import {MenuManagerService} from '../../services/menu-manager.service';
-import {AuthService} from '../../services/auth.service';
-import {CommonModule} from '@angular/common';
-import {PrimeNgModule} from '../primeng/primeng.module';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ConfirmationService} from 'primeng/api';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { AuthService } from '../../services/auth.service';
+import { MenuManagerService } from '../../services/menu-manager.service';
+import { PrimeNgModule } from '../primeng/primeng.module';
 
 @Component({
   selector: 'app-navbar',
@@ -32,8 +38,7 @@ export class NavbarComponent implements OnInit {
     private authService: AuthService,
     private menuManagerService: MenuManagerService,
     private confirmationService: ConfirmationService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadNavbarData();
@@ -79,7 +84,7 @@ export class NavbarComponent implements OnInit {
         console.error('Failed to load menus:', err);
         this.errorMessage = 'Failed to load menus.';
         this.router.navigate(['/login'], {
-          queryParams: {warning: 'Session expired. Please log in again.'},
+          queryParams: { warning: 'Session expired. Please log in again.' },
         });
       },
       complete: () => {
@@ -98,18 +103,16 @@ export class NavbarComponent implements OnInit {
         this.onLogout.emit();
         localStorage.clear();
         this.router.navigate(['/login'], {
-          queryParams: {warning: 'You have been successfully logged out.'},
+          queryParams: { warning: 'You have been successfully logged out.' },
         });
       },
       reject: () => {
         // User canceled logout
-        console.log('Logout canceled.');
       },
     });
   }
 
   navigateTo(menu: string): void {
-    console.log(menu);
     const route = `/${menu}`;
     if (!this.isActiveRoute(menu)) {
       this.router.navigate([route]);
